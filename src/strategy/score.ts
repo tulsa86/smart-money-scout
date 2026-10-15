@@ -1,0 +1,2 @@
+import type {MarketToken} from '../providers/market';
+export function score(t:MarketToken){const liquidity=Math.min(30,Math.round(t.liquidity/200000));const volume=Math.min(25,Math.round(t.volume/t.liquidity*30));const momentum=Math.min(25,Math.max(0,Math.round(t.change+13)));const maturity=t.age>=90?20:5;return {total:liquidity+volume+momentum+maturity,parts:{liquidity,volume,momentum,maturity},flags:[...(t.liquidity<500000?['Low liquidity']:[]),...(t.age<30?['Young token']:[]),...(t.change>15?['High volatility']:[])]};}
