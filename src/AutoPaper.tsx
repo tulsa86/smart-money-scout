@@ -8,12 +8,12 @@ const date=(t:number)=>new Date(t).toLocaleString();
 export default function AutoPaper(){
  const [data,setData]=useState<State|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);
  useEffect(()=>{let active=true;const ctrl=new AbortController();
- const load=async()=>{try{const response=await fetch('/smart-money-scout/paper-state.json?t='+Date.now(),{cache:'no-store',signal:ctrl.signal});if(response.status===404){if(active){setData(null);setError('Background account has not run yet. Start the workflow once from GitHub Actions.')}return}if(!response.ok)throw Error('HTTP '+response.status);const state:State=await response.json();if(state.version!==1||!Array.isArray(state.positions)||!Array.isArray(state.trades)||!Array.isArray(state.events))throw Error('Invalid account data');if(active){setData(state);setError('')}}catch(e){if(active)setError('Could not load background account: '+String(e))}finally{if(active)setLoading(false)}};
+ const load=async()=>{try{const response=await fetch('https://raw.githubusercontent.com/tulsa86/smart-money-scout/main/public/paper-state.json?t='+Date.now(),{cache:'no-store',signal:ctrl.signal});if(response.status===404){if(active){setData(null);setError('Saved background account not found in GitHub.')}return}if(!response.ok)throw Error('HTTP '+response.status);const state:State=await response.json();if(state.version!==1||!Array.isArray(state.positions)||!Array.isArray(state.trades)||!Array.isArray(state.events))throw Error('Invalid account data');if(active){setData(state);setError('')}}catch(e){if(active)setError('Could not load background account: '+String(e))}finally{if(active)setLoading(false)}};
  void load();const timer=setInterval(()=>{if(document.visibilityState==='visible')void load()},60000);return()=>{active=false;ctrl.abort();clearInterval(timer)}},[]);
  const holdings=data?.positions.reduce((n,p)=>n+p.units*p.last*.99,0)??0;
  return <section className="panel" style={{padding:20}}>
  <h2>Unattended auto paper trader · live quotes, fake money</h2>
- <p>GitHub Actions checks the market approximately every 15 minutes even when your phone is off. The account is saved in the GitHub repository, not your browser. No real funds or wallets are involved.</p>
+ <p>GitHub Actions is scheduled to check every 15 minutes, but actual runs can be delayed even when your phone is off. The account is saved in the GitHub repository, not your browser. No real funds or wallets are involved.</p>
  {loading&&<p>Loading saved background account…</p>}
  {error&&<p role="alert" style={{color:'#f4ad7d'}}>{error}</p>}
  {data&&<>
@@ -21,7 +21,7 @@ export default function AutoPaper(){
  <div style={{border:'1px solid #34464c',borderRadius:10,padding:12,marginBottom:16}}>
  <strong>Last scan: {data.lastCheck?date(data.lastCheck):'Not yet run'}</strong>
  <p>{data.checked} tokens checked · {data.qualified} qualified · {data.positions.length} open positions</p>
- <p>Status: {data.status}</p>
+ <p>Status: {data.status}</p><p style={{fontSize:12,opacity:.8}}>Account data fetched directly from GitHub. Refreshes every minute while this page is visible.</p>
  {data.lastCheck&&Date.now()-data.lastCheck>45*60000&&<p style={{color:'#f4ad7d'}}>Warning: last check is over 45 minutes old. Scheduled runs may be delayed or stopped.</p>}
  </div>
  <h3>Open positions</h3>
