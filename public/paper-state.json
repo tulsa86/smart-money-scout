@@ -5,6 +5,10 @@
   "trades": [],
   "events": [
     {
+      "time": 1792184556405,
+      "message": "SCAN 18 tokens checked, 0 qualified, 0 open"
+    },
+    {
       "time": 1792182662995,
       "message": "SCAN 18 tokens checked, 0 qualified, 0 open"
     },
@@ -57,7 +61,7 @@
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792182662995,
+  "lastCheck": 1792184556405,
   "checked": 18,
   "qualified": 0,
   "status": "OK"
