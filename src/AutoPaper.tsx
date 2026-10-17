@@ -5,6 +5,7 @@ type Event={time:number;message:string};
 type State={version:number;cash:number;positions:Position[];trades:Trade[];events:Event[];lastCheck:number|null;checked:number;qualified:number;status:string;rejections?:Record<string,number>;discovery?:{sources:string[];uniqueMints:number;requested:number;quoteBatches:number;totalBatches:number}};
 const usd=(n:number)=>n.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2});
 const date=(t:number)=>new Date(t).toLocaleString();
+const reasonLabels:Record<string,string>={invalidPrice:'Invalid price',lowLiquidity:'Liquidity below $100k',lowVolume:'Volume below liquidity',momentum:'1h momentum outside +3–25%',tooNew:'Pair younger than 7 days',alreadyHeld:'Already held',cooldown:'Recently sold'};
 export default function AutoPaper(){
  const [data,setData]=useState<State|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);
  useEffect(()=>{let active=true;const ctrl=new AbortController();
@@ -23,7 +24,7 @@ export default function AutoPaper(){
  <p>{data.checked} tokens checked · {data.qualified} qualified · {data.positions.length} open positions</p>
  <p>Status: {data.status}</p>
  {data.discovery&&<p style={{fontSize:13}}>Discovery: {data.discovery.uniqueMints} unique Solana tokens across three feeds · {data.discovery.requested} requested · {data.discovery.quoteBatches}/{data.discovery.totalBatches} quote batches succeeded.</p>}
- {data.rejections&&<div style={{marginTop:12}}><strong>Why tokens did not qualify</strong><p style={{fontSize:12,opacity:.8}}>Each token can fail more than one rule, so counts overlap.</p><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:8}}>{Object.entries(data.rejections).map(([key,count])=><div key={key} style={{border:'1px solid #34464c',borderRadius:8,padding:9}}><strong>{count}</strong><div style={{fontSize:12}}>{{invalidPrice:'Invalid price',lowLiquidity:'Liquidity below $100k',lowVolume:'Volume below liquidity',momentum:'1h momentum outside +3–25%',tooNew:'Pair younger than 7 days',alreadyHeld:'Already held',cooldown:'Recently sold'}[key]||key}</div></div>)}</div></div>}<p style={{fontSize:12,opacity:.8}}>Account data fetched directly from GitHub. Refreshes every minute while this page is visible.</p>
+ {data.rejections&&<div style={{marginTop:12}}><strong>Why tokens did not qualify</strong><p style={{fontSize:12,opacity:.8}}>Each token can fail more than one rule, so counts overlap.</p><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:8}}>{Object.entries(data.rejections).map(([key,count])=><div key={key} style={{border:'1px solid #34464c',borderRadius:8,padding:9}}><strong>{count}</strong><div style={{fontSize:12}}>{reasonLabels[key]||key}</div></div>)}</div></div>}<p style={{fontSize:12,opacity:.8}}>Account data fetched directly from GitHub. Refreshes every minute while this page is visible.</p>
  {data.lastCheck&&Date.now()-data.lastCheck>45*60000&&<p style={{color:'#f4ad7d'}}>Warning: last check is over 45 minutes old. Scheduled runs may be delayed or stopped.</p>}
  </div>
  <h3>Open positions</h3>
