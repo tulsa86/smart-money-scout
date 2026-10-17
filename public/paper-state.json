@@ -1,9 +1,29 @@
 {
   "version": 1,
-  "cash": 100,
-  "positions": [],
+  "cash": 90,
+  "positions": [
+    {
+      "id": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
+      "symbol": "swordcat",
+      "units": 4549.632352941177,
+      "entry": 0.002176,
+      "spent": 10,
+      "opened": 1792279482405,
+      "last": 0.002176,
+      "lastQuoteAt": 1792279482405,
+      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
+    }
+  ],
   "trades": [],
   "events": [
+    {
+      "time": 1792279482405,
+      "message": "SCAN 49 tokens checked, 1 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 45, lowVolume 18, momentum 43, tooNew 42, alreadyHeld 0, cooldown 0"
+    },
+    {
+      "time": 1792279482405,
+      "message": "BUY swordcat · $10 paper · all entry rules met"
+    },
     {
       "time": 1792277689633,
       "message": "SCAN 16 tokens checked, 0 qualified, 0 open"
@@ -265,8 +285,28 @@
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792277689633,
-  "checked": 16,
-  "qualified": 0,
-  "status": "OK"
+  "lastCheck": 1792279482405,
+  "checked": 49,
+  "qualified": 1,
+  "status": "OK",
+  "discovery": {
+    "sources": [
+      "/token-profiles/latest/v1: 23 Solana listings",
+      "/token-boosts/latest/v1: 26 Solana listings",
+      "/token-boosts/top/v1: 22 Solana listings"
+    ],
+    "uniqueMints": 55,
+    "requested": 55,
+    "quoteBatches": 2,
+    "totalBatches": 2
+  },
+  "rejections": {
+    "invalidPrice": 0,
+    "lowLiquidity": 45,
+    "lowVolume": 18,
+    "momentum": 43,
+    "tooNew": 42,
+    "alreadyHeld": 0,
+    "cooldown": 0
+  }
 }
