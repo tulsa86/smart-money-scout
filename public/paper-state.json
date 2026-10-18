@@ -9,13 +9,17 @@
       "entry": 0.002176,
       "spent": 10,
       "opened": 1792279482405,
-      "last": 0.002222,
-      "lastQuoteAt": 1792288268140,
+      "last": 0.002211,
+      "lastQuoteAt": 1792289650826,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
   "trades": [],
   "events": [
+    {
+      "time": 1792289650826,
+      "message": "SCAN 57 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 53, lowVolume 19, momentum 51, tooNew 51, alreadyHeld 1, cooldown 0"
+    },
     {
       "time": 1792288268140,
       "message": "SCAN 58 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 53, lowVolume 19, momentum 50, tooNew 52, alreadyHeld 1, cooldown 0"
@@ -301,13 +305,13 @@
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792288268140,
-  "checked": 58,
+  "lastCheck": 1792289650826,
+  "checked": 57,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 26 Solana listings",
+      "/token-profiles/latest/v1: 27 Solana listings",
       "/token-boosts/latest/v1: 29 Solana listings",
       "/token-boosts/top/v1: 22 Solana listings"
     ],
@@ -320,8 +324,8 @@
     "invalidPrice": 0,
     "lowLiquidity": 53,
     "lowVolume": 19,
-    "momentum": 50,
-    "tooNew": 52,
+    "momentum": 51,
+    "tooNew": 51,
     "alreadyHeld": 1,
     "cooldown": 0
   }
