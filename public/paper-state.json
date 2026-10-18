@@ -9,8 +9,8 @@
       "entry": 0.002176,
       "spent": 10,
       "opened": 1792279482405,
-      "last": 0.002182,
-      "lastQuoteAt": 1792295517442,
+      "last": 0.002164,
+      "lastQuoteAt": 1792296965383,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     },
     {
@@ -20,13 +20,17 @@
       "entry": 0.005174,
       "spent": 10,
       "opened": 1792295517442,
-      "last": 0.005174,
-      "lastQuoteAt": 1792295517442,
+      "last": 0.004983,
+      "lastQuoteAt": 1792296965383,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
   "trades": [],
   "events": [
+    {
+      "time": 1792296965383,
+      "message": "SCAN 57 tokens checked, 0 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 52, lowVolume 24, momentum 50, tooNew 53, alreadyHeld 2, cooldown 0"
+    },
     {
       "time": 1792295517442,
       "message": "SCAN 56 tokens checked, 1 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 22, momentum 48, tooNew 51, alreadyHeld 1, cooldown 0"
@@ -332,28 +336,28 @@
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792295517442,
-  "checked": 56,
-  "qualified": 1,
+  "lastCheck": 1792296965383,
+  "checked": 57,
+  "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
       "/token-profiles/latest/v1: 26 Solana listings",
-      "/token-boosts/latest/v1: 28 Solana listings",
-      "/token-boosts/top/v1: 23 Solana listings"
+      "/token-boosts/latest/v1: 27 Solana listings",
+      "/token-boosts/top/v1: 24 Solana listings"
     ],
-    "uniqueMints": 59,
-    "requested": 59,
+    "uniqueMints": 58,
+    "requested": 58,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 51,
-    "lowVolume": 22,
-    "momentum": 48,
-    "tooNew": 51,
-    "alreadyHeld": 1,
+    "lowLiquidity": 52,
+    "lowVolume": 24,
+    "momentum": 50,
+    "tooNew": 53,
+    "alreadyHeld": 2,
     "cooldown": 0
   }
 }
