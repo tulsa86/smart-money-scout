@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "cash": 90,
+  "cash": 80,
   "positions": [
     {
       "id": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
@@ -9,13 +9,32 @@
       "entry": 0.002176,
       "spent": 10,
       "opened": 1792279482405,
-      "last": 0.002232,
-      "lastQuoteAt": 1792293155786,
+      "last": 0.002182,
+      "lastQuoteAt": 1792295517442,
+      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
+    },
+    {
+      "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
+      "symbol": "MISTAKE",
+      "units": 1913.4132199458834,
+      "entry": 0.005174,
+      "spent": 10,
+      "opened": 1792295517442,
+      "last": 0.005174,
+      "lastQuoteAt": 1792295517442,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
   "trades": [],
   "events": [
+    {
+      "time": 1792295517442,
+      "message": "SCAN 56 tokens checked, 1 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 22, momentum 48, tooNew 51, alreadyHeld 1, cooldown 0"
+    },
+    {
+      "time": 1792295517442,
+      "message": "BUY MISTAKE · $10 paper · all entry rules met"
+    },
     {
       "time": 1792293155786,
       "message": "SCAN 55 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 50, lowVolume 21, momentum 48, tooNew 50, alreadyHeld 1, cooldown 0"
@@ -313,27 +332,27 @@
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792293155786,
-  "checked": 55,
-  "qualified": 0,
+  "lastCheck": 1792295517442,
+  "checked": 56,
+  "qualified": 1,
   "status": "OK",
   "discovery": {
     "sources": [
       "/token-profiles/latest/v1: 26 Solana listings",
       "/token-boosts/latest/v1: 28 Solana listings",
-      "/token-boosts/top/v1: 22 Solana listings"
+      "/token-boosts/top/v1: 23 Solana listings"
     ],
-    "uniqueMints": 57,
-    "requested": 57,
+    "uniqueMints": 59,
+    "requested": 59,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 50,
-    "lowVolume": 21,
+    "lowLiquidity": 51,
+    "lowVolume": 22,
     "momentum": 48,
-    "tooNew": 50,
+    "tooNew": 51,
     "alreadyHeld": 1,
     "cooldown": 0
   }
