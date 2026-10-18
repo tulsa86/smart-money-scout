@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "cash": 87.68461871628362,
-  "positions": [
+  "cash": 96.39069912865476,
+  "positions": [],
+  "trades": [
     {
       "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
       "symbol": "CBUCKS",
-      "units": 9278.350515463917,
       "entry": 0.001067,
+      "exit": 0.0009478,
       "spent": 10,
+      "received": 8.706080412371133,
+      "pnl": -1.2939195876288672,
       "opened": 1792339628747,
-      "last": 0.001019,
-      "lastQuoteAt": 1792346728113,
-      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
-    }
-  ],
-  "trades": [
+      "closed": 1792348501778,
+      "reason": "Stop loss"
+    },
     {
       "id": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
       "symbol": "swordcat",
@@ -41,6 +41,18 @@
     }
   ],
   "events": [
+    {
+      "time": 1792348501778,
+      "message": "SCAN 59 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 55, lowVolume 21, momentum 53, tooNew 54, alreadyHeld 0, cooldown 2"
+    },
+    {
+      "time": 1792348501778,
+      "message": "SELL CBUCKS · Stop loss · P/L $-1.29"
+    },
+    {
+      "time": 1792348501778,
+      "message": "RESEARCH 4 snapshots, 8 outcomes, 24 pending"
+    },
     {
       "time": 1792346728113,
       "message": "SCAN 59 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 54, lowVolume 22, momentum 47, tooNew 54, alreadyHeld 1, cooldown 1"
@@ -428,27 +440,15 @@
     {
       "time": 1792188088577,
       "message": "SCAN 18 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792186260039,
-      "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792184556405,
-      "message": "SCAN 18 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792182662995,
-      "message": "SCAN 18 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792346728113,
+  "lastCheck": 1792348501778,
   "checked": 59,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 28 Solana listings",
+      "/token-profiles/latest/v1: 27 Solana listings",
       "/token-boosts/latest/v1: 26 Solana listings",
       "/token-boosts/top/v1: 27 Solana listings"
     ],
@@ -459,11 +459,11 @@
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 54,
-    "lowVolume": 22,
-    "momentum": 47,
+    "lowLiquidity": 55,
+    "lowVolume": 21,
+    "momentum": 53,
     "tooNew": 54,
-    "alreadyHeld": 1,
-    "cooldown": 1
+    "alreadyHeld": 0,
+    "cooldown": 2
   }
 }
