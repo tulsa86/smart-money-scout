@@ -1,7 +1,19 @@
 {
   "version": 1,
-  "cash": 97.68461871628362,
-  "positions": [],
+  "cash": 87.68461871628362,
+  "positions": [
+    {
+      "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
+      "symbol": "CBUCKS",
+      "units": 9278.350515463917,
+      "entry": 0.001067,
+      "spent": 10,
+      "opened": 1792339628747,
+      "last": 0.001067,
+      "lastQuoteAt": 1792339628747,
+      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
+    }
+  ],
   "trades": [
     {
       "id": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
@@ -29,6 +41,18 @@
     }
   ],
   "events": [
+    {
+      "time": 1792339628747,
+      "message": "SCAN 54 tokens checked, 1 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 21, momentum 45, tooNew 49, alreadyHeld 0, cooldown 1"
+    },
+    {
+      "time": 1792339628747,
+      "message": "BUY CBUCKS · $10 paper · all entry rules met"
+    },
+    {
+      "time": 1792339628747,
+      "message": "RESEARCH 4 snapshots, 0 outcomes, 4 pending"
+    },
     {
       "time": 1792338318461,
       "message": "SCAN 53 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 48, lowVolume 22, momentum 45, tooNew 48, alreadyHeld 0, cooldown 1"
@@ -416,41 +440,29 @@
     {
       "time": 1792166796711,
       "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792164782199,
-      "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792162448136,
-      "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792159870543,
-      "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792338318461,
-  "checked": 53,
-  "qualified": 0,
+  "lastCheck": 1792339628747,
+  "checked": 54,
+  "qualified": 1,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 25 Solana listings",
+      "/token-profiles/latest/v1: 26 Solana listings",
       "/token-boosts/latest/v1: 26 Solana listings",
       "/token-boosts/top/v1: 25 Solana listings"
     ],
-    "uniqueMints": 55,
-    "requested": 55,
+    "uniqueMints": 56,
+    "requested": 56,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 48,
-    "lowVolume": 22,
+    "lowLiquidity": 49,
+    "lowVolume": 21,
     "momentum": 45,
-    "tooNew": 48,
+    "tooNew": 49,
     "alreadyHeld": 0,
     "cooldown": 1
   }

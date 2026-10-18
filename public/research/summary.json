@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "observations": 4,
+  "outcomes": 0,
+  "complete": 0,
+  "missing": 0,
+  "days": 1,
+  "lastCapture": 1792339628747,
+  "pending": 4,
+  "quoteBatchFailures": 0,
+  "sampledPerScan": 4,
+  "horizonsMinutes": [
+    15,
+    60,
+    240,
+    1440
+  ]
+}
