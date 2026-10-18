@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "cash": 80,
+  "cash": 88.81597487437186,
   "positions": [
     {
       "id": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
@@ -9,24 +9,34 @@
       "entry": 0.002176,
       "spent": 10,
       "opened": 1792279482405,
-      "last": 0.002398,
-      "lastQuoteAt": 1792303734274,
-      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
-    },
-    {
-      "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
-      "symbol": "MISTAKE",
-      "units": 1913.4132199458834,
-      "entry": 0.005174,
-      "spent": 10,
-      "opened": 1792295517442,
-      "last": 0.004914,
-      "lastQuoteAt": 1792303734274,
+      "last": 0.002347,
+      "lastQuoteAt": 1792306818654,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
-  "trades": [],
+  "trades": [
+    {
+      "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
+      "symbol": "MISTAKE",
+      "entry": 0.005174,
+      "exit": 0.004654,
+      "spent": 10,
+      "received": 8.81597487437186,
+      "pnl": -1.1840251256281409,
+      "opened": 1792295517442,
+      "closed": 1792306818654,
+      "reason": "Stop loss"
+    }
+  ],
   "events": [
+    {
+      "time": 1792306818654,
+      "message": "SCAN 55 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 22, momentum 46, tooNew 49, alreadyHeld 1, cooldown 1"
+    },
+    {
+      "time": 1792306818654,
+      "message": "SELL MISTAKE · Stop loss · P/L $-1.18"
+    },
     {
       "time": 1792303734274,
       "message": "SCAN 54 tokens checked, 0 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 22, momentum 46, tooNew 50, alreadyHeld 2, cooldown 0"
@@ -352,13 +362,13 @@
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792303734274,
-  "checked": 54,
+  "lastCheck": 1792306818654,
+  "checked": 55,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 26 Solana listings",
+      "/token-profiles/latest/v1: 25 Solana listings",
       "/token-boosts/latest/v1: 27 Solana listings",
       "/token-boosts/top/v1: 24 Solana listings"
     ],
@@ -369,11 +379,11 @@
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 49,
+    "lowLiquidity": 51,
     "lowVolume": 22,
     "momentum": 46,
-    "tooNew": 50,
-    "alreadyHeld": 2,
-    "cooldown": 0
+    "tooNew": 49,
+    "alreadyHeld": 1,
+    "cooldown": 1
   }
 }
