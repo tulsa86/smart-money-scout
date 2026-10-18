@@ -9,8 +9,8 @@
       "entry": 0.001067,
       "spent": 10,
       "opened": 1792339628747,
-      "last": 0.001067,
-      "lastQuoteAt": 1792339628747,
+      "last": 0.001214,
+      "lastQuoteAt": 1792342120137,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
@@ -41,6 +41,14 @@
     }
   ],
   "events": [
+    {
+      "time": 1792342120137,
+      "message": "SCAN 55 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 50, lowVolume 22, momentum 48, tooNew 51, alreadyHeld 1, cooldown 1"
+    },
+    {
+      "time": 1792342120137,
+      "message": "RESEARCH 4 snapshots, 4 outcomes, 8 pending"
+    },
     {
       "time": 1792339628747,
       "message": "SCAN 54 tokens checked, 1 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 21, momentum 45, tooNew 49, alreadyHeld 0, cooldown 1"
@@ -432,38 +440,30 @@
     {
       "time": 1792170851081,
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792168663743,
-      "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792166796711,
-      "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792339628747,
-  "checked": 54,
-  "qualified": 1,
+  "lastCheck": 1792342120137,
+  "checked": 55,
+  "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 26 Solana listings",
+      "/token-profiles/latest/v1: 25 Solana listings",
       "/token-boosts/latest/v1: 26 Solana listings",
-      "/token-boosts/top/v1: 25 Solana listings"
+      "/token-boosts/top/v1: 26 Solana listings"
     ],
-    "uniqueMints": 56,
-    "requested": 56,
+    "uniqueMints": 55,
+    "requested": 55,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 49,
-    "lowVolume": 21,
-    "momentum": 45,
-    "tooNew": 49,
-    "alreadyHeld": 0,
+    "lowLiquidity": 50,
+    "lowVolume": 22,
+    "momentum": 48,
+    "tooNew": 51,
+    "alreadyHeld": 1,
     "cooldown": 1
   }
 }
