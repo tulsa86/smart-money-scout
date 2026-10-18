@@ -42,6 +42,14 @@
   ],
   "events": [
     {
+      "time": 1792350159932,
+      "message": "SCAN 60 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 54, lowVolume 25, momentum 54, tooNew 55, alreadyHeld 0, cooldown 2"
+    },
+    {
+      "time": 1792350159932,
+      "message": "RESEARCH 4 snapshots, 8 outcomes, 28 pending"
+    },
+    {
       "time": 1792348501778,
       "message": "SCAN 59 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 55, lowVolume 21, momentum 53, tooNew 54, alreadyHeld 0, cooldown 2"
     },
@@ -432,37 +440,29 @@
     {
       "time": 1792191555431,
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792189880039,
-      "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792188088577,
-      "message": "SCAN 18 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792348501778,
-  "checked": 59,
+  "lastCheck": 1792350159932,
+  "checked": 60,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 27 Solana listings",
+      "/token-profiles/latest/v1: 28 Solana listings",
       "/token-boosts/latest/v1: 26 Solana listings",
       "/token-boosts/top/v1: 27 Solana listings"
     ],
-    "uniqueMints": 59,
-    "requested": 59,
+    "uniqueMints": 60,
+    "requested": 60,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 55,
-    "lowVolume": 21,
-    "momentum": 53,
-    "tooNew": 54,
+    "lowLiquidity": 54,
+    "lowVolume": 25,
+    "momentum": 54,
+    "tooNew": 55,
     "alreadyHeld": 0,
     "cooldown": 2
   }
