@@ -1,3 +1,4 @@
+import {captureResearch} from './research-capture.mjs';
 import fs from 'node:fs/promises';
 const PATH='public/paper-state.json';
 const API='https://api.dexscreener.com';
@@ -64,6 +65,7 @@ async function main(){
  try{
  const {pairs,discovery}=await discover(),quotes=new Map(pairs.map(p=>[p.baseToken.address,p]));
  a.discovery=discovery;
+ try{const research=await captureResearch({pairs,api:API,now,positions:a.positions,trades:a.trades});record(a,'RESEARCH '+research.observations+' snapshots, '+research.outcomes+' outcomes, '+research.pending+' pending')}catch(e){record(a,'RESEARCH ERROR '+String(e));console.error('Research capture failed:',e);process.exitCode=1}
  const remaining=[];
  for(const pos of a.positions){
   let q=quotes.get(pos.id);
