@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "observations": 64,
-  "outcomes": 140,
-  "complete": 140,
+  "observations": 68,
+  "outcomes": 152,
+  "complete": 152,
   "missing": 0,
   "days": 1,
-  "lastCapture": 1792365962879,
-  "pending": 64,
+  "lastCapture": 1792367660864,
+  "pending": 68,
   "quoteBatchFailures": 0,
   "sampledPerScan": 4,
   "horizonsMinutes": [
