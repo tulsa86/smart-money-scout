@@ -9,8 +9,8 @@
       "entry": 0.001067,
       "spent": 10,
       "opened": 1792339628747,
-      "last": 0.001063,
-      "lastQuoteAt": 1792343388782,
+      "last": 0.001081,
+      "lastQuoteAt": 1792345419771,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
@@ -41,6 +41,14 @@
     }
   ],
   "events": [
+    {
+      "time": 1792345419771,
+      "message": "SCAN 56 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 23, momentum 43, tooNew 51, alreadyHeld 1, cooldown 1"
+    },
+    {
+      "time": 1792345419771,
+      "message": "RESEARCH 4 snapshots, 4 outcomes, 16 pending"
+    },
     {
       "time": 1792343388782,
       "message": "SCAN 56 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 22, momentum 49, tooNew 51, alreadyHeld 1, cooldown 1"
@@ -432,17 +440,9 @@
     {
       "time": 1792179059021,
       "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792177052549,
-      "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792174343332,
-      "message": "SCAN 20 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792343388782,
+  "lastCheck": 1792345419771,
   "checked": 56,
   "qualified": 0,
   "status": "OK",
@@ -450,7 +450,7 @@
     "sources": [
       "/token-profiles/latest/v1: 25 Solana listings",
       "/token-boosts/latest/v1: 26 Solana listings",
-      "/token-boosts/top/v1: 26 Solana listings"
+      "/token-boosts/top/v1: 27 Solana listings"
     ],
     "uniqueMints": 56,
     "requested": 56,
@@ -460,8 +460,8 @@
   "rejections": {
     "invalidPrice": 0,
     "lowLiquidity": 51,
-    "lowVolume": 22,
-    "momentum": 49,
+    "lowVolume": 23,
+    "momentum": 43,
     "tooNew": 51,
     "alreadyHeld": 1,
     "cooldown": 1
