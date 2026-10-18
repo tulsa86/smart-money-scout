@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "cash": 88.81597487437186,
-  "positions": [
+  "cash": 97.68461871628362,
+  "positions": [],
+  "trades": [
     {
       "id": "5tCju6YNxHq5zrA6tGndr6F7TK42mpUFmeE31cSFpump",
       "symbol": "swordcat",
-      "units": 4549.632352941177,
       "entry": 0.002176,
+      "exit": 0.001969,
       "spent": 10,
+      "received": 8.868643841911764,
+      "pnl": -1.131356158088236,
       "opened": 1792279482405,
-      "last": 0.002066,
-      "lastQuoteAt": 1792332448536,
-      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
-    }
-  ],
-  "trades": [
+      "closed": 1792334784771,
+      "reason": "Stop loss"
+    },
     {
       "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
       "symbol": "MISTAKE",
@@ -29,6 +29,14 @@
     }
   ],
   "events": [
+    {
+      "time": 1792334784771,
+      "message": "SCAN 52 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 23, momentum 47, tooNew 48, alreadyHeld 0, cooldown 1"
+    },
+    {
+      "time": 1792334784771,
+      "message": "SELL swordcat · Stop loss · P/L $-1.13"
+    },
     {
       "time": 1792332448536,
       "message": "SCAN 54 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 50, lowVolume 20, momentum 43, tooNew 50, alreadyHeld 0, cooldown 1"
@@ -418,27 +426,27 @@
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792332448536,
-  "checked": 54,
+  "lastCheck": 1792334784771,
+  "checked": 52,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 25 Solana listings",
-      "/token-boosts/latest/v1: 26 Solana listings",
+      "/token-profiles/latest/v1: 24 Solana listings",
+      "/token-boosts/latest/v1: 25 Solana listings",
       "/token-boosts/top/v1: 25 Solana listings"
     ],
-    "uniqueMints": 55,
-    "requested": 55,
+    "uniqueMints": 54,
+    "requested": 54,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 50,
-    "lowVolume": 20,
-    "momentum": 43,
-    "tooNew": 50,
+    "lowLiquidity": 49,
+    "lowVolume": 23,
+    "momentum": 47,
+    "tooNew": 48,
     "alreadyHeld": 0,
     "cooldown": 1
   }
