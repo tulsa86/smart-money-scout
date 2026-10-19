@@ -54,6 +54,14 @@
   ],
   "events": [
     {
+      "time": 1792423318382,
+      "message": "SCAN 51 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 25, momentum 46, tooNew 44, alreadyHeld 0, cooldown 0"
+    },
+    {
+      "time": 1792423318382,
+      "message": "RESEARCH 4 snapshots, 12 outcomes, 156 pending"
+    },
+    {
       "time": 1792420817655,
       "message": "SCAN 55 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 52, lowVolume 24, momentum 48, tooNew 46, alreadyHeld 0, cooldown 1"
     },
@@ -444,38 +452,30 @@
     {
       "time": 1792308761271,
       "message": "SCAN 53 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 19, momentum 44, tooNew 47, alreadyHeld 1, cooldown 1"
-    },
-    {
-      "time": 1792306818654,
-      "message": "SCAN 55 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 22, momentum 46, tooNew 49, alreadyHeld 1, cooldown 1"
-    },
-    {
-      "time": 1792306818654,
-      "message": "SELL MISTAKE · Stop loss · P/L $-1.18"
     }
   ],
-  "lastCheck": 1792420817655,
-  "checked": 55,
+  "lastCheck": 1792423318382,
+  "checked": 51,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 27 Solana listings",
-      "/token-boosts/latest/v1: 21 Solana listings",
-      "/token-boosts/top/v1: 23 Solana listings"
+      "/token-profiles/latest/v1: 25 Solana listings",
+      "/token-boosts/latest/v1: 20 Solana listings",
+      "/token-boosts/top/v1: 22 Solana listings"
     ],
-    "uniqueMints": 58,
-    "requested": 58,
+    "uniqueMints": 54,
+    "requested": 54,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 52,
-    "lowVolume": 24,
-    "momentum": 48,
-    "tooNew": 46,
+    "lowLiquidity": 49,
+    "lowVolume": 25,
+    "momentum": 46,
+    "tooNew": 44,
     "alreadyHeld": 0,
-    "cooldown": 1
+    "cooldown": 0
   }
 }
