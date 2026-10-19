@@ -19,6 +19,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Validate research scripts
+        run: |
+          node --check scripts/research-capture.mjs
+          node --check scripts/research-audit.mjs
+          node --check scripts/research-analysis.mjs
+          node scripts/research-test.mjs
       - name: Run paper scan
         run: node scripts/paper-scan.mjs
       - name: Audit research data quality
