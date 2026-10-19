@@ -9,8 +9,8 @@
       "entry": 0.004793,
       "spent": 10,
       "opened": 1792395270046,
-      "last": 0.004739,
-      "lastQuoteAt": 1792400451917,
+      "last": 0.004828,
+      "lastQuoteAt": 1792402728391,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
@@ -53,6 +53,14 @@
     }
   ],
   "events": [
+    {
+      "time": 1792402728391,
+      "message": "SCAN 51 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 46, lowVolume 23, momentum 42, tooNew 46, alreadyHeld 1, cooldown 1"
+    },
+    {
+      "time": 1792402728391,
+      "message": "RESEARCH 4 snapshots, 12 outcomes, 124 pending"
+    },
     {
       "time": 1792400451917,
       "message": "SCAN 51 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 46, lowVolume 24, momentum 46, tooNew 46, alreadyHeld 1, cooldown 1"
@@ -444,36 +452,28 @@
     {
       "time": 1792279482405,
       "message": "SCAN 49 tokens checked, 1 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 45, lowVolume 18, momentum 43, tooNew 42, alreadyHeld 0, cooldown 0"
-    },
-    {
-      "time": 1792279482405,
-      "message": "BUY swordcat · $10 paper · all entry rules met"
-    },
-    {
-      "time": 1792277689633,
-      "message": "SCAN 16 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792400451917,
+  "lastCheck": 1792402728391,
   "checked": 51,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 21 Solana listings",
-      "/token-boosts/latest/v1: 24 Solana listings",
+      "/token-profiles/latest/v1: 22 Solana listings",
+      "/token-boosts/latest/v1: 23 Solana listings",
       "/token-boosts/top/v1: 26 Solana listings"
     ],
-    "uniqueMints": 52,
-    "requested": 52,
+    "uniqueMints": 53,
+    "requested": 53,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
     "lowLiquidity": 46,
-    "lowVolume": 24,
-    "momentum": 46,
+    "lowVolume": 23,
+    "momentum": 42,
     "tooNew": 46,
     "alreadyHeld": 1,
     "cooldown": 1
