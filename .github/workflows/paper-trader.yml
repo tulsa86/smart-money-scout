@@ -26,6 +26,7 @@ jobs:
           node --check scripts/research-analysis.mjs
           node scripts/research-test.mjs
           node scripts/paper-simulation-test.mjs
+          node scripts/historical-replay-test.mjs
       - name: Run paper scan
         run: node scripts/paper-scan.mjs
       - name: Audit research data quality
@@ -36,6 +37,10 @@ jobs:
         if: always()
         run: |
           if [ -f public/research/summary.json ]; then node scripts/research-analysis.mjs; fi
+      - name: Generate historical replay report
+        if: always()
+        run: |
+          if [ -f public/research/summary.json ]; then node scripts/historical-replay.mjs; fi
       - name: Commit account state
         if: always()
         run: |
