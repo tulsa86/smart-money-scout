@@ -54,6 +54,14 @@
   ],
   "events": [
     {
+      "time": 1792420817655,
+      "message": "SCAN 55 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 52, lowVolume 24, momentum 48, tooNew 46, alreadyHeld 0, cooldown 1"
+    },
+    {
+      "time": 1792420817655,
+      "message": "RESEARCH 4 snapshots, 12 outcomes, 152 pending"
+    },
+    {
       "time": 1792418606930,
       "message": "SCAN 57 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 53, lowVolume 24, momentum 49, tooNew 47, alreadyHeld 0, cooldown 2"
     },
@@ -444,23 +452,15 @@
     {
       "time": 1792306818654,
       "message": "SELL MISTAKE · Stop loss · P/L $-1.18"
-    },
-    {
-      "time": 1792303734274,
-      "message": "SCAN 54 tokens checked, 0 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 22, momentum 46, tooNew 50, alreadyHeld 2, cooldown 0"
-    },
-    {
-      "time": 1792302477004,
-      "message": "SCAN 53 tokens checked, 0 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 48, lowVolume 22, momentum 44, tooNew 50, alreadyHeld 2, cooldown 0"
     }
   ],
-  "lastCheck": 1792418606930,
-  "checked": 57,
+  "lastCheck": 1792420817655,
+  "checked": 55,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 26 Solana listings",
+      "/token-profiles/latest/v1: 27 Solana listings",
       "/token-boosts/latest/v1: 21 Solana listings",
       "/token-boosts/top/v1: 23 Solana listings"
     ],
@@ -471,11 +471,11 @@
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 53,
+    "lowLiquidity": 52,
     "lowVolume": 24,
-    "momentum": 49,
-    "tooNew": 47,
+    "momentum": 48,
+    "tooNew": 46,
     "alreadyHeld": 0,
-    "cooldown": 2
+    "cooldown": 1
   }
 }
