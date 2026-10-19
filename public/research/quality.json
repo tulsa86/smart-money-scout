@@ -1,11 +1,11 @@
 {
-  "generatedAt": 1792425370883,
-  "totalObservations": 160,
-  "uniqueTokens": 15,
-  "repeatObservationPct": 90.6,
-  "totalOutcomes": 444,
+  "generatedAt": 1792427825756,
+  "totalObservations": 164,
+  "uniqueTokens": 17,
+  "repeatObservationPct": 89.6,
+  "totalOutcomes": 460,
   "nearTargetOutcomes": 64,
-  "nearTargetPct": 14.4,
+  "nearTargetPct": 13.9,
   "delayMinutes": {
     "median": 21,
     "p90": 34,
@@ -17,27 +17,27 @@
     {
       "id": "8Xg89xT8Ve34sKiYqYuMs46mycREsCA2F362UscRpump",
       "count": 37,
-      "sharePct": 23.1
+      "sharePct": 22.6
     },
     {
       "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
       "count": 30,
-      "sharePct": 18.8
+      "sharePct": 18.3
     },
     {
       "id": "EKosQw4oJFbXmeJ4qRnbH1quGFRTc3Eok6nwnFKDpump",
-      "count": 25,
-      "sharePct": 15.6
+      "count": 26,
+      "sharePct": 15.9
     },
     {
       "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
-      "count": 22,
-      "sharePct": 13.8
+      "count": 23,
+      "sharePct": 14
     },
     {
       "id": "5x6QQvpRpd1PsFTTTJe6sJFFSqrA21H1j3GZLmo2pump",
       "count": 15,
-      "sharePct": 9.4
+      "sharePct": 9.1
     }
   ],
   "summaryMatchesFiles": true,
