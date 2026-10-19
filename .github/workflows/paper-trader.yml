@@ -25,6 +25,10 @@ jobs:
         if: always()
         run: |
           if [ -f public/research/summary.json ]; then node scripts/research-audit.mjs; fi
+      - name: Generate exploratory research analysis
+        if: always()
+        run: |
+          if [ -f public/research/summary.json ]; then node scripts/research-analysis.mjs; fi
       - name: Commit account state
         if: always()
         run: |
