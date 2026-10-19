@@ -14,11 +14,13 @@ async function discover(){
  const results=await Promise.allSettled(feeds.map(f=>json(API+f)));
  const addresses=new Set();
  const sources=[];
+ const feedStats=[];
  for(let i=0;i<results.length;i++){
   const result=results[i];
-  if(result.status!=='fulfilled'||!Array.isArray(result.value)){sources.push(feeds[i]+': unavailable');continue}
-  let count=0;
-  for(const p of result.value){if(p.chainId==='solana'&&typeof p.tokenAddress==='string'&&/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(p.tokenAddress)){addresses.add(p.tokenAddress);count++}}
+  if(result.status!=='fulfilled'||!Array.isArray(result.value)){sources.push(feeds[i]+': unavailable');feedStats.push({feed:feeds[i],unavailable:true,listings:0,uniqueAdded:0});continue}
+  let count=0,newMints=0;
+  for(const p of result.value){if(p.chainId==='solana'&&typeof p.tokenAddress==='string'&&/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(p.tokenAddress)){if(!addresses.has(p.tokenAddress))newMints++;addresses.add(p.tokenAddress);count++}}
+  feedStats.push({feed:feeds[i],listings:count,uniqueAdded:newMints});
   sources.push(feeds[i]+': '+count+' Solana listings');
  }
  if(!addresses.size)throw Error('No valid tokens from discovery feeds: '+sources.join('; '));
@@ -38,7 +40,7 @@ async function discover(){
   }
  }
  if(!goodBatches)throw Error('All quote batches failed');
- return {pairs:[...best.values()],discovery:{sources,uniqueMints:addresses.size,requested:mints.length,quoteBatches:goodBatches,totalBatches:batches.length}};
+ return {pairs:[...best.values()],discovery:{sources,feedStats,uniqueMints:addresses.size,requested:mints.length,excludedByCap:Math.max(0,addresses.size-mints.length),quotedTokens:best.size,unquotedTokens:mints.length-best.size,quoteBatches:goodBatches,totalBatches:batches.length}};
 }
 function diagnose(pairs,positions,trades){
  const reasons={invalidPrice:0,lowLiquidity:0,lowVolume:0,momentum:0,tooNew:0,alreadyHeld:0,cooldown:0};
