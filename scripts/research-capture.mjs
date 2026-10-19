@@ -29,7 +29,10 @@ export async function captureResearch({pairs,api,now,positions,trades}){
  }}
  // Four stratified observations per scan: diversify liquidity, age and momentum.
  // Prefer tokens not observed recently, while retaining occasional repeat observations.
- const recent=new Map();
+ const samplingPath=ROOT+'/sampling-history.json';
+ const samplingHistory=await read(samplingPath,{});
+ if(!samplingHistory||typeof samplingHistory!=='object'||Array.isArray(samplingHistory))throw Error('Invalid sampling history');
+ const recent=new Map(Object.entries(samplingHistory).filter(([id,t])=>typeof id==='string'&&valid(t)));
  for(const x of pending){if(!recent.has(x.id)||recent.get(x.id)<x.time)recent.set(x.id,x.time)}
  const candidates=pairs.filter(p=>numeric(p.priceUsd)>0&&p.baseToken?.address);
  const buckets=[[],[],[],[]];
@@ -51,6 +54,8 @@ export async function captureResearch({pairs,api,now,positions,trades}){
  for(const [d,rows] of Map.groupBy(outcomes,x=>day(x.evaluatedAt)))await append(d,'outcomes.ndjson',rows);
  const remaining=pending.filter(x=>x.done.length<HORIZONS.length&&now-x.time<3*DAY);
  await fs.writeFile(queuePath,JSON.stringify([...remaining,...fresh])+'\n');
+ for(const o of observations)recent.set(o.id,now);
+ await fs.writeFile(samplingPath,JSON.stringify(Object.fromEntries(recent))+'\n');
  const previousDay=summary.lastCapture?day(summary.lastCapture):null;
  summary.observations+=observations.length;summary.outcomes+=outcomes.length;summary.complete+=outcomes.filter(x=>x.status==='observed').length;summary.missing+=outcomes.filter(x=>x.status==='missing').length;summary.days+=(previousDay!==day(now)?1:0);summary.lastCapture=now;summary.pending=remaining.length+fresh.length;summary.quoteBatchFailures=failures;summary.sampledPerScan=4;summary.horizonsMinutes=HORIZONS;
  await fs.writeFile(summaryPath,JSON.stringify(summary,null,2)+'\n');
