@@ -54,6 +54,14 @@
   ],
   "events": [
     {
+      "time": 1792429787545,
+      "message": "SCAN 51 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 48, lowVolume 24, momentum 43, tooNew 43, alreadyHeld 0, cooldown 1"
+    },
+    {
+      "time": 1792429787545,
+      "message": "RESEARCH 4 snapshots, 16 outcomes, 160 pending"
+    },
+    {
       "time": 1792427825238,
       "message": "SCAN 49 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 45, lowVolume 22, momentum 37, tooNew 41, alreadyHeld 0, cooldown 1"
     },
@@ -444,24 +452,16 @@
     {
       "time": 1792319316077,
       "message": "SCAN 50 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 47, lowVolume 13, momentum 44, tooNew 46, alreadyHeld 0, cooldown 1"
-    },
-    {
-      "time": 1792317517611,
-      "message": "SCAN 48 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 44, lowVolume 11, momentum 40, tooNew 43, alreadyHeld 1, cooldown 1"
-    },
-    {
-      "time": 1792315749732,
-      "message": "SCAN 48 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 44, lowVolume 12, momentum 38, tooNew 42, alreadyHeld 1, cooldown 1"
     }
   ],
-  "lastCheck": 1792427825238,
-  "checked": 49,
+  "lastCheck": 1792429787545,
+  "checked": 51,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 20 Solana listings",
-      "/token-boosts/latest/v1: 19 Solana listings",
+      "/token-profiles/latest/v1: 21 Solana listings",
+      "/token-boosts/latest/v1: 20 Solana listings",
       "/token-boosts/top/v1: 22 Solana listings"
     ],
     "uniqueMints": 53,
@@ -471,10 +471,10 @@
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 45,
-    "lowVolume": 22,
-    "momentum": 37,
-    "tooNew": 41,
+    "lowLiquidity": 48,
+    "lowVolume": 24,
+    "momentum": 43,
+    "tooNew": 43,
     "alreadyHeld": 0,
     "cooldown": 1
   }
