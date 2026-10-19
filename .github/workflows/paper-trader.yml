@@ -25,6 +25,7 @@ jobs:
           node --check scripts/research-audit.mjs
           node --check scripts/research-analysis.mjs
           node scripts/research-test.mjs
+          node scripts/paper-simulation-test.mjs
       - name: Run paper scan
         run: node scripts/paper-scan.mjs
       - name: Audit research data quality
