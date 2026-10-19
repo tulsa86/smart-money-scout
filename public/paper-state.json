@@ -9,8 +9,8 @@
       "entry": 0.004793,
       "spent": 10,
       "opened": 1792395270046,
-      "last": 0.004872,
-      "lastQuoteAt": 1792409697812,
+      "last": 0.00524,
+      "lastQuoteAt": 1792411820493,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
@@ -53,6 +53,14 @@
     }
   ],
   "events": [
+    {
+      "time": 1792411820493,
+      "message": "SCAN 53 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 20, momentum 43, tooNew 45, alreadyHeld 1, cooldown 1"
+    },
+    {
+      "time": 1792411820493,
+      "message": "RESEARCH 4 snapshots, 8 outcomes, 140 pending"
+    },
     {
       "time": 1792409697812,
       "message": "SCAN 52 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 48, lowVolume 19, momentum 43, tooNew 44, alreadyHeld 1, cooldown 1"
@@ -444,18 +452,10 @@
     {
       "time": 1792295517442,
       "message": "BUY MISTAKE · $10 paper · all entry rules met"
-    },
-    {
-      "time": 1792293155786,
-      "message": "SCAN 55 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 50, lowVolume 21, momentum 48, tooNew 50, alreadyHeld 1, cooldown 0"
-    },
-    {
-      "time": 1792291820669,
-      "message": "SCAN 57 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 53, lowVolume 20, momentum 48, tooNew 51, alreadyHeld 1, cooldown 0"
     }
   ],
-  "lastCheck": 1792409697812,
-  "checked": 52,
+  "lastCheck": 1792411820493,
+  "checked": 53,
   "qualified": 0,
   "status": "OK",
   "discovery": {
@@ -471,10 +471,10 @@
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 48,
-    "lowVolume": 19,
+    "lowLiquidity": 49,
+    "lowVolume": 20,
     "momentum": 43,
-    "tooNew": 44,
+    "tooNew": 45,
     "alreadyHeld": 1,
     "cooldown": 1
   }
