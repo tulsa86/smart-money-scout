@@ -1,7 +1,19 @@
 {
   "version": 1,
-  "cash": 96.39069912865476,
-  "positions": [],
+  "cash": 86.39069912865476,
+  "positions": [
+    {
+      "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
+      "symbol": "MISTAKE",
+      "units": 2065.5122052993947,
+      "entry": 0.004793,
+      "spent": 10,
+      "opened": 1792395270046,
+      "last": 0.004793,
+      "lastQuoteAt": 1792395270046,
+      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
+    }
+  ],
   "trades": [
     {
       "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
@@ -41,6 +53,18 @@
     }
   ],
   "events": [
+    {
+      "time": 1792395270046,
+      "message": "SCAN 57 tokens checked, 1 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 26, momentum 47, tooNew 50, alreadyHeld 0, cooldown 1"
+    },
+    {
+      "time": 1792395270046,
+      "message": "BUY MISTAKE · $10 paper · all entry rules met"
+    },
+    {
+      "time": 1792395270046,
+      "message": "RESEARCH 4 snapshots, 12 outcomes, 112 pending"
+    },
     {
       "time": 1792392336674,
       "message": "SCAN 60 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 55, lowVolume 27, momentum 53, tooNew 53, alreadyHeld 0, cooldown 2"
@@ -428,42 +452,30 @@
     {
       "time": 1792270744523,
       "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792268917504,
-      "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792266894412,
-      "message": "SCAN 19 tokens checked, 0 qualified, 0 open"
-    },
-    {
-      "time": 1792265174765,
-      "message": "SCAN 18 tokens checked, 0 qualified, 0 open"
     }
   ],
-  "lastCheck": 1792392336674,
-  "checked": 60,
-  "qualified": 0,
+  "lastCheck": 1792395270046,
+  "checked": 57,
+  "qualified": 1,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 24 Solana listings",
-      "/token-boosts/latest/v1: 27 Solana listings",
-      "/token-boosts/top/v1: 29 Solana listings"
+      "/token-profiles/latest/v1: 22 Solana listings",
+      "/token-boosts/latest/v1: 25 Solana listings",
+      "/token-boosts/top/v1: 27 Solana listings"
     ],
-    "uniqueMints": 62,
-    "requested": 62,
-    "quoteBatches": 3,
-    "totalBatches": 3
+    "uniqueMints": 59,
+    "requested": 59,
+    "quoteBatches": 2,
+    "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 55,
-    "lowVolume": 27,
-    "momentum": 53,
-    "tooNew": 53,
+    "lowLiquidity": 51,
+    "lowVolume": 26,
+    "momentum": 47,
+    "tooNew": 50,
     "alreadyHeld": 0,
-    "cooldown": 2
+    "cooldown": 1
   }
 }
