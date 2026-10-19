@@ -27,6 +27,7 @@ jobs:
           node scripts/research-test.mjs
           node scripts/paper-simulation-test.mjs
           node scripts/historical-replay-test.mjs
+          node scripts/sampling-history-test.mjs
       - name: Run paper scan
         run: node scripts/paper-scan.mjs
       - name: Audit research data quality
