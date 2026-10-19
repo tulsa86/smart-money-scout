@@ -27,9 +27,24 @@ export async function captureResearch({pairs,api,now,positions,trades}){
   outcomes.push({id:x.id,symbol:x.symbol,observedAt:x.time,evaluatedAt:now,horizonMinutes:horizon,entryPrice:x.price,exitPrice:price,returnPct:price>0?(price/x.price-1)*100:null,status,delayMinutes:Math.round((now-x.time-horizon*60000)/60000)});
   x.done.push(horizon);
  }}
- // Keep a deterministic sample per scan to bound API calls and GitHub repository growth.
- const sampled=pairs.filter(p=>numeric(p.priceUsd)>0).sort((a,b)=>(numeric(b.liquidity?.usd)??0)-(numeric(a.liquidity?.usd)??0)).slice(0,4);
- const observations=sampled.map(p=>({id:p.baseToken.address,symbol:p.baseToken.symbol||p.baseToken.address.slice(0,6),time:now,price:numeric(p.priceUsd),liquidityUsd:numeric(p.liquidity?.usd),volume24hUsd:numeric(p.volume?.h24),change1hPct:numeric(p.priceChange?.h1),change24hPct:numeric(p.priceChange?.h24),pairCreatedAt:numeric(p.pairCreatedAt),source:'dexscreener',schema:1}));
+ // Four stratified observations per scan: diversify liquidity, age and momentum.
+ // Prefer tokens not observed recently, while retaining occasional repeat observations.
+ const recent=new Map();
+ for(const x of pending){if(!recent.has(x.id)||recent.get(x.id)<x.time)recent.set(x.id,x.time)}
+ const candidates=pairs.filter(p=>numeric(p.priceUsd)>0&&p.baseToken?.address);
+ const buckets=[[],[],[],[]];
+ for(const p of candidates){
+  const liq=numeric(p.liquidity?.usd)??0,age=p.pairCreatedAt?(now-p.pairCreatedAt)/DAY:0,momentum=numeric(p.priceChange?.h1)??0;
+  const bucket=liq>=100000&&age>=7?0:liq>=100000?1:momentum>=3?2:3;
+  buckets[bucket].push(p);
+ }
+ const score=p=>{const last=recent.get(p.baseToken.address);return last===undefined?Number.MAX_SAFE_INTEGER:now-last};
+ for(const bucket of buckets)bucket.sort((a,b)=>score(b)-score(a)||(numeric(b.liquidity?.usd)??0)-(numeric(a.liquidity?.usd)??0)||a.baseToken.address.localeCompare(b.baseToken.address));
+ const sampled=[],chosen=new Set();
+ for(const bucket of buckets){const p=bucket.find(x=>!chosen.has(x.baseToken.address));if(p&&sampled.length<4){sampled.push(p);chosen.add(p.baseToken.address)}}
+ const leftovers=candidates.filter(x=>!chosen.has(x.baseToken.address)).sort((a,b)=>score(b)-score(a)||(numeric(b.liquidity?.usd)??0)-(numeric(a.liquidity?.usd)??0));
+ for(const p of leftovers){if(sampled.length>=4)break;sampled.push(p);chosen.add(p.baseToken.address)}
+ const observations=sampled.map(p=>({id:p.baseToken.address,symbol:p.baseToken.symbol||p.baseToken.address.slice(0,6),time:now,price:numeric(p.priceUsd),liquidityUsd:numeric(p.liquidity?.usd),volume24hUsd:numeric(p.volume?.h24),change1hPct:numeric(p.priceChange?.h1),change24hPct:numeric(p.priceChange?.h24),pairCreatedAt:numeric(p.pairCreatedAt),source:'dexscreener',sampling:'stratified-recency-v2',schema:2}));
  const fresh=observations.map(x=>({id:x.id,symbol:x.symbol,time:x.time,price:x.price,done:[]}));
  // Append before queue update: if interrupted, at worst duplicate observations, not fabricated outcomes.
  await append(day(now),'observations.ndjson',observations);
