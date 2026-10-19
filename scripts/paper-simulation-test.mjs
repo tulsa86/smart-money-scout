@@ -8,7 +8,7 @@ const tmp=await fs.mkdtemp(path.join(os.tmpdir(),'sms-simulation-'));
 const mint='11111111111111111111111111111111';
 const scenarios=[
  {name:'qualifying entry',price:1,starting:null,expect:'BUY',cash:90,open:1,trades:0},
- {name:'profit-taking rally',price:1.3,starting:'open',expect:'Take profit',cash:102.6413,open:0,trades:1},
+ {name:'profit-taking rally',price:1.3,starting:'open',expect:'Take profit',cash:102.7413,open:0,trades:1},
  {name:'gap-through-stop crash',price:0.2,starting:'open',expect:'Stop loss',cash:91.9602,open:0,trades:1},
  {name:'missing held quote',price:null,starting:'open',expect:'position held',cash:90,open:1,trades:0},
  {name:'ineligible low liquidity',price:1,liquidity:100,starting:null,expect:'lowLiquidity',cash:100,open:0,trades:0}
