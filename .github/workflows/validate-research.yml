@@ -25,7 +25,11 @@ jobs:
           node --check scripts/research-audit.mjs
           node --check scripts/research-analysis.mjs
           node --check scripts/paper-simulation-test.mjs
+          node --check scripts/historical-replay.mjs
+          node --check scripts/historical-replay-test.mjs
       - name: Research data fixture tests
         run: node scripts/research-test.mjs
       - name: Paper trader simulation scenarios
-        run: node scripts/paper-simulation-test.mjs
+        run: |
+          node scripts/paper-simulation-test.mjs
+          node scripts/historical-replay-test.mjs
