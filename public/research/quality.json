@@ -1,53 +1,53 @@
 {
-  "generatedAt": 1792438582344,
-  "totalObservations": 184,
-  "uniqueTokens": 27,
-  "repeatObservationPct": 85.3,
-  "totalOutcomes": 544,
-  "nearTargetOutcomes": 96,
-  "nearTargetPct": 17.6,
+  "generatedAt": 1792440563677,
+  "totalObservations": 188,
+  "uniqueTokens": 29,
+  "repeatObservationPct": 84.6,
+  "totalOutcomes": 560,
+  "nearTargetOutcomes": 100,
+  "nearTargetPct": 17.9,
   "delayMinutes": {
-    "median": 21,
-    "p90": 34,
+    "median": 20,
+    "p90": 33,
     "max": 53
   },
   "byHorizon": {
     "15": {
-      "total": 180,
-      "observed": 180,
+      "total": 184,
+      "observed": 184,
       "missing": 0,
       "within10Minutes": 16,
-      "within10Pct": 8.9,
+      "within10Pct": 8.7,
       "medianDelayMinutes": 20
     },
     "60": {
-      "total": 176,
-      "observed": 176,
+      "total": 180,
+      "observed": 180,
       "missing": 0,
-      "within10Minutes": 24,
-      "within10Pct": 13.6,
+      "within10Minutes": 28,
+      "within10Pct": 15.6,
       "medianDelayMinutes": 19
     },
     "240": {
-      "total": 156,
-      "observed": 156,
+      "total": 160,
+      "observed": 160,
       "missing": 0,
       "within10Minutes": 40,
-      "within10Pct": 25.6,
+      "within10Pct": 25,
       "medianDelayMinutes": 21
     },
     "1440": {
-      "total": 32,
-      "observed": 32,
+      "total": 36,
+      "observed": 36,
       "missing": 0,
       "within10Minutes": 16,
-      "within10Pct": 50,
-      "medianDelayMinutes": 9
+      "within10Pct": 44.4,
+      "medianDelayMinutes": 14
     }
   },
   "scanCadence": {
-    "uniqueCaptureTimes": 46,
-    "gapsOver30Minutes": 30,
+    "uniqueCaptureTimes": 47,
+    "gapsOver30Minutes": 31,
     "largestGapMinutes": 57
   },
   "duplicateObservations": 0,
@@ -56,27 +56,27 @@
     {
       "id": "8Xg89xT8Ve34sKiYqYuMs46mycREsCA2F362UscRpump",
       "count": 40,
-      "sharePct": 21.7
+      "sharePct": 21.3
     },
     {
       "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
       "count": 30,
-      "sharePct": 16.3
+      "sharePct": 16
     },
     {
       "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
-      "count": 28,
-      "sharePct": 15.2
+      "count": 29,
+      "sharePct": 15.4
     },
     {
       "id": "EKosQw4oJFbXmeJ4qRnbH1quGFRTc3Eok6nwnFKDpump",
-      "count": 28,
-      "sharePct": 15.2
+      "count": 29,
+      "sharePct": 15.4
     },
     {
       "id": "5x6QQvpRpd1PsFTTTJe6sJFFSqrA21H1j3GZLmo2pump",
       "count": 15,
-      "sharePct": 8.2
+      "sharePct": 8
     }
   ],
   "summaryMatchesFiles": true,

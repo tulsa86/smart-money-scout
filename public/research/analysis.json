@@ -1,9 +1,9 @@
 {
-  "generatedAt": 1792438582495,
+  "generatedAt": 1792440563724,
   "status": "EXPLORATORY_ONLY",
   "warning": "Descriptive associations, not forecasts, causal effects, trading signals, or net executable returns. Biased discovery, repeated tokens and delayed observations limit validity.",
-  "observations": 184,
-  "distinctTokens": 27,
+  "observations": 188,
+  "distinctTokens": 29,
   "horizons": {
     "15": {
       "eligibleOutcomes": 16,
@@ -60,15 +60,15 @@
       }
     },
     "60": {
-      "eligibleOutcomes": 24,
-      "independentTokenExamples": 9,
+      "eligibleOutcomes": 28,
+      "independentTokenExamples": 11,
       "groups": {
         "liquidity": [
           {
             "label": "below $100k",
-            "tokens": 3,
-            "medianReturnPct": 13.90374331550801,
-            "positivePct": 66.7
+            "tokens": 5,
+            "medianReturnPct": 1.6542876434841425,
+            "positivePct": 60
           },
           {
             "label": "$100k or more",
@@ -80,9 +80,9 @@
         "momentum": [
           {
             "label": "negative 1h",
-            "tokens": 4,
+            "tokens": 5,
             "medianReturnPct": 3.0480419862737085,
-            "positivePct": 75
+            "positivePct": 80
           },
           {
             "label": "0% to 3%",
@@ -92,17 +92,17 @@
           },
           {
             "label": "3% or more",
-            "tokens": 4,
-            "medianReturnPct": -21.694971694971688,
+            "tokens": 5,
+            "medianReturnPct": -16.932515337423304,
             "positivePct": 0
           }
         ],
         "age": [
           {
             "label": "under 7 days",
-            "tokens": 7,
+            "tokens": 9,
             "medianReturnPct": -9.15991902834008,
-            "positivePct": 42.9
+            "positivePct": 44.4
           },
           {
             "label": "7 days or older",
