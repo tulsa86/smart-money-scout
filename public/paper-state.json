@@ -9,8 +9,8 @@
       "entry": 0.004793,
       "spent": 10,
       "opened": 1792395270046,
-      "last": 0.004735,
-      "lastQuoteAt": 1792405194020,
+      "last": 0.004569,
+      "lastQuoteAt": 1792407295481,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
@@ -53,6 +53,14 @@
     }
   ],
   "events": [
+    {
+      "time": 1792407295481,
+      "message": "SCAN 52 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 48, lowVolume 18, momentum 48, tooNew 44, alreadyHeld 1, cooldown 1"
+    },
+    {
+      "time": 1792407295481,
+      "message": "RESEARCH 4 snapshots, 12 outcomes, 132 pending"
+    },
     {
       "time": 1792405194020,
       "message": "SCAN 52 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 48, lowVolume 23, momentum 47, tooNew 45, alreadyHeld 1, cooldown 1"
@@ -444,25 +452,17 @@
     {
       "time": 1792288268140,
       "message": "SCAN 58 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 53, lowVolume 19, momentum 50, tooNew 52, alreadyHeld 1, cooldown 0"
-    },
-    {
-      "time": 1792286448783,
-      "message": "SCAN 58 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 55, lowVolume 21, momentum 47, tooNew 53, alreadyHeld 1, cooldown 0"
-    },
-    {
-      "time": 1792284120923,
-      "message": "SCAN 54 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 19, momentum 45, tooNew 48, alreadyHeld 1, cooldown 0"
     }
   ],
-  "lastCheck": 1792405194020,
+  "lastCheck": 1792407295481,
   "checked": 52,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 21 Solana listings",
+      "/token-profiles/latest/v1: 23 Solana listings",
       "/token-boosts/latest/v1: 23 Solana listings",
-      "/token-boosts/top/v1: 26 Solana listings"
+      "/token-boosts/top/v1: 24 Solana listings"
     ],
     "uniqueMints": 53,
     "requested": 53,
@@ -472,9 +472,9 @@
   "rejections": {
     "invalidPrice": 0,
     "lowLiquidity": 48,
-    "lowVolume": 23,
-    "momentum": 47,
-    "tooNew": 45,
+    "lowVolume": 18,
+    "momentum": 48,
+    "tooNew": 44,
     "alreadyHeld": 1,
     "cooldown": 1
   }
