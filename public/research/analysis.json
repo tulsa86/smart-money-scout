@@ -1,9 +1,9 @@
 {
-  "generatedAt": 1792429787930,
+  "generatedAt": 1792432188113,
   "status": "EXPLORATORY_ONLY",
   "warning": "Descriptive associations, not forecasts, causal effects, trading signals, or net executable returns. Biased discovery, repeated tokens and delayed observations limit validity.",
-  "observations": 168,
-  "distinctTokens": 19,
+  "observations": 172,
+  "distinctTokens": 21,
   "horizons": {
     "15": {
       "eligibleOutcomes": 12,
@@ -168,8 +168,8 @@
       }
     },
     "1440": {
-      "eligibleOutcomes": 0,
-      "independentTokenExamples": 0,
+      "eligibleOutcomes": 4,
+      "independentTokenExamples": 4,
       "groups": {
         "liquidity": [
           {
@@ -180,17 +180,17 @@
           },
           {
             "label": "$100k or more",
-            "tokens": 0,
-            "medianReturnPct": null,
-            "positivePct": null
+            "tokens": 4,
+            "medianReturnPct": -82.84546805349183,
+            "positivePct": 25
           }
         ],
         "momentum": [
           {
             "label": "negative 1h",
-            "tokens": 0,
-            "medianReturnPct": null,
-            "positivePct": null
+            "tokens": 2,
+            "medianReturnPct": -82.84546805349183,
+            "positivePct": 0
           },
           {
             "label": "0% to 3%",
@@ -200,23 +200,23 @@
           },
           {
             "label": "3% or more",
-            "tokens": 0,
-            "medianReturnPct": null,
-            "positivePct": null
+            "tokens": 2,
+            "medianReturnPct": -98.37160385626643,
+            "positivePct": 50
           }
         ],
         "age": [
           {
             "label": "under 7 days",
-            "tokens": 0,
-            "medianReturnPct": null,
-            "positivePct": null
+            "tokens": 3,
+            "medianReturnPct": -82.84546805349183,
+            "positivePct": 33.3
           },
           {
             "label": "7 days or older",
-            "tokens": 0,
-            "medianReturnPct": null,
-            "positivePct": null
+            "tokens": 1,
+            "medianReturnPct": -30.773092369477904,
+            "positivePct": 0
           }
         ]
       }
