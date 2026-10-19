@@ -21,6 +21,10 @@ jobs:
           node-version: 24
       - name: Run paper scan
         run: node scripts/paper-scan.mjs
+      - name: Audit research data quality
+        if: always()
+        run: |
+          if [ -f public/research/summary.json ]; then node scripts/research-audit.mjs; fi
       - name: Commit account state
         if: always()
         run: |
