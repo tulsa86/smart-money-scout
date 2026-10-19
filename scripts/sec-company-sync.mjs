@@ -1,0 +1,12 @@
+import fs from 'node:fs/promises';
+import {parseSecTickerMap} from '../src/stocks/research.ts';
+const URL='https://www.sec.gov/files/company_tickers.json';
+const destination='public/stocks/sec-companies.json';
+const response=await fetch(URL,{headers:{'User-Agent':'SmartMoneyScout Research contact: https://github.com/tulsa86/smart-money-scout','Accept':'application/json'},signal:AbortSignal.timeout(20000)});
+if(!response.ok)throw Error('SEC directory HTTP '+response.status);
+const companies=parseSecTickerMap(await response.json());
+if(companies.length<1000)throw Error('SEC company directory unexpectedly small; refusing overwrite');
+const data={source:URL,asOf:new Date().toISOString(),status:'SEC_DIRECTORY_SNAPSHOT_NOT_HISTORICAL',companies};
+await fs.mkdir('public/stocks',{recursive:true});
+await fs.writeFile(destination,JSON.stringify(data)+'\n');
+console.log('Saved '+companies.length+' SEC company identifiers');
