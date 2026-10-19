@@ -1,20 +1,20 @@
 {
   "version": 1,
-  "cash": 86.39069912865476,
-  "positions": [
+  "cash": 95.28378258369335,
+  "positions": [],
+  "trades": [
     {
       "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
       "symbol": "MISTAKE",
-      "units": 2065.5122052993947,
       "entry": 0.004793,
+      "exit": 0.004349,
       "spent": 10,
+      "received": 8.893083455038596,
+      "pnl": -1.106916544961404,
       "opened": 1792395270046,
-      "last": 0.00524,
-      "lastQuoteAt": 1792411820493,
-      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
-    }
-  ],
-  "trades": [
+      "closed": 1792415262979,
+      "reason": "Stop loss"
+    },
     {
       "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
       "symbol": "CBUCKS",
@@ -53,6 +53,18 @@
     }
   ],
   "events": [
+    {
+      "time": 1792415262979,
+      "message": "SCAN 55 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 21, momentum 47, tooNew 46, alreadyHeld 0, cooldown 2"
+    },
+    {
+      "time": 1792415262979,
+      "message": "SELL MISTAKE · Stop loss · P/L $-1.11"
+    },
+    {
+      "time": 1792415262979,
+      "message": "RESEARCH 4 snapshots, 16 outcomes, 144 pending"
+    },
     {
       "time": 1792411820493,
       "message": "SCAN 53 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 20, momentum 43, tooNew 45, alreadyHeld 1, cooldown 1"
@@ -440,42 +452,30 @@
     {
       "time": 1792299080124,
       "message": "SCAN 56 tokens checked, 0 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 24, momentum 47, tooNew 52, alreadyHeld 2, cooldown 0"
-    },
-    {
-      "time": 1792296965383,
-      "message": "SCAN 57 tokens checked, 0 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 52, lowVolume 24, momentum 50, tooNew 53, alreadyHeld 2, cooldown 0"
-    },
-    {
-      "time": 1792295517442,
-      "message": "SCAN 56 tokens checked, 1 qualified, 2 open · rejection counts: invalidPrice 0, lowLiquidity 51, lowVolume 22, momentum 48, tooNew 51, alreadyHeld 1, cooldown 0"
-    },
-    {
-      "time": 1792295517442,
-      "message": "BUY MISTAKE · $10 paper · all entry rules met"
     }
   ],
-  "lastCheck": 1792411820493,
-  "checked": 53,
+  "lastCheck": 1792415262979,
+  "checked": 55,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
       "/token-profiles/latest/v1: 23 Solana listings",
       "/token-boosts/latest/v1: 23 Solana listings",
-      "/token-boosts/top/v1: 24 Solana listings"
+      "/token-boosts/top/v1: 23 Solana listings"
     ],
-    "uniqueMints": 53,
-    "requested": 53,
+    "uniqueMints": 55,
+    "requested": 55,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 49,
-    "lowVolume": 20,
-    "momentum": 43,
-    "tooNew": 45,
-    "alreadyHeld": 1,
-    "cooldown": 1
+    "lowLiquidity": 51,
+    "lowVolume": 21,
+    "momentum": 47,
+    "tooNew": 46,
+    "alreadyHeld": 0,
+    "cooldown": 2
   }
 }
