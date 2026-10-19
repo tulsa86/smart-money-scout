@@ -9,8 +9,8 @@
       "entry": 0.004793,
       "spent": 10,
       "opened": 1792395270046,
-      "last": 0.004569,
-      "lastQuoteAt": 1792407295481,
+      "last": 0.004872,
+      "lastQuoteAt": 1792409697812,
       "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
     }
   ],
@@ -53,6 +53,14 @@
     }
   ],
   "events": [
+    {
+      "time": 1792409697812,
+      "message": "SCAN 52 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 48, lowVolume 19, momentum 43, tooNew 44, alreadyHeld 1, cooldown 1"
+    },
+    {
+      "time": 1792409697812,
+      "message": "RESEARCH 4 snapshots, 12 outcomes, 136 pending"
+    },
     {
       "time": 1792407295481,
       "message": "SCAN 52 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 48, lowVolume 18, momentum 48, tooNew 44, alreadyHeld 1, cooldown 1"
@@ -444,17 +452,9 @@
     {
       "time": 1792291820669,
       "message": "SCAN 57 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 53, lowVolume 20, momentum 48, tooNew 51, alreadyHeld 1, cooldown 0"
-    },
-    {
-      "time": 1792289650826,
-      "message": "SCAN 57 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 53, lowVolume 19, momentum 51, tooNew 51, alreadyHeld 1, cooldown 0"
-    },
-    {
-      "time": 1792288268140,
-      "message": "SCAN 58 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 53, lowVolume 19, momentum 50, tooNew 52, alreadyHeld 1, cooldown 0"
     }
   ],
-  "lastCheck": 1792407295481,
+  "lastCheck": 1792409697812,
   "checked": 52,
   "qualified": 0,
   "status": "OK",
@@ -472,8 +472,8 @@
   "rejections": {
     "invalidPrice": 0,
     "lowLiquidity": 48,
-    "lowVolume": 18,
-    "momentum": 48,
+    "lowVolume": 19,
+    "momentum": 43,
     "tooNew": 44,
     "alreadyHeld": 1,
     "cooldown": 1
