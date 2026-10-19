@@ -1,9 +1,9 @@
 {
-  "generatedAt": 1792436611162,
+  "generatedAt": 1792438582495,
   "status": "EXPLORATORY_ONLY",
   "warning": "Descriptive associations, not forecasts, causal effects, trading signals, or net executable returns. Biased discovery, repeated tokens and delayed observations limit validity.",
-  "observations": 180,
-  "distinctTokens": 25,
+  "observations": 184,
+  "distinctTokens": 27,
   "horizons": {
     "15": {
       "eligibleOutcomes": 16,
@@ -168,7 +168,7 @@
       }
     },
     "1440": {
-      "eligibleOutcomes": 12,
+      "eligibleOutcomes": 16,
       "independentTokenExamples": 4,
       "groups": {
         "liquidity": [

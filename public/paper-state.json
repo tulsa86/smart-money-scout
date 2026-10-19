@@ -1,7 +1,19 @@
 {
   "version": 1,
-  "cash": 95.28378258369335,
-  "positions": [],
+  "cash": 85.28378258369335,
+  "positions": [
+    {
+      "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
+      "symbol": "CBUCKS",
+      "units": 8319.327731092437,
+      "entry": 0.00119,
+      "spent": 10,
+      "opened": 1792438581944,
+      "last": 0.00119,
+      "lastQuoteAt": 1792438581944,
+      "reason": "Liquidity ≥ $100k; volume ≥ liquidity; 1h +3–25%; age ≥ 7 days"
+    }
+  ],
   "trades": [
     {
       "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
@@ -53,6 +65,18 @@
     }
   ],
   "events": [
+    {
+      "time": 1792438581944,
+      "message": "SCAN 52 tokens checked, 1 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 24, momentum 45, tooNew 48, alreadyHeld 0, cooldown 0"
+    },
+    {
+      "time": 1792438581944,
+      "message": "BUY CBUCKS · $10 paper · all entry rules met"
+    },
+    {
+      "time": 1792438581944,
+      "message": "RESEARCH 4 snapshots, 16 outcomes, 152 pending"
+    },
     {
       "time": 1792436610756,
       "message": "SCAN 38 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 35, lowVolume 14, momentum 33, tooNew 33, alreadyHeld 0, cooldown 0"
@@ -440,41 +464,49 @@
     {
       "time": 1792334784771,
       "message": "SCAN 52 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 23, momentum 47, tooNew 48, alreadyHeld 0, cooldown 1"
-    },
-    {
-      "time": 1792334784771,
-      "message": "SELL swordcat · Stop loss · P/L $-1.13"
-    },
-    {
-      "time": 1792332448536,
-      "message": "SCAN 54 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 50, lowVolume 20, momentum 43, tooNew 50, alreadyHeld 0, cooldown 1"
-    },
-    {
-      "time": 1792331173585,
-      "message": "SCAN 52 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 19, momentum 42, tooNew 48, alreadyHeld 0, cooldown 1"
     }
   ],
-  "lastCheck": 1792436610756,
-  "checked": 38,
-  "qualified": 0,
+  "lastCheck": 1792438581944,
+  "checked": 52,
+  "qualified": 1,
   "status": "OK",
   "discovery": {
     "sources": [
-      "/token-profiles/latest/v1: 27 Solana listings",
-      "/token-boosts/latest/v1: 16 Solana listings",
-      "/token-boosts/top/v1: 22 Solana listings"
+      "/token-profiles/latest/v1: 26 Solana listings",
+      "/token-boosts/latest/v1: 17 Solana listings",
+      "/token-boosts/top/v1: 23 Solana listings"
     ],
-    "uniqueMints": 53,
-    "requested": 53,
+    "feedStats": [
+      {
+        "feed": "/token-profiles/latest/v1",
+        "listings": 26,
+        "uniqueAdded": 26
+      },
+      {
+        "feed": "/token-boosts/latest/v1",
+        "listings": 17,
+        "uniqueAdded": 13
+      },
+      {
+        "feed": "/token-boosts/top/v1",
+        "listings": 23,
+        "uniqueAdded": 15
+      }
+    ],
+    "uniqueMints": 54,
+    "requested": 54,
+    "excludedByCap": 0,
+    "quotedTokens": 52,
+    "unquotedTokens": 2,
     "quoteBatches": 2,
     "totalBatches": 2
   },
   "rejections": {
     "invalidPrice": 0,
-    "lowLiquidity": 35,
-    "lowVolume": 14,
-    "momentum": 33,
-    "tooNew": 33,
+    "lowLiquidity": 49,
+    "lowVolume": 24,
+    "momentum": 45,
+    "tooNew": 48,
     "alreadyHeld": 0,
     "cooldown": 0
   }

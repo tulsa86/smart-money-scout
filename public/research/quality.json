@@ -1,45 +1,84 @@
 {
-  "generatedAt": 1792436611120,
-  "totalObservations": 180,
-  "uniqueTokens": 25,
-  "repeatObservationPct": 86.1,
-  "totalOutcomes": 528,
-  "nearTargetOutcomes": 92,
-  "nearTargetPct": 17.4,
+  "generatedAt": 1792438582344,
+  "totalObservations": 184,
+  "uniqueTokens": 27,
+  "repeatObservationPct": 85.3,
+  "totalOutcomes": 544,
+  "nearTargetOutcomes": 96,
+  "nearTargetPct": 17.6,
   "delayMinutes": {
     "median": 21,
     "p90": 34,
     "max": 53
+  },
+  "byHorizon": {
+    "15": {
+      "total": 180,
+      "observed": 180,
+      "missing": 0,
+      "within10Minutes": 16,
+      "within10Pct": 8.9,
+      "medianDelayMinutes": 20
+    },
+    "60": {
+      "total": 176,
+      "observed": 176,
+      "missing": 0,
+      "within10Minutes": 24,
+      "within10Pct": 13.6,
+      "medianDelayMinutes": 19
+    },
+    "240": {
+      "total": 156,
+      "observed": 156,
+      "missing": 0,
+      "within10Minutes": 40,
+      "within10Pct": 25.6,
+      "medianDelayMinutes": 21
+    },
+    "1440": {
+      "total": 32,
+      "observed": 32,
+      "missing": 0,
+      "within10Minutes": 16,
+      "within10Pct": 50,
+      "medianDelayMinutes": 9
+    }
+  },
+  "scanCadence": {
+    "uniqueCaptureTimes": 46,
+    "gapsOver30Minutes": 30,
+    "largestGapMinutes": 57
   },
   "duplicateObservations": 0,
   "duplicateOutcomes": 0,
   "topRepeatedTokens": [
     {
       "id": "8Xg89xT8Ve34sKiYqYuMs46mycREsCA2F362UscRpump",
-      "count": 39,
+      "count": 40,
       "sharePct": 21.7
     },
     {
       "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
       "count": 30,
-      "sharePct": 16.7
+      "sharePct": 16.3
+    },
+    {
+      "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
+      "count": 28,
+      "sharePct": 15.2
     },
     {
       "id": "EKosQw4oJFbXmeJ4qRnbH1quGFRTc3Eok6nwnFKDpump",
       "count": 28,
-      "sharePct": 15.6
-    },
-    {
-      "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
-      "count": 27,
-      "sharePct": 15
+      "sharePct": 15.2
     },
     {
       "id": "5x6QQvpRpd1PsFTTTJe6sJFFSqrA21H1j3GZLmo2pump",
       "count": 15,
-      "sharePct": 8.3
+      "sharePct": 8.2
     }
   ],
   "summaryMatchesFiles": true,
-  "warning": "These are delayed observations, not guaranteed exact-horizon prices or independent predictions. Sample is biased toward high-liquidity tokens in promotional discovery feeds."
+  "warning": "Scan gaps are observational and do not prove GitHub scheduling was the sole cause. These are delayed observations, not guaranteed exact-horizon prices or independent predictions. Sample is biased toward high-liquidity tokens in promotional discovery feeds."
 }
