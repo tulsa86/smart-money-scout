@@ -1,0 +1,40 @@
+{
+  "status": "EXPLORATORY_REPLAY_ONLY",
+  "warning": "Sparse snapshots, promotion-feed selection bias, absent quotes, and unmodeled liquidity/slippage make this unsuitable as a profitability estimate. Unseen prices are never interpolated. Open positions are marked using last observed prices and may be stale.",
+  "snapshots": 44,
+  "observations": 176,
+  "uniqueTokens": 23,
+  "firstTime": 1792339628747,
+  "lastTime": 1792433623604,
+  "entries": 2,
+  "closedTrades": 2,
+  "missingQuotes": 10,
+  "cash": 95.16796311555643,
+  "markedValue": 0,
+  "markedEquity": 95.16796311555643,
+  "positions": [],
+  "trades": [
+    {
+      "id": "HKZDfZnkHZxd9agRDNPyDv4iT6LmAurJnpRtj9wpump",
+      "opened": 1792339628747,
+      "closed": 1792342120137,
+      "entry": 0.005443,
+      "exit": 0.004396,
+      "spent": 10,
+      "received": 7.915707514238471,
+      "pnl": -2.0842924857615293,
+      "reason": "Stop loss"
+    },
+    {
+      "id": "DtcicPCKTKeAh7TDEzTym3hXeoHAoMiBdYJhMYxZpump",
+      "opened": 1792342120137,
+      "closed": 1792360631618,
+      "entry": 0.001214,
+      "exit": 0.0008983,
+      "spent": 10,
+      "received": 7.252255601317958,
+      "pnl": -2.747744398682042,
+      "reason": "Stop loss"
+    }
+  ]
+}

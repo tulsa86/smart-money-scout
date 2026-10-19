@@ -1,44 +1,44 @@
 {
-  "generatedAt": 1792432188113,
+  "generatedAt": 1792433623994,
   "status": "EXPLORATORY_ONLY",
   "warning": "Descriptive associations, not forecasts, causal effects, trading signals, or net executable returns. Biased discovery, repeated tokens and delayed observations limit validity.",
-  "observations": 172,
-  "distinctTokens": 21,
+  "observations": 176,
+  "distinctTokens": 23,
   "horizons": {
     "15": {
-      "eligibleOutcomes": 12,
-      "independentTokenExamples": 5,
+      "eligibleOutcomes": 16,
+      "independentTokenExamples": 8,
       "groups": {
         "liquidity": [
           {
             "label": "below $100k",
-            "tokens": 0,
-            "medianReturnPct": null,
-            "positivePct": null
+            "tokens": 2,
+            "medianReturnPct": -16.078542970973242,
+            "positivePct": 50
           },
           {
             "label": "$100k or more",
-            "tokens": 5,
+            "tokens": 6,
             "medianReturnPct": -3.4055727554179516,
-            "positivePct": 40
+            "positivePct": 50
           }
         ],
         "momentum": [
           {
             "label": "negative 1h",
-            "tokens": 3,
+            "tokens": 4,
             "medianReturnPct": 0.27272727272726893,
-            "positivePct": 66.7
+            "positivePct": 75
           },
           {
             "label": "0% to 3%",
-            "tokens": 0,
-            "medianReturnPct": null,
-            "positivePct": null
+            "tokens": 1,
+            "medianReturnPct": 0.7686130549501069,
+            "positivePct": 100
           },
           {
             "label": "3% or more",
-            "tokens": 2,
+            "tokens": 3,
             "medianReturnPct": -12.27347611202636,
             "positivePct": 0
           }
@@ -46,13 +46,13 @@
         "age": [
           {
             "label": "under 7 days",
-            "tokens": 3,
-            "medianReturnPct": 0.27272727272726893,
-            "positivePct": 66.7
+            "tokens": 5,
+            "medianReturnPct": 0.6907137375287808,
+            "positivePct": 80
           },
           {
             "label": "7 days or older",
-            "tokens": 2,
+            "tokens": 3,
             "medianReturnPct": -12.27347611202636,
             "positivePct": 0
           }
@@ -60,15 +60,15 @@
       }
     },
     "60": {
-      "eligibleOutcomes": 20,
-      "independentTokenExamples": 7,
+      "eligibleOutcomes": 24,
+      "independentTokenExamples": 9,
       "groups": {
         "liquidity": [
           {
             "label": "below $100k",
-            "tokens": 1,
-            "medianReturnPct": 14.285714285714302,
-            "positivePct": 100
+            "tokens": 3,
+            "medianReturnPct": 13.90374331550801,
+            "positivePct": 66.7
           },
           {
             "label": "$100k or more",
@@ -80,9 +80,9 @@
         "momentum": [
           {
             "label": "negative 1h",
-            "tokens": 3,
+            "tokens": 4,
             "medianReturnPct": 3.0480419862737085,
-            "positivePct": 66.7
+            "positivePct": 75
           },
           {
             "label": "0% to 3%",
@@ -92,17 +92,17 @@
           },
           {
             "label": "3% or more",
-            "tokens": 3,
-            "medianReturnPct": -9.783368273934311,
+            "tokens": 4,
+            "medianReturnPct": -21.694971694971688,
             "positivePct": 0
           }
         ],
         "age": [
           {
             "label": "under 7 days",
-            "tokens": 5,
+            "tokens": 7,
             "medianReturnPct": -9.15991902834008,
-            "positivePct": 40
+            "positivePct": 42.9
           },
           {
             "label": "7 days or older",
@@ -114,7 +114,7 @@
       }
     },
     "240": {
-      "eligibleOutcomes": 36,
+      "eligibleOutcomes": 40,
       "independentTokenExamples": 10,
       "groups": {
         "liquidity": [
@@ -168,7 +168,7 @@
       }
     },
     "1440": {
-      "eligibleOutcomes": 4,
+      "eligibleOutcomes": 8,
       "independentTokenExamples": 4,
       "groups": {
         "liquidity": [
