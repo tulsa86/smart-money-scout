@@ -54,6 +54,14 @@
   ],
   "events": [
     {
+      "time": 1792425370542,
+      "message": "SCAN 54 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 25, momentum 47, tooNew 45, alreadyHeld 0, cooldown 1"
+    },
+    {
+      "time": 1792425370542,
+      "message": "RESEARCH 4 snapshots, 12 outcomes, 160 pending"
+    },
+    {
       "time": 1792423318382,
       "message": "SCAN 51 tokens checked, 0 qualified, 0 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 25, momentum 46, tooNew 44, alreadyHeld 0, cooldown 0"
     },
@@ -444,28 +452,20 @@
     {
       "time": 1792312213721,
       "message": "SCAN 48 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 44, lowVolume 14, momentum 38, tooNew 42, alreadyHeld 1, cooldown 1"
-    },
-    {
-      "time": 1792310380059,
-      "message": "SCAN 54 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 50, lowVolume 18, momentum 45, tooNew 48, alreadyHeld 1, cooldown 1"
-    },
-    {
-      "time": 1792308761271,
-      "message": "SCAN 53 tokens checked, 0 qualified, 1 open · rejection counts: invalidPrice 0, lowLiquidity 49, lowVolume 19, momentum 44, tooNew 47, alreadyHeld 1, cooldown 1"
     }
   ],
-  "lastCheck": 1792423318382,
-  "checked": 51,
+  "lastCheck": 1792425370542,
+  "checked": 54,
   "qualified": 0,
   "status": "OK",
   "discovery": {
     "sources": [
       "/token-profiles/latest/v1: 25 Solana listings",
-      "/token-boosts/latest/v1: 20 Solana listings",
-      "/token-boosts/top/v1: 22 Solana listings"
+      "/token-boosts/latest/v1: 19 Solana listings",
+      "/token-boosts/top/v1: 23 Solana listings"
     ],
-    "uniqueMints": 54,
-    "requested": 54,
+    "uniqueMints": 57,
+    "requested": 57,
     "quoteBatches": 2,
     "totalBatches": 2
   },
@@ -473,9 +473,9 @@
     "invalidPrice": 0,
     "lowLiquidity": 49,
     "lowVolume": 25,
-    "momentum": 46,
-    "tooNew": 44,
+    "momentum": 47,
+    "tooNew": 45,
     "alreadyHeld": 0,
-    "cooldown": 0
+    "cooldown": 1
   }
 }
