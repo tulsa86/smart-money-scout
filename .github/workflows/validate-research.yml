@@ -1,0 +1,31 @@
+name: Validate trading and research
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/paper-trader.yml'
+      - '.github/workflows/validate-research.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check script syntax
+        run: |
+          node --check scripts/paper-scan.mjs
+          node --check scripts/research-capture.mjs
+          node --check scripts/research-audit.mjs
+          node --check scripts/research-analysis.mjs
+          node --check scripts/paper-simulation-test.mjs
+      - name: Research data fixture tests
+        run: node scripts/research-test.mjs
+      - name: Paper trader simulation scenarios
+        run: node scripts/paper-simulation-test.mjs
