@@ -1,8 +1,6 @@
 name: Compare Solana discovery sources
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '43 12 * * *'
 permissions:
   contents: write
 concurrency:
