@@ -26,7 +26,8 @@ export function annualFacts(document){
   }
   // Different tags for the same metric may represent different concepts.
   // Prefer the first supported tag with usable observations rather than summing them.
-  const chosen=candidates.find(tag=>series.some(f=>f.tag===tag));
+  const latestEnd=Math.max(...series.map(f=>Date.parse(f.periodEnd)));
+  const chosen=candidates.find(tag=>series.some(f=>f.tag===tag&&Date.parse(f.periodEnd)===latestEnd));
   const selected=series.filter(f=>f.tag===chosen).sort((a,b)=>b.periodEnd.localeCompare(a.periodEnd)||a.filed.localeCompare(b.filed));
   // Earliest filing for each annual period, avoiding later restatements in the initial snapshot.
   const byPeriod=new Map();
