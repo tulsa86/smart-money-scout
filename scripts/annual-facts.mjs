@@ -15,9 +15,9 @@ export function annualFacts(document){
    const observations=gaap[tag]?.units?.USD;
    if(!Array.isArray(observations))continue;
    for(const f of observations){
-    if(f.form!=='10-K'||f.fp!=='FY'||f.fy==null||typeof f.val!=='number'||!Number.isFinite(f.val)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(f.filed??'')||!/^\\d{4}-\\d{2}-\\d{2}$/.test(f.end??'')||!/^\\d{10}-\\d{2}-\\d{6}$/.test(f.accn??''))continue;
+    if(f.form!=='10-K'||f.fp!=='FY'||f.fy==null||typeof f.val!=='number'||!Number.isFinite(f.val)||!/^\d{4}-\d{2}-\d{2}$/.test(f.filed??'')||!/^\d{4}-\d{2}-\d{2}$/.test(f.end??'')||!/^\d{10}-\d{2}-\d{6}$/.test(f.accn??''))continue;
     if(metric!=='longTermDebt'){
-     if(!f.start||!/^\\d{4}-\\d{2}-\\d{2}$/.test(f.start))continue;
+     if(!f.start||!/^\d{4}-\d{2}-\d{2}$/.test(f.start))continue;
      const duration=(Date.parse(f.end)-Date.parse(f.start))/86400000;
      if(duration<330||duration>380)continue;
     }else if(f.start)continue;
