@@ -12,3 +12,17 @@ test('only annual 10-K values and earliest filing are retained',()=>{
  const out=annualFacts(x);assert.equal(out.revenue.length,1);assert.equal(out.revenue[0].value,100);assert.equal(out.revenue[0].filed,'2025-02-01');
 });
 test('rejects missing facts',()=>assert.throws(()=>annualFacts({})));
+
+test('selects the freshest revenue tag rather than a stale preferred tag',()=>{
+ const older=fact(50,'2022-01-01','2022-12-31','2023-02-01');
+ const newer=fact(100,'2025-01-01','2025-12-31','2026-02-01');
+ const x={facts:{'us-gaap':{
+  RevenueFromContractWithCustomerExcludingAssessedTax:{units:{USD:[older]}},
+  Revenues:{units:{USD:[newer]}},
+  NetIncomeLoss:{units:{USD:[fact(20,'2025-01-01','2025-12-31','2026-02-01')]}}
+ }}};
+ const out=annualFacts(x);
+ assert.equal(out.revenue[0].value,100);
+ assert.equal(out.revenue[0].tag,'Revenues');
+ assert.equal(out.revenue[0].periodEnd,out.netIncome[0].periodEnd);
+});
