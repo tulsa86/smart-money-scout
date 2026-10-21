@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import {annualFacts} from './annual-facts.mjs';
+import {annualFacts,validateLatestAnnualPeriods} from './annual-facts.mjs';
 const agent=process.env.SEC_USER_AGENT?.trim();
 if(!agent||!agent.includes('@'))throw Error('SEC_USER_AGENT is required');
 const symbols=['AAPL','MSFT','NVDA'];
@@ -15,11 +15,7 @@ for(const symbol of symbols){
  const document=await response.json();
  if(String(document.cik).padStart(10,'0')!==company.cik)throw Error('SEC CIK mismatch '+symbol);
  const facts=annualFacts(document);
- if(!facts.revenue?.length||!facts.netIncome?.length)throw Error('Required annual figures missing for '+symbol);
- const revenue=facts.revenue[0], income=facts.netIncome[0];
- if(revenue.periodEnd!==income.periodEnd||revenue.periodStart!==income.periodStart){
-  throw Error('Latest annual revenue and net income periods do not match for '+symbol+': '+revenue.periodStart+'..'+revenue.periodEnd+' vs '+income.periodStart+'..'+income.periodEnd);
- }
+ validateLatestAnnualPeriods(facts,symbol);
  output.companies[symbol]={name:company.name,cik:company.cik,source:url,facts};
  console.log(symbol+' annual revenue observations '+facts.revenue.length);
  await new Promise(resolve=>setTimeout(resolve,300));
