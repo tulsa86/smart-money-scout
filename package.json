@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "test": "node --experimental-strip-types --test src/engine/core.test.ts src/stocks/research.test.ts scripts/annual-facts.test.mjs"
+    "test": "node --experimental-strip-types --test src/engine/core.test.ts src/stocks/research.test.ts src/stocks/fundamentals.test.ts scripts/annual-facts.test.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
