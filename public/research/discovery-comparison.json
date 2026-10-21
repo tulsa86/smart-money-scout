@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-10-21T13:27:37.312Z",
+  "experiment": "read-only discovery comparison; no trades or research outcomes",
+  "sources": {
+    "promotional": {
+      "discovered": 52,
+      "quoted": 50,
+      "eligible": 1,
+      "errors": []
+    },
+    "trendingPools": {
+      "endpoint": "https://api.geckoterminal.com/api/v2/networks/solana/trending_pools?page=1",
+      "pools": 20,
+      "baseTokens": 19,
+      "overlapWithPromotional": 1,
+      "geckoEligiblePools": 2,
+      "dexQuotedTokens": 19,
+      "dexEligibleTokens": 0,
+      "errors": []
+    }
+  }
+}
