@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {annualFacts} from './annual-facts.mjs';
+import {annualFacts,validateLatestAnnualPeriods} from './annual-facts.mjs';
 const fact=(val,start,end,filed,form='10-K')=>({val,start,end,filed,form,fp:'FY',fy:2025,accn:'0000000001-25-000001'});
 test('only annual 10-K values and earliest filing are retained',()=>{
  const x={facts:{'us-gaap':{RevenueFromContractWithCustomerExcludingAssessedTax:{units:{USD:[
@@ -25,4 +25,12 @@ test('selects the freshest revenue tag rather than a stale preferred tag',()=>{
  assert.equal(out.revenue[0].value,100);
  assert.equal(out.revenue[0].tag,'Revenues');
  assert.equal(out.revenue[0].periodEnd,out.netIncome[0].periodEnd);
+});
+
+test('rejects mismatched annual reporting periods',()=>{
+ const revenue={periodStart:'2024-01-01',periodEnd:'2024-12-31'};
+ const netIncome={periodStart:'2025-01-01',periodEnd:'2025-12-31'};
+ assert.throws(()=>validateLatestAnnualPeriods({revenue:[revenue],netIncome:[netIncome]},'TEST'),/periods do not match/);
+ assert.throws(()=>validateLatestAnnualPeriods({revenue:[revenue],netIncome:[]},'TEST'),/Required annual figures/);
+ assert.equal(validateLatestAnnualPeriods({revenue:[revenue],netIncome:[{...revenue}]},'TEST'),true);
 });
