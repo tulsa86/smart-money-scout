@@ -16,6 +16,10 @@ for(const symbol of symbols){
  if(String(document.cik).padStart(10,'0')!==company.cik)throw Error('SEC CIK mismatch '+symbol);
  const facts=annualFacts(document);
  if(!facts.revenue?.length||!facts.netIncome?.length)throw Error('Required annual figures missing for '+symbol);
+ const revenue=facts.revenue[0], income=facts.netIncome[0];
+ if(revenue.periodEnd!==income.periodEnd||revenue.periodStart!==income.periodStart){
+  throw Error('Latest annual revenue and net income periods do not match for '+symbol+': '+revenue.periodStart+'..'+revenue.periodEnd+' vs '+income.periodStart+'..'+income.periodEnd);
+ }
  output.companies[symbol]={name:company.name,cik:company.cik,source:url,facts};
  console.log(symbol+' annual revenue observations '+facts.revenue.length);
  await new Promise(resolve=>setTimeout(resolve,300));
