@@ -36,3 +36,12 @@ export function annualFacts(document){
  }
  return result;
 }
+
+export function validateLatestAnnualPeriods(facts,symbol='company'){
+ const revenue=facts?.revenue?.[0],income=facts?.netIncome?.[0];
+ if(!revenue||!income)throw Error('Required annual figures missing for '+symbol);
+ if(!revenue.periodStart||!income.periodStart||revenue.periodStart!==income.periodStart||revenue.periodEnd!==income.periodEnd){
+  throw Error('Latest annual revenue and net income periods do not match for '+symbol);
+ }
+ return true;
+}
