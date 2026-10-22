@@ -1,4 +1,4 @@
-import {breakoutSignal,validateCandles,type Candle} from './candles';
+import {breakoutSignal,validateCandles,type Candle} from './candles.ts';
 
 export type SimTrade={entryTime:string;exitTime:string;entryPrice:number;exitPrice:number;shares:number;netPnl:number;reason:'stop'|'target'|'session-end'|'end-of-data'};
 export type BacktestResult={status:'ok'|'invalid';error?:string;startingCash:number;endingCash:number;netReturnPct:number;maxDrawdownPct:number;trades:SimTrade[]};
