@@ -1,0 +1,19 @@
+import React,{useState} from 'react';
+type Strategy={id:string;name:string;description:string;rule:string};
+const strategies:Strategy[]=[
+{id:'momentum',name:'Momentum Hunter',description:'Tests sustained price strength and unusual volume.',rule:'Price momentum + volume confirmation'},
+{id:'catalyst',name:'Catalyst Chaser',description:'Tests trades around verified, time-stamped events.',rule:'Verified event + predeclared entry window'},
+{id:'dip',name:'Dip Buyer',description:'Tests recoveries after steep price declines.',rule:'Pullback + recovery confirmation'},
+{id:'breakout',name:'Breakout Hunter',description:'Tests moves above established trading ranges.',rule:'Range breakout + volume confirmation'},
+{id:'experimental',name:'Experimental Strategy',description:'Reserved for new rules that beat out-of-sample tests.',rule:'Frozen candidate rules + unseen test period'},
+{id:'benchmark',name:'S&P 500 Benchmark',description:'Passive comparison over the same dates and with comparable costs.',rule:'Buy and hold benchmark'}
+];
+export default function GambleLab(){
+ const [details,setDetails]=useState<string|null>(null);
+ return <section className="gamble-lab"><div className="gamble-lead"><span className="scout-kicker">HIGH-RISK RESEARCH · SIMULATION ONLY</span><h2>Gamble Lab</h2><p>Six independent $1,000 paper portfolios. Five experimental strategies compete against a passive benchmark. Every winner, loser and rule change must be recorded.</p></div>
+ <div className="gamble-warning" role="status"><strong>Experiment setup only. No stock trades are running.</strong><p>We do not yet have validated historical stock prices, volume, corporate actions or execution assumptions. Showing simulated profits before that would be fiction.</p></div>
+ <div className="gamble-stats"><div><span>Planned portfolios</span><strong>6</strong></div><div><span>Virtual capital each</span><strong>$1,000</strong></div><div><span>Total planned capital</span><strong>$6,000</strong></div><div><span>Executed stock trades</span><strong>0</strong></div></div>
+ <h3>Experiment roster</h3><div className="gamble-grid">{strategies.map((s,i)=><article className="gamble-strategy" key={s.id}><div className="gamble-strategy-top"><div><span className="gamble-index">RUN {String(i+1).padStart(2,'0')}</span><h4>{s.name}</h4></div><span className="gamble-pending">Not started</span></div><p>{s.description}</p><div className="gamble-capital"><span>Starting cash (planned)</span><strong>$1,000</strong></div><button type="button" aria-expanded={details===s.id} onClick={()=>setDetails(details===s.id?null:s.id)}>{details===s.id?'Hide experiment details':'View experiment rules'} <span aria-hidden="true">{details===s.id?'−':'+'}</span></button>{details===s.id&&<div className="gamble-detail"><p><strong>Hypothesis:</strong> {s.rule}.</p><p><strong>Evidence required:</strong> Timestamped price/volume data, trading calendar, transaction costs, and realistic fill assumptions. Events must be public before the simulated decision.</p><p><strong>Success criteria:</strong> Net return, maximum drawdown, trade count, and performance against the benchmark over matching dates.</p></div>}</article>)}</div>
+ <div className="gamble-method"><h3>How the system will learn</h3><ol><li>Freeze strategy rules before each run.</li><li>Train and tune on historical data without peeking at future prices.</li><li>Test on a separate, untouched period and compare against the benchmark.</li><li>Paper-trade new market periods; record losses, fees and drawdowns as well as wins.</li><li>Promote a new rule only after repeated out-of-sample improvement. Keep previous versions for comparison.</li></ol><p><strong>Next engineering dependency:</strong> a reliable, reproducible historical stock-price dataset with adjusted prices, delistings where available, and transaction-cost modeling. The lab will not fabricate results while that is missing.</p></div>
+ </section>;
+}
