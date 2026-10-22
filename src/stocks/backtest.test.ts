@@ -31,3 +31,21 @@ test('gap through stop gets worse open fill',()=>{
  assert.equal(result.trades[0].reason,'stop');
  assert.ok(result.trades[0].exitPrice<95);
 });
+
+test('daily trade target uses a smaller fallback and records its strategy',()=>{
+ const bars=Array.from({length:30},(_,i)=>bar(i));
+ const result=backtestBreakout(bars,{dailyTradeTarget:true});
+ assert.equal(result.status,'ok');
+ assert.equal(result.trades.length,1);
+ assert.equal(result.trades[0].strategy,'fallback');
+ assert.ok(result.trades[0].shares<=2);
+ assert.equal(result.trades[0].reason,'end-of-data');
+});
+test('daily trade target disabled preserves zero-trade baseline',()=>{
+ const result=backtestBreakout(Array.from({length:30},(_,i)=>bar(i)),{dailyTradeTarget:false});
+ assert.equal(result.trades.length,0);
+});
+test('fallback cannot trade without sufficient cash for a whole share',()=>{
+ const result=backtestBreakout(Array.from({length:30},(_,i)=>bar(i)),{dailyTradeTarget:true,startingCash:100});
+ assert.equal(result.trades.length,0);
+});
