@@ -65,7 +65,11 @@ export function backtestBreakout(candles:readonly Candle[],config:BacktestConfig
     // Uses no future prices to decide direction; only future timestamps to locate session end.
     let remaining=0;
     for(let j=i+1;j<candles.length&&day(candles[j].time)===day(c.time);j++)remaining++;
-    if(remaining===2)pending='fallback';
+    if(remaining===2){
+     // Weak but measurable momentum: the latest completed close must exceed
+     // the previous close, with positive volume. No random forced buys.
+     if(c.close>previous.close&&c.volume>0)pending='fallback';
+    }
    }
   }
  }
