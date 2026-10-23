@@ -1,0 +1,32 @@
+name: Sync historical intraday stock candles
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 22 * * 1-5'
+permissions:
+  contents: write
+concurrency:
+  group: intraday-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Fetch and validate five-minute Alpaca bars
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: node scripts/alpaca-intraday-sync.mjs
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/stocks/intraday/
+          if ! git diff --cached --quiet; then
+            git commit -m "Update historical stock candles"
+            git push
+          fi
