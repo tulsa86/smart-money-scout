@@ -34,6 +34,7 @@ test('gap through stop gets worse open fill',()=>{
 
 test('daily trade target uses a smaller fallback and records its strategy',()=>{
  const bars=Array.from({length:30},(_,i)=>bar(i));
+ bars[27]=bar(27,{close:100.5,high:101});
  const result=backtestBreakout(bars,{dailyTradeTarget:true});
  assert.equal(result.status,'ok');
  assert.equal(result.trades.length,1);
@@ -41,11 +42,17 @@ test('daily trade target uses a smaller fallback and records its strategy',()=>{
  assert.ok(result.trades[0].shares<=2);
  assert.equal(result.trades[0].reason,'end-of-data');
 });
+test('fallback refuses flat momentum instead of forcing random entries',()=>{
+ const result=backtestBreakout(Array.from({length:30},(_,i)=>bar(i)),{dailyTradeTarget:true});
+ assert.equal(result.trades.length,0);
+});
 test('daily trade target disabled preserves zero-trade baseline',()=>{
  const result=backtestBreakout(Array.from({length:30},(_,i)=>bar(i)),{dailyTradeTarget:false});
  assert.equal(result.trades.length,0);
 });
 test('fallback cannot trade without sufficient cash for a whole share',()=>{
- const result=backtestBreakout(Array.from({length:30},(_,i)=>bar(i)),{dailyTradeTarget:true,startingCash:100});
+ const bars=Array.from({length:30},(_,i)=>bar(i));
+ bars[27]=bar(27,{close:100.5});
+ const result=backtestBreakout(bars,{dailyTradeTarget:true,startingCash:100});
  assert.equal(result.trades.length,0);
 });
