@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {parseCandleCsv} from './csv.ts';
+test('reads real timestamped OHLCV rows',()=>{const r=parseCandleCsv('time,open,high,low,close,volume\n2026-10-20T13:30:00Z,100,101,99,100,500\n2026-10-20T13:35:00Z,100,102,99,101,600');assert.equal(r.error,undefined);assert.equal(r.candles.length,2);});
+test('rejects invalid and unordered candles',()=>{assert.ok(parseCandleCsv('time,open,high,low,close,volume\n2026-10-20T13:30:00Z,100,99,98,100,500').error);assert.ok(parseCandleCsv('time,open,high,low,close,volume\n2026-10-20T13:35:00Z,100,101,99,100,500\n2026-10-20T13:30:00Z,100,101,99,100,500').error);});
