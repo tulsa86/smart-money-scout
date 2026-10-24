@@ -10,9 +10,10 @@ for(const symbol of symbols){
  if(parsed.error)throw new Error(symbol+': '+parsed.error);
  data[symbol]=parsed.candles;
 }
-const result=replayPortfolio(data,1000);
+const result=replayPortfolio(data,1000,'prior-session-momentum');
+const baseline=replayPortfolio(data,1000,'rotation');
 if(result.status!=='ok')throw new Error(result.error||'Replay failed');
 const byStrategy={breakout:0,fallback:0};
 const byExit={stop:0,target:0,'session-end':0,'end-of-data':0};
 for(const entry of result.entries)for(const trade of entry.trades){byStrategy[trade.strategy]++;byExit[trade.reason]++;}
-console.log(JSON.stringify({source:'Yahoo Finance 5-minute temporary data',note:'Historical simulation only; not paper orders. No raw Yahoo candles published.',sessions:result.entries.length,trades:result.trades,noTradeDays:result.noTradeDays,startingCash:result.startingCash,endingCash:result.endingCash,returnPct:result.netReturnPct,byStrategy,byExit},null,2));
+console.log(JSON.stringify({source:'Yahoo Finance 5-minute temporary data',note:'Historical simulation only; not paper orders. No raw Yahoo candles published.',sessions:result.entries.length,trades:result.trades,noTradeDays:result.noTradeDays,startingCash:result.startingCash,endingCash:result.endingCash,returnPct:result.netReturnPct,byStrategy,byExit,baseline:{sessions:baseline.entries.length,trades:baseline.trades,endingCash:baseline.endingCash,returnPct:baseline.netReturnPct},selection:'Prior-session momentum and relative volume; no same-day stock-selection lookahead'},null,2));
