@@ -56,3 +56,13 @@ test('fallback cannot trade without sufficient cash for a whole share',()=>{
  const result=backtestBreakout(bars,{dailyTradeTarget:true,startingCash:100});
  assert.equal(result.trades.length,0);
 });
+
+test('regular 3:55pm New York close is a session-end, not truncated data',()=>{
+ const begin=Date.parse('2026-10-20T13:30:00Z');
+ const bars=Array.from({length:78},(_,i)=>({...bar(i),time:new Date(begin+i*300000).toISOString()}));
+ bars[20]={...bars[20],high:103,low:100,close:102,volume:200};
+ const result=backtestBreakout(bars);
+ assert.equal(result.status,'ok');
+ assert.equal(result.trades.length,1);
+ assert.equal(result.trades[0].reason,'session-end');
+});
