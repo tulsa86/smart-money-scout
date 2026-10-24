@@ -1,0 +1,17 @@
+name: Compare Yahoo and Alpaca intraday data
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install diagnostic dependency
+        run: python -m pip install 'yfinance>=0.2.65,<2'
+      - name: Compare 5-minute data without publishing Yahoo candles
+        run: python scripts/compare-yahoo-alpaca.py
