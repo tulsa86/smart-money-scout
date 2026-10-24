@@ -5,6 +5,8 @@ export type BacktestResult={status:'ok'|'invalid';error?:string;startingCash:num
 export type BacktestConfig={startingCash?:number;lookback?:number;volumeMultiple?:number;stopPct?:number;targetPct?:number;feeBps?:number;slippageBps?:number;maxAllocationPct?:number;dailyTradeTarget?:boolean;fallbackAllocationPct?:number};
 const day=(iso:string)=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(iso));
 const round=(n:number)=>Math.round(n*1e6)/1e6;
+const nyClock=(iso:string)=>new Intl.DateTimeFormat('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(iso));
+const isRegularClose=(iso:string)=>nyClock(iso)==='15:55';
 /** Long-only baseline. A signal on a CLOSED candle enters at the NEXT candle open.
  * Exit stop/target checks begin on the entry candle. If both touch, assume STOP first.
  * No leverage, fractional shares, pyramiding, overnight holding or intrabar prediction.
@@ -51,7 +53,7 @@ export function backtestBreakout(candles:readonly Candle[],config:BacktestConfig
    else if(c.low<=position.stop)exit(c,position.stop,'stop');
    else if(c.open>=position.target)exit(c,c.open,'target');
    else if(c.high>=position.target)exit(c,position.target,'target');
-   else if(i===candles.length-1||day(c.time)!==day(candles[i+1].time))exit(c,c.close,i===candles.length-1?'end-of-data':'session-end');
+   else if(i===candles.length-1||day(c.time)!==day(candles[i+1].time))exit(c,c.close,isRegularClose(c.time)?'session-end':'end-of-data');
   }
   const marked=cash+(position?position.shares*c.close*(1-slip)*(1-fee):0);
   peak=Math.max(peak,marked);
