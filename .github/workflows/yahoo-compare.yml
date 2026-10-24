@@ -11,7 +11,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
       - name: Install diagnostic dependency
         run: python -m pip install 'yfinance>=0.2.65,<2'
-      - name: Compare 5-minute data without publishing Yahoo candles
+      - name: Compare and replay Yahoo history without publishing candles
         run: python scripts/compare-yahoo-alpaca.py
