@@ -1,0 +1,39 @@
+{
+  "source": "Alpaca IEX",
+  "feed": "iex",
+  "timeframe": "5Min",
+  "fetchedAt": "2026-10-24T20:25:06.211Z",
+  "symbols": [
+    {
+      "symbol": "SPY",
+      "bars": 390,
+      "first": "2026-10-19T13:30:00Z",
+      "last": "2026-10-23T19:55:00Z"
+    },
+    {
+      "symbol": "QQQ",
+      "bars": 390,
+      "first": "2026-10-19T13:30:00Z",
+      "last": "2026-10-23T19:55:00Z"
+    },
+    {
+      "symbol": "NVDA",
+      "bars": 390,
+      "first": "2026-10-19T13:30:00Z",
+      "last": "2026-10-23T19:55:00Z"
+    },
+    {
+      "symbol": "AMD",
+      "bars": 390,
+      "first": "2026-10-19T13:30:00Z",
+      "last": "2026-10-23T19:55:00Z"
+    },
+    {
+      "symbol": "TSLA",
+      "bars": 390,
+      "first": "2026-10-19T13:30:00Z",
+      "last": "2026-10-23T19:55:00Z"
+    }
+  ],
+  "limitations": "Single-exchange volume, not consolidated US market. Historical simulation only."
+}
