@@ -9,7 +9,7 @@ const money=(n:number)=>Math.round(n*100)/100;
  * One stock/day and one shared cash account; avoids retrospective stock picking,
  * simultaneous positions, and double-counting the same $1,000.
  */
-export function replayPortfolio(data:Record<string,readonly Candle[]>,startingCash=1000):PortfolioReplay{
+export function replayPortfolio(data:Record<string,readonly Candle[]>,startingCash=1000,selectionMode:'rotation'|'prior-session-momentum'='rotation'):PortfolioReplay{
  const fail=(error:string):PortfolioReplay=>({status:'invalid',error,startingCash,endingCash:startingCash,netReturnPct:0,entries:[],trades:0,noTradeDays:0});
  if(!Number.isFinite(startingCash)||startingCash<=0)return fail('Invalid starting cash');
  const symbols=Object.keys(data).sort();
@@ -30,7 +30,25 @@ export function replayPortfolio(data:Record<string,readonly Candle[]>,startingCa
   // Choose the next available symbol in a deterministic predeclared rotation.
   const available=symbols.filter(s=>grouped.get(s)!.has(d));
   if(!available.length)continue;
-  const symbol=available[index%available.length];
+  // Score only sessions strictly BEFORE the day being traded. Never select using today's price or volume.
+  const candidates=available.map(symbol=>{
+   const prior=[...grouped.get(symbol)!.entries()].filter(([date])=>date<d).sort((a,b)=>a[0].localeCompare(b[0]));
+   if(prior.length<6)return {symbol,score:-Infinity};
+   const latest=prior.at(-1)![1];
+   const previous=prior.slice(-6,-1);
+   const volume=(bars:Candle[])=>bars.reduce((sum,c)=>sum+c.volume,0);
+   const meanVolume=previous.reduce((sum,[,bars])=>sum+volume(bars),0)/previous.length;
+   const first=latest[0].open,last=latest.at(-1)!.close;
+   const momentum=(last/first-1);
+   const relativeVolume=meanVolume>0?volume(latest)/meanVolume:0;
+   return {symbol,score:momentum>0&&relativeVolume>1?momentum*relativeVolume:-Infinity};
+  });
+  const ranked=candidates.filter(c=>Number.isFinite(c.score)).sort((a,b)=>b.score-a.score||a.symbol.localeCompare(b.symbol));
+  if(selectionMode==='prior-session-momentum'&&!ranked.length){
+   entries.push({day:d,symbol:'NONE',trades:[],pnl:0,endingCash:money(cash),note:'No eligible candidate using previous-session data'});
+   noTradeDays++;continue;
+  }
+  const symbol=selectionMode==='prior-session-momentum'?ranked[0].symbol:available[index%available.length];
   const all=data[symbol],first=all.findIndex(c=>day(c.time)===d);
   const session=grouped.get(symbol)!.get(d)!;
   const warmup=all.slice(Math.max(0,first-20),first);
@@ -42,7 +60,7 @@ export function replayPortfolio(data:Record<string,readonly Candle[]>,startingCa
   const pnl=result.endingCash-cash;
   cash=result.endingCash;trades+=result.trades.length;
   if(!result.trades.length)noTradeDays++;
-  entries.push({day:d,symbol,trades:result.trades,pnl:money(pnl),endingCash:money(cash),note:result.trades.length?'Historical replay':'No qualifying trade'});
+  entries.push({day:d,symbol,trades:result.trades,pnl:money(pnl),endingCash:money(cash),note:result.trades.length?(selectionMode==='prior-session-momentum'?'Prior-session momentum selection; historical replay':'Historical replay'):'No qualifying trade'});
  }
  return {status:'ok',startingCash,endingCash:money(cash),netReturnPct:money((cash/startingCash-1)*100),entries,trades,noTradeDays};
 }
