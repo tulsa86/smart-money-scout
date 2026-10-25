@@ -2,7 +2,7 @@ const symbols=['SPY','QQQ','NVDA','AMD','TSLA'];
 const key=process.env.ALPACA_API_KEY_ID,secret=process.env.ALPACA_API_SECRET_KEY;
 if(!key||!secret)throw new Error('Missing Alpaca API credentials in GitHub Actions secrets');
 const fs=await import('node:fs/promises');
-const end=new Date(Date.now()-20*60_000),start=new Date(end.getTime()-7*86400_000);
+const end=new Date(Date.now()-20*60_000),start=new Date(end.getTime()-21*86400_000);
 const day=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'});
 const clock=new Intl.DateTimeFormat('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
 await fs.mkdir('public/stocks/intraday',{recursive:true});
