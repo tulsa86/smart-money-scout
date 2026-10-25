@@ -1,0 +1,13 @@
+[
+  {
+    "day": "2026-10-23",
+    "source": "Alpaca IEX five-minute candles",
+    "mode": "prior-session-momentum",
+    "symbol": "TSLA",
+    "decision": "no-signal",
+    "note": "No qualifying trade",
+    "trades": [],
+    "pnl": 0,
+    "limitations": "Research-only replay; no orders. IEX volume is not consolidated. Rolling-window cash and PnL are not cumulative forward returns."
+  }
+]
