@@ -1,0 +1,14 @@
+{
+  "mode": "Fixed $1,000 daily simulation, not compounded or executable account equity",
+  "firstSession": "2026-10-23",
+  "lastSession": "2026-10-23",
+  "sessions": 1,
+  "simulatedTrades": 0,
+  "noTradeSessions": 1,
+  "winRatePct": null,
+  "cumulativePnl": 0,
+  "illustrativeBalance": 1000,
+  "spyCloseToCloseReturnPct": null,
+  "spyBenchmarkStart": null,
+  "limitations": "Historical October 23 entry has no SPY closing-price anchor. Benchmark begins at first future observed SPY close. Not a matched investment or risk comparison. Daily fixed-size PnL is not compounded."
+}

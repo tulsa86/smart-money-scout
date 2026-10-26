@@ -2,7 +2,7 @@
   "source": "Alpaca IEX",
   "feed": "iex",
   "timeframe": "5Min",
-  "fetchedAt": "2026-10-25T04:48:49.275Z",
+  "fetchedAt": "2026-10-26T12:58:26.736Z",
   "symbols": [
     {
       "symbol": "SPY",
