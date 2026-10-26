@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 const path='public/stocks/forward-ledger.json';
-if(!fs.existsSync(path))throw new Error('Prospective ledger not initialized');
+if(!fs.existsSync(path)){fs.writeFileSync(path,'[]\n');console.log('Initialized empty prospective ledger');}
 const ledger=JSON.parse(fs.readFileSync(path,'utf8'));
 if(!Array.isArray(ledger))throw new Error('Invalid prospective ledger');
 const valid=ledger.filter(r=>['TRADE_EXECUTED','QUALIFIED_NO_TRADE','NO_CANDIDATE'].includes(r.status));
