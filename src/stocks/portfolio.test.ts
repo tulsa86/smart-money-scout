@@ -14,3 +14,10 @@ test('prior-session selector picks strongest eligible previous-day momentum',()=
  assert.equal(r.status,'ok');
  assert.equal(r.entries[6].symbol,'BBB');
 });
+
+test('evaluation start uses prior sessions for selection without replaying earlier trades',()=>{
+ const r=replayPortfolio({AAA:stock(0.5),BBB:stock(1.5)},900,'prior-session-momentum','2026-09-07');
+ assert.equal(r.status,'ok');
+ assert.equal(r.entries.every(e=>e.day>='2026-09-07'),true);
+ assert.equal(r.entries[0].endingCash<=10000,true);
+});
