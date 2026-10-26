@@ -1,10 +1,10 @@
 import fs from 'node:fs';
+import {validateLedger,appendSession} from './ledger-core.mjs';
 import {parseCandleCsv} from '../src/stocks/csv.ts';
 import {replayPortfolio} from '../src/stocks/portfolio.ts';
 
 const symbols=['SPY','QQQ','NVDA','AMD','TSLA'];
 const ledgerPath='public/stocks/forward-ledger.json';
-const journalPath='public/stocks/forward-journal.json';
 const money=n=>Math.round((n+Number.EPSILON)*100);
 const dateOf=iso=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(iso));
 const data={};
@@ -19,11 +19,7 @@ if(!target)throw new Error('No common trading sessions');
 if(target<'2026-10-26'){console.log('Only retrospective sessions available; prospective ledger starts October 26');process.exit(0);}
 if(!symbols.every(s=>data[s].filter(c=>dateOf(c.time)===target).length>=75))throw new Error('Latest session incomplete');
 const old=fs.existsSync(ledgerPath)?JSON.parse(fs.readFileSync(ledgerPath,'utf8')):[];
-if(!Array.isArray(old))throw new Error('Invalid ledger');
-for(let i=0;i<old.length;i++){
- const e=old[i],previous=i?old[i-1].endingCashCents:100000;
- if(!Number.isInteger(e.startingCashCents)||!Number.isInteger(e.endingCashCents)||!Number.isInteger(e.pnlCents)||e.startingCashCents!==previous||e.endingCashCents!==previous+e.pnlCents||i&&e.day<=old[i-1].day)throw new Error('Ledger continuity invalid at '+e.day);
-}
+validateLedger(old);
 if(old.some(e=>e.day===target)){console.log('Session already in immutable ledger: '+target);process.exit(0);}
 if(old.length&&target<old.at(-1).day)throw new Error('Refusing to backfill prospective ledger');
 const startingCashCents=old.length?old.at(-1).endingCashCents:100000;
@@ -37,5 +33,5 @@ if(first==='INSUFFICIENT_DATA')throw new Error('Insufficient warmup; refusing to
 const pnlCents=money(entry.pnl),endingCashCents=startingCashCents+pnlCents;
 const spyClose=data.SPY.filter(c=>dateOf(c.time)===target).at(-1).close;
 const record={schemaVersion:1,day:target,status:first,strategy:'prior-session-momentum-v1',feed:'Alpaca IEX 5m',startingCashCents,pnlCents,endingCashCents,selectedTicker:entry.symbol,trades:entry.trades,spyClose,recordedAt:new Date().toISOString(),limitations:'End-of-session retrospective candle evaluation; simulated only, no live orders.'};
-fs.writeFileSync(ledgerPath,JSON.stringify([...old,record],null,2)+'\n');
+fs.writeFileSync(ledgerPath,JSON.stringify(appendSession(old,record),null,2)+'\n');
 console.log(JSON.stringify({appended:record,totalSessions:old.length+1},null,2));
