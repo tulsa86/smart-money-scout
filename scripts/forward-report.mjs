@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+const path='public/stocks/forward-journal.json';
+const journal=JSON.parse(fs.readFileSync(path,'utf8'));
+if(!Array.isArray(journal))throw new Error('Invalid journal');
+const trades=journal.flatMap(r=>r.trades||[]);
+const pnl=journal.reduce((sum,r)=>sum+(Number(r.pnl)||0),0);
+const wins=trades.filter(t=>t.netPnl>0).length;
+const anchor=journal.find(r=>Number.isFinite(r.spyClose));
+const last=journal.at(-1);
+const report={mode:'Fixed $1,000 daily simulation, not compounded or executable account equity',firstSession:journal[0]?.day||null,lastSession:last?.day||null,sessions:journal.length,simulatedTrades:trades.length,noTradeSessions:journal.filter(r=>!r.trades?.length).length,winRatePct:trades.length?Number((100*wins/trades.length).toFixed(2)):null,cumulativePnl:Number(pnl.toFixed(2)),illustrativeBalance:Number((1000+pnl).toFixed(2)),spyCloseToCloseReturnPct:anchor&&last&&Number.isFinite(last.spyClose)?Number(((last.spyClose/anchor.spyClose-1)*100).toFixed(3)):null,spyBenchmarkStart:anchor?.day||null,limitations:'Historical October 23 entry has no SPY closing-price anchor. Benchmark begins at first future observed SPY close. Not a matched investment or risk comparison. Daily fixed-size PnL is not compounded.'};
+fs.writeFileSync('public/stocks/forward-report.json',JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify(report,null,2));
