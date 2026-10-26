@@ -23,11 +23,13 @@ jobs:
         run: node scripts/alpaca-intraday-sync.mjs
       - name: Append daily forward-test observation
         run: node scripts/forward-journal.mjs
+      - name: Build forward performance report
+        run: node scripts/forward-report.mjs
       - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/stocks/intraday/ public/stocks/forward-journal.json
+          git add public/stocks/intraday/ public/stocks/forward-journal.json public/stocks/forward-report.json
           if ! git diff --cached --quiet; then
             git commit -m "Update historical stock candles"
             git push
