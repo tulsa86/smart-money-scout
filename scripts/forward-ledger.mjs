@@ -16,6 +16,7 @@ for(const symbol of symbols){
 const common=symbols.map(s=>new Set(data[s].map(c=>dateOf(c.time)))).reduce((a,b)=>new Set([...a].filter(d=>b.has(d))));
 const target=[...common].sort().at(-1);
 if(!target)throw new Error('No common trading sessions');
+if(target<'2026-10-26'){console.log('Only retrospective sessions available; prospective ledger starts October 26');process.exit(0);}
 if(!symbols.every(s=>data[s].filter(c=>dateOf(c.time)===target).length>=75))throw new Error('Latest session incomplete');
 const old=fs.existsSync(ledgerPath)?JSON.parse(fs.readFileSync(ledgerPath,'utf8')):[];
 if(!Array.isArray(old))throw new Error('Invalid ledger');
