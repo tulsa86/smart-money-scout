@@ -9,7 +9,7 @@ const money=(n:number)=>Math.round(n*100)/100;
  * One stock/day and one shared cash account; avoids retrospective stock picking,
  * simultaneous positions, and double-counting the same $1,000.
  */
-export function replayPortfolio(data:Record<string,readonly Candle[]>,startingCash=1000,selectionMode:'rotation'|'prior-session-momentum'='rotation'):PortfolioReplay{
+export function replayPortfolio(data:Record<string,readonly Candle[]>,startingCash=1000,selectionMode:'rotation'|'prior-session-momentum'='rotation',evaluateFromDay?:string):PortfolioReplay{
  const fail=(error:string):PortfolioReplay=>({status:'invalid',error,startingCash,endingCash:startingCash,netReturnPct:0,entries:[],trades:0,noTradeDays:0});
  if(!Number.isFinite(startingCash)||startingCash<=0)return fail('Invalid starting cash');
  const symbols=Object.keys(data).sort();
@@ -27,6 +27,7 @@ export function replayPortfolio(data:Record<string,readonly Candle[]>,startingCa
  let cash=startingCash,trades=0,noTradeDays=0;
  const entries:JournalEntry[]=[];
  for(const [index,d] of [...days].sort().entries()){
+  if(evaluateFromDay&&d<evaluateFromDay)continue;
   // Choose the next available symbol in a deterministic predeclared rotation.
   const available=symbols.filter(s=>grouped.get(s)!.has(d));
   if(!available.length)continue;
