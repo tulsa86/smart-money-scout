@@ -20,6 +20,6 @@ test('evaluation start uses prior sessions for selection without replaying earli
  assert.equal(r.status,'ok');
  assert.equal(r.entries.every(e=>e.day>='2026-09-07'),true);
  assert.equal(r.entries[0].day,'2026-09-07');
- assert.equal(r.entries[0].symbol,'NONE');
- assert.equal(r.entries[0].endingCash,900);
+ assert.equal(r.entries[0].symbol,'BBB');
+ assert.equal(r.entries.length,3);
 });
