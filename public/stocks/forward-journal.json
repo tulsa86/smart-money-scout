@@ -9,5 +9,20 @@
     "trades": [],
     "pnl": 0,
     "limitations": "Research-only replay; no orders. IEX volume is not consolidated. Rolling-window cash and PnL are not cumulative forward returns."
+  },
+  {
+    "day": "2026-10-26",
+    "spyClose": 765.225,
+    "source": "Alpaca IEX five-minute candles",
+    "mode": "prior-session-momentum",
+    "symbol": "NONE",
+    "decision": "no-eligible-stock",
+    "note": "No eligible candidate using previous-session data",
+    "trades": [],
+    "pnl": 0,
+    "limitations": "Research-only replay; no orders. IEX volume is not consolidated. Rolling-window cash and PnL are not cumulative forward returns.",
+    "fixedSizeCumulativePnl": 0,
+    "fixedSizeIllustrativeBalance": 1000,
+    "spyReturnSinceAnchorPct": 0
   }
 ]

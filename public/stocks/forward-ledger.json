@@ -1,0 +1,17 @@
+[
+  {
+    "schemaVersion": 1,
+    "day": "2026-10-26",
+    "status": "NO_CANDIDATE",
+    "strategy": "prior-session-momentum-v1",
+    "feed": "Alpaca IEX 5m",
+    "startingCashCents": 100000,
+    "pnlCents": 0,
+    "endingCashCents": 100000,
+    "selectedTicker": "NONE",
+    "trades": [],
+    "spyClose": 765.225,
+    "recordedAt": "2026-10-26T20:24:25.386Z",
+    "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
+  }
+]
