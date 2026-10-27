@@ -31,3 +31,6 @@ test('XML accepts standard escaped ampersands in reporting owner names',()=>{con
 test('XML rejects forbidden numeric control characters',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('Example Officer','Example &#0; Officer'),meta),/Invalid XML character/)});
 test('XML accepts numeric newline references',()=>{assert.equal(extractForm4Purchases(wrap().replace('Example Officer','Example&#10;Officer'),meta)[0].ownerNames[0],'Example\nOfficer')});
 test('XML rejects malformed double-hyphen comments',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<!--bad--comment--><issuer>'),meta),/Malformed XML comment/)});
+
+test('XML rejects CDATA outside the ownership root',()=>{assert.throws(()=>extractForm4Purchases('<![CDATA[unexpected]]>'+wrap(),meta),/CDATA outside/)});
+test('XML rejects multiple ownership roots',()=>{assert.throws(()=>extractForm4Purchases(wrap()+wrap(),meta),/Multiple XML roots/)});
