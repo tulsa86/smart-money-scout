@@ -38,5 +38,5 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  if(actualForm!==filing.formType)throw Error('Indexed filing type mismatch');
  const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:filing.cik,accession:filing.accession,filingUrl:xmlUrl});
  if(transactions.some(t=>t.formType!==filing.formType))throw Error('Indexed filing type mismatch');
- return {accession:filing.accession,cik:filing.cik,formType:filing.formType,filingDate:filing.filingDate,acceptanceTime:filing.acceptanceTime??null,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
+ return {accession:filing.accession,cik:filing.cik,formType:filing.formType,filingDate:filing.filingDate,acceptanceTime:filing.acceptanceTime??null,acceptanceTimezone:filing.acceptanceTimezone??null,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
 }
