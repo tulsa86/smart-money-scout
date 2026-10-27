@@ -1,0 +1,38 @@
+import {extractForm4Purchases} from './form4-core.mjs';
+// Explicit, bounded SEC retrieval. Caller supplies a truthful contact User-Agent.
+// No automatic retries or concurrent requests. An HTML primary document is never parsed as XML.
+const MAX_BYTES=5_000_000;
+const allowedUrl=url=>{
+ const u=new URL(url);
+ if(u.protocol!=='https:'||u.hostname!=='www.sec.gov'||!/^\/Archives\/edgar\/data\/\d+\/\d+\/[\w./-]+$/.test(u.pathname)||u.pathname.split('/').includes('..')||u.search||u.hash)throw Error('Unsafe SEC archive URL');
+ return u.href;
+};
+export async function fetchSecText(url,{fetchImpl=fetch,userAgent,signal}={}){
+ if(typeof userAgent!=='string'||!/.+@.+\..+/.test(userAgent)||userAgent.length>200)throw Error('SEC contact User-Agent required');
+ const safe=allowedUrl(url);
+ const response=await fetchImpl(safe,{headers:{'User-Agent':userAgent,'Accept':'application/xml,text/xml,application/json,text/plain'},signal});
+ if(!response.ok)throw Error('SEC HTTP '+response.status);
+ const size=Number(response.headers?.get?.('content-length'));
+ if(Number.isFinite(size)&&size>MAX_BYTES)throw Error('SEC response too large');
+ const text=await response.text();
+ if(text.length>MAX_BYTES)throw Error('SEC response too large');
+ return text;
+}
+export function selectOwnershipXml(index){
+ const items=index?.directory?.item;
+ if(!Array.isArray(items))throw Error('Invalid SEC archive index');
+ const candidates=items.filter(i=>typeof i?.name==='string'&&/^[\w.-]+\.xml$/i.test(i.name)&&!/^(?:index|filing-summary|metadata)\.xml$/i.test(i.name));
+ if(candidates.length!==1)throw Error('Ownership XML requires manual selection');
+ return candidates[0].name;
+}
+export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,signal}={}){
+ if(!filing||!['4','4/A'].includes(filing.formType)||!filing.filingIndexUrl||!filing.primaryDocumentUrl)throw Error('Invalid indexed Form 4');
+ const indexUrl=allowedUrl(filing.filingIndexUrl+'index.json');
+ const index=JSON.parse(await fetchSecText(indexUrl,{fetchImpl,userAgent,signal}));
+ const xmlName=selectOwnershipXml(index);
+ const xmlUrl=allowedUrl(filing.filingIndexUrl+xmlName);
+ const xml=await fetchSecText(xmlUrl,{fetchImpl,userAgent,signal});
+ const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:filing.cik,accession:filing.accession,filingUrl:xmlUrl,filedAt:filing.filingDate});
+ if(!xml.includes('<ownershipDocument')&&!/<[\w-]+:ownershipDocument\b/.test(xml))throw Error('Not ownership XML');
+ return {accession:filing.accession,cik:filing.cik,formType:filing.formType,filingDate:filing.filingDate,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
+}
