@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {fetchSecText,selectOwnershipXml,retrieveForm4Candidate} from './sec-form4-retrieval.mjs';
+import {fetchSecText,fetchRecentOwnershipFilings,selectOwnershipXml,retrieveForm4Candidate} from './sec-form4-retrieval.mjs';
 const ua='SmartMoneyScout research contact@example.org';
 const base='https://www.sec.gov/Archives/edgar/data/320193/000032019326000001/';
 const filing={accession:'0000320193-26-000001',cik:'320193',ticker:'AAPL',formType:'4',filingDate:'2026-10-27',filingIndexUrl:base,primaryDocumentUrl:base+'primary.html'};
@@ -16,3 +16,21 @@ test('SEC fetch explicitly rejects HTTP redirects',async()=>{let redirect;await 
 test('streamed SEC responses are size-limited before full buffering',async()=>{let reads=0;const stream=new ReadableStream({pull(controller){reads++;controller.enqueue(new Uint8Array(3_000_000));if(reads===2)controller.close()}});await assert.rejects(fetchSecText(base+'index.json',{userAgent:ua,fetchImpl:async()=>({ok:true,headers:{get:()=>null},body:stream})}),/too large/)});
 
 test('retains independently supplied SEC acceptance time',async()=>{const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);const r=await retrieveForm4Candidate({...filing,acceptanceTime:'2026-10-27T18:12:00.000Z'},{userAgent:ua,fetchImpl});assert.equal(r.acceptanceTime,'2026-10-27T18:12:00.000Z')});
+
+test('SEC submissions API discovery checks issuer identity and preserves source filing data',async()=>{
+ let request;
+ const fetchImpl=async(url,options)=>{request={url,options};return response(JSON.stringify({cik:320193,filings:{recent:{accessionNumber:['0000320193-26-000001'],form:['4'],filingDate:['2026-10-27'],primaryDocument:['primary.html'],acceptanceDateTime:['2026-10-27T16:20:00']}}}))};
+ const result=await fetchRecentOwnershipFilings('0000320193',{userAgent:ua,fetchImpl});
+ assert.equal(request.url,'https://data.sec.gov/submissions/CIK0000320193.json');
+ assert.equal(request.options.redirect,'error');
+ assert.equal(result.length,1);
+ assert.equal(result[0].acceptanceTimezone,'America/New_York');
+ assert.equal(result[0].acceptanceTime,'2026-10-27T16:20:00');
+});
+test('SEC submissions API rejects mismatched issuer CIK',async()=>{
+ const fetchImpl=async()=>response(JSON.stringify({cik:1,filings:{recent:{accessionNumber:[],form:[],filingDate:[],primaryDocument:[]}}}));
+ await assert.rejects(fetchRecentOwnershipFilings('320193',{userAgent:ua,fetchImpl}),/CIK mismatch/);
+});
+test('SEC submissions API rejects invalid CIK without a request',async()=>{
+ await assert.rejects(fetchRecentOwnershipFilings('../320193',{userAgent:ua,fetchImpl:()=>{throw Error('should not fetch')}}),/Invalid issuer CIK/);
+});
