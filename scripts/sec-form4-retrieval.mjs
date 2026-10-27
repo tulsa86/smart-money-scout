@@ -28,7 +28,7 @@ export async function fetchRecentOwnershipFilings(cik,{fetchImpl=fetch,userAgent
  const padded=String(cik).padStart(10,'0');
  const url='https://data.sec.gov/submissions/CIK'+padded+'.json';
  const submissions=JSON.parse(await fetchSecText(url,{fetchImpl,userAgent,signal}));
- if(BigInt(submissions.cik)!==BigInt(cik))throw Error('SEC submissions issuer CIK mismatch');
+ if(!/^\d{1,10}$/.test(String(submissions?.cik??''))||BigInt(submissions.cik)!==BigInt(cik))throw Error('SEC submissions CIK mismatch');
  return indexRecentOwnershipFilings(submissions,{limit});
 }
 export function selectOwnershipXml(index,{primaryDocument}={}){
