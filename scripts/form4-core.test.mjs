@@ -16,3 +16,5 @@ test('Table II P is ignored',()=>{const x=wrap().replace('nonDerivativeTable','d
 test('XML parser accepts namespaces and CDATA without changing amounts',()=>{const x=wrap().replace('<ownershipDocument>','<sec:ownershipDocument xmlns:sec="urn:sec">').replace('</ownershipDocument>','</sec:ownershipDocument>').replace('<value>12.50</value>','<value><![CDATA[12.50]]></value>');assert.equal(extractForm4Purchases(x,meta)[0].reportedPurchaseValue,1250)});
 test('XML parser rejects malformed closing tags and DTD',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('</issuer>','</wrong>'),meta),/mismatch/);assert.throws(()=>extractForm4Purchases('<!DOCTYPE ownershipDocument>'+wrap(),meta),/forbidden/)});
 test('plan footnote prompts review, never automatically marks a scheduled plan',()=>{const x=wrap().replace('</ownershipDocument>','<footnotes><footnote id="F1">Rule 10b5-1 plan referenced</footnote></footnotes></ownershipDocument>');assert.equal(extractForm4Purchases(x,meta)[0].rule10b5_1,'requires_review')});
+
+test('rejects impossible calendar dates',()=>{assert.equal(extractForm4Purchases(wrap().replace('2026-10-26','2026-02-30'),meta).length,0)});
