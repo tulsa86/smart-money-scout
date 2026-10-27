@@ -3,7 +3,7 @@
 const decode=s=>{const withoutEntities=s.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi,'');
  if(withoutEntities.includes('&'))throw Error('Unknown or malformed XML entity');
  return s.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi,(_,e)=>{
- if(e[0]==='#'){const n=e[1].toLowerCase()==='x'?parseInt(e.slice(2),16):parseInt(e.slice(1),10);if(n<0||n>0x10ffff||n>=0xd800&&n<=0xdfff)throw Error('Invalid XML character');return String.fromCodePoint(n)}
+ if(e[0]==='#'){const n=e[1].toLowerCase()==='x'?parseInt(e.slice(2),16):parseInt(e.slice(1),10);if(n!==9&&n!==10&&n!==13&&n<32||n>0x10ffff||n>=0xd800&&n<=0xdfff)throw Error('Invalid XML character');return String.fromCodePoint(n)}
  return {amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"}[e.toLowerCase()]
 });
 };
@@ -14,7 +14,8 @@ export function parseOwnershipXml(xml){
  const tokens=xml.match(/<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\?[\s\S]*?\?>|<[^>]*>|[^<]+/g)||[];
  if(tokens.join('')!==xml)throw Error('Malformed XML');
  for(const token of tokens){
-  if(token.startsWith('<!--')||token.startsWith('<?'))continue;
+  if(token.startsWith('<!--')){if(!token.endsWith('-->')||token.slice(4,-3).includes('--'))throw Error('Malformed XML comment');continue}
+  if(token.startsWith('<?')){if(!token.endsWith('?>'))throw Error('Malformed XML declaration');continue}
   if(token.startsWith('<![CDATA[')){stack.at(-1).text+=token.slice(9,-3);continue}
   if(token.startsWith('</')){
    const m=token.match(/^<\/([\w.:-]+)\s*>$/);if(!m||stack.length<2||stack.at(-1).name!==m[1].split(':').at(-1))throw Error('XML closing tag mismatch');
