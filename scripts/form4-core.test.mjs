@@ -52,3 +52,5 @@ test('raw purchases never become investment signals from metadata',()=>{const p=
 
 test('XML rejects literal less-than inside quoted attributes',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer note="a<b">'),meta),/Malformed XML attributes/)});
 test('XML accepts escaped less-than inside quoted attributes',()=>{assert.equal(extractForm4Purchases(wrap().replace('<issuer>','<issuer note="a&lt;b">'),meta).length,1)});
+
+test('caller-supplied filedAt cannot claim SEC public availability',()=>{const r=extractForm4Purchases(wrap(),{...meta,filedAt:'2026-10-27T20:00:00Z'});assert.equal(r[0].filedAt,null);assert.equal(r[0].publicAvailabilityStatus,'unknown');assert.equal(r[0].investmentSignal,false)});
