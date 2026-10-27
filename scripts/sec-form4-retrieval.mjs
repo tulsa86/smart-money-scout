@@ -33,6 +33,7 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  const xmlUrl=allowedUrl(filing.filingIndexUrl+xmlName);
  const xml=await fetchSecText(xmlUrl,{fetchImpl,userAgent,signal});
  const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:filing.cik,accession:filing.accession,filingUrl:xmlUrl,filedAt:filing.filingDate});
+ if(transactions.some(t=>t.formType!==filing.formType))throw Error('Indexed filing type mismatch');
  if(!xml.includes('<ownershipDocument')&&!/<[\w-]+:ownershipDocument\b/.test(xml))throw Error('Not ownership XML');
  return {accession:filing.accession,cik:filing.cik,formType:filing.formType,filingDate:filing.filingDate,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
 }
