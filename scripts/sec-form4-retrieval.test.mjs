@@ -34,3 +34,9 @@ test('SEC submissions API rejects mismatched issuer CIK',async()=>{
 test('SEC submissions API rejects invalid CIK without a request',async()=>{
  await assert.rejects(fetchRecentOwnershipFilings('../320193',{userAgent:ua,fetchImpl:()=>{throw Error('should not fetch')}}),/Invalid issuer CIK/);
 });
+
+test('exact primary ownership XML resolves otherwise ambiguous archive',()=>{
+ const index={directory:{item:[{name:'ownership.xml'},{name:'other.xml'}]}};
+ assert.equal(selectOwnershipXml(index,{primaryDocument:'ownership.xml'}),'ownership.xml');
+ assert.throws(()=>selectOwnershipXml(index,{primaryDocument:'unknown.xml'}),/manual selection/);
+});
