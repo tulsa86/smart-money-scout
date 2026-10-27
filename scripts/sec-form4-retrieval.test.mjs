@@ -40,3 +40,14 @@ test('exact primary ownership XML resolves otherwise ambiguous archive',()=>{
  assert.equal(selectOwnershipXml(index,{primaryDocument:'ownership.xml'}),'ownership.xml');
  assert.throws(()=>selectOwnershipXml(index,{primaryDocument:'unknown.xml'}),/manual selection/);
 });
+
+test('retrieval rejects mismatched SEC accession archive before fetching',async()=>{
+ let called=false;
+ await assert.rejects(retrieveForm4Candidate({...filing,filingIndexUrl:'https://www.sec.gov/Archives/edgar/data/1/2/',primaryDocumentUrl:'https://www.sec.gov/Archives/edgar/data/1/2/x.xml'},{userAgent:ua,fetchImpl:async()=>{called=true;return response('{}')}}),/archive identity mismatch/);
+ assert.equal(called,false);
+});
+test('retrieval accepts padded issuer CIK independent of archive submitter',async()=>{
+ const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);
+ const result=await retrieveForm4Candidate({...filing,cik:'0000320193'},{userAgent:ua,fetchImpl});
+ assert.equal(result.transactions.length,1);
+});
