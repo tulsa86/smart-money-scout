@@ -116,3 +116,19 @@ test('invalid SEC acceptance calendar and clock values never become provenance',
   assert.equal(r.transactions[0].filedAt,null);
  }
 });
+
+test('nested SEC XML document paths are selected without allowing traversal',()=>{
+ const index={directory:{item:[{name:'xslF345X05/index.xml'},{name:'xslF345X05/ownership.xml'}]}};
+ assert.equal(selectOwnershipXml(index,{primaryDocument:'xslF345X05/ownership.xml'}),'xslF345X05/ownership.xml');
+ assert.equal(selectOwnershipXml(index),'xslF345X05/ownership.xml');
+ assert.throws(()=>selectOwnershipXml({directory:{item:[{name:'../ownership.xml'}]}}),/manual selection/);
+});
+test('retrieval handles nested ownership XML from SEC archive index',async()=>{
+ const nested='xslF345X05/ownership.xml';
+ const requested=[];
+ const fetchImpl=async url=>{requested.push(url);return response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:nested}]}}):xml)};
+ const r=await retrieveForm4Candidate({...filing,primaryDocument:nested,primaryDocumentUrl:base+nested},{userAgent:ua,fetchImpl});
+ assert.equal(r.transactions.length,1);
+ assert.equal(r.sourceUrl,base+nested);
+ assert.equal(requested[1],base+nested);
+});
