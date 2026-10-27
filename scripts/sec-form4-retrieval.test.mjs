@@ -61,7 +61,7 @@ test('ownership XML supplies issuer CIK when SEC submissions filer differs',asyn
 });
 test('retrieval rejects conflicting known issuer and ownership XML',async()=>{
  const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);
- await assert.rejects(retrieveForm4Candidate({...filing,cik:'1234'},{userAgent:ua,fetchImpl}),/issuer CIK mismatch/);
+ await assert.rejects(retrieveForm4Candidate({...filing,cik:'1234',archiveCik:'320193'},{userAgent:ua,fetchImpl}),/issuer CIK mismatch/);
 });
 
 
