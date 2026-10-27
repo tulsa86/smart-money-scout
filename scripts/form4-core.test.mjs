@@ -36,3 +36,8 @@ test('XML rejects CDATA outside the ownership root',()=>{assert.throws(()=>extra
 test('XML rejects multiple ownership roots',()=>{assert.throws(()=>extractForm4Purchases(wrap()+wrap(),meta),/Multiple XML roots/)});
 
 test('XML rejects malformed entity references in attributes',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer bad="&bogus;">'),meta),/entity/)});
+
+test('XML rejects unquoted attributes',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer id=bad>'),meta),/Malformed XML attributes/)});
+test('XML rejects unterminated attribute quotes',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer id="bad>'),meta),/Malformed XML attributes/)});
+test('XML rejects duplicate attribute names',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer id="a" id="b">'),meta),/Duplicate XML attribute/)});
+test('XML accepts quoted attributes on issuer elements',()=>{assert.equal(extractForm4Purchases(wrap().replace('<issuer>','<issuer id="ok">'),meta).length,1)});
