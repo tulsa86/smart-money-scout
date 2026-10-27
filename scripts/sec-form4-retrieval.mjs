@@ -1,11 +1,14 @@
 import {parseOwnershipXml,val} from './form4-xml.mjs';
 import {extractForm4Purchases} from './form4-core.mjs';
+import {indexRecentOwnershipFilings} from './sec-ownership-index.mjs';
 // Explicit, bounded SEC retrieval. Caller supplies a truthful contact User-Agent.
 // No automatic retries or concurrent requests. An HTML primary document is never parsed as XML.
 const MAX_BYTES=5_000_000;
 const allowedUrl=url=>{
  const u=new URL(url);
- if(u.protocol!=='https:'||u.hostname!=='www.sec.gov'||!/^\/Archives\/edgar\/data\/\d+\/\d+\/[\w./-]+$/.test(u.pathname)||u.pathname.split('/').includes('..')||u.search||u.hash)throw Error('Unsafe SEC archive URL');
+ const archive=u.hostname==='www.sec.gov'&&/^\/Archives\/edgar\/data\/\d+\/\d+\/[\w./-]+$/.test(u.pathname);
+ const submissions=u.hostname==='data.sec.gov'&&/^\/submissions\/CIK\d{10}\.json$/.test(u.pathname);
+ if(u.protocol!=='https:'||(!archive&&!submissions)||u.pathname.split('/').includes('..')||u.search||u.hash)throw Error('Unsafe SEC URL');
  return u.href;
 };
 export async function fetchSecText(url,{fetchImpl=fetch,userAgent,signal}={}){
@@ -19,6 +22,14 @@ export async function fetchSecText(url,{fetchImpl=fetch,userAgent,signal}={}){
  const reader=response.body.getReader(),chunks=[];let total=0;
  try{while(true){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>MAX_BYTES)throw Error('SEC response too large');chunks.push(value)}}finally{reader.releaseLock()}
  return Buffer.concat(chunks.map(x=>Buffer.from(x)),total).toString('utf8');
+}
+export async function fetchRecentOwnershipFilings(cik,{fetchImpl=fetch,userAgent,signal,limit=100}={}){
+ if(!/^\d{1,10}$/.test(String(cik??''))||BigInt(cik)===0n)throw Error('Invalid issuer CIK');
+ const padded=String(cik).padStart(10,'0');
+ const url='https://data.sec.gov/submissions/CIK'+padded+'.json';
+ const submissions=JSON.parse(await fetchSecText(url,{fetchImpl,userAgent,signal}));
+ if(BigInt(submissions.cik)!==BigInt(cik))throw Error('SEC submissions issuer CIK mismatch');
+ return indexRecentOwnershipFilings(submissions,{limit});
 }
 export function selectOwnershipXml(index){
  const items=index?.directory?.item;
