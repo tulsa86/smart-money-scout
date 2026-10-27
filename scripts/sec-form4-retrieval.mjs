@@ -62,7 +62,7 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  // SEC submissions acceptanceDateTime is an Eastern wall-clock timestamp, not UTC.
  // Preserve its provenance and never substitute transactionDate for public availability.
  const rawAcceptance=filing.acceptanceTime;
- const acceptanceValid=typeof rawAcceptance==='string'&&/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?$/.test(rawAcceptance)&&filing.acceptanceTimezone==='America/New_York';
+ const acceptanceValid=typeof rawAcceptance==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(rawAcceptance)&&filing.acceptanceTimezone==='America/New_York';
  const publicAvailabilityStatus=acceptanceValid?'sec_acceptance_time_publication_unverified':'unknown';
  const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:issuerCik,accession:filing.accession,filingUrl:xmlUrl});
  for(const transaction of transactions){
