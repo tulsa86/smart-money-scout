@@ -1,3 +1,4 @@
+import {parseOwnershipXml,val} from './form4-xml.mjs';
 import {extractForm4Purchases} from './form4-core.mjs';
 // Explicit, bounded SEC retrieval. Caller supplies a truthful contact User-Agent.
 // No automatic retries or concurrent requests. An HTML primary document is never parsed as XML.
@@ -32,8 +33,9 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  const xmlName=selectOwnershipXml(index);
  const xmlUrl=allowedUrl(filing.filingIndexUrl+xmlName);
  const xml=await fetchSecText(xmlUrl,{fetchImpl,userAgent,signal});
+ const actualForm=val(parseOwnershipXml(xml),'documentType');
+ if(actualForm!==filing.formType)throw Error('Indexed filing type mismatch');
  const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:filing.cik,accession:filing.accession,filingUrl:xmlUrl,filedAt:filing.filingDate});
  if(transactions.some(t=>t.formType!==filing.formType))throw Error('Indexed filing type mismatch');
- if(!xml.includes('<ownershipDocument')&&!/<[\w-]+:ownershipDocument\b/.test(xml))throw Error('Not ownership XML');
  return {accession:filing.accession,cik:filing.cik,formType:filing.formType,filingDate:filing.filingDate,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
 }
