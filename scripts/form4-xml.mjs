@@ -32,6 +32,7 @@ export function parseOwnershipXml(xml){
     if(!attribute)throw Error('Malformed XML attributes');
     if(attributeNames.has(attribute[1]))throw Error('Duplicate XML attribute');
     attributeNames.add(attribute[1]);
+    if(attribute[3].includes('<'))throw Error('Malformed XML attributes: unescaped less-than');
     decode(attribute[3]);
     attributes=attributes.slice(attribute[0].length);
    }
