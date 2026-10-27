@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "test": "node --experimental-strip-types --test src/engine/core.test.ts src/stocks/research.test.ts src/stocks/fundamentals.test.ts src/stocks/screener.test.ts scripts/annual-facts.test.mjs scripts/ledger-core.test.mjs scripts/form4-core.test.mjs scripts/form4-ledger.test.mjs scripts/sec-ownership-index.test.mjs scripts/sec-form4-retrieval.test.mjs src/stocks/candles.test.ts src/stocks/backtest.test.ts src/stocks/portfolio.test.ts src/stocks/csv.test.ts"
+    "test": "node --experimental-strip-types --test src/engine/core.test.ts src/stocks/research.test.ts src/stocks/fundamentals.test.ts src/stocks/screener.test.ts scripts/annual-facts.test.mjs scripts/ledger-core.test.mjs scripts/form4-core.test.mjs scripts/form4-research-assessment.test.mjs scripts/form4-ledger.test.mjs scripts/sec-ownership-index.test.mjs scripts/sec-form4-retrieval.test.mjs src/stocks/candles.test.ts src/stocks/backtest.test.ts src/stocks/portfolio.test.ts src/stocks/csv.test.ts"
   },
   "dependencies": {
     "react": "^19.0.0",
