@@ -13,7 +13,7 @@ export function indexRecentOwnershipFilings(submissions,{limit=100}={}){
  for(let i=0;i<n&&out.length<limit;i++){
   const form=recent.form[i],accession=recent.accessionNumber[i],filingDate=recent.filingDate[i],primaryDocument=recent.primaryDocument[i];
   if(form!=='4'&&form!=='4/A')continue;
-  if(!validAccession(accession)||!validDate(filingDate)||typeof primaryDocument!=='string'||!/^[\w.-]+$/.test(primaryDocument))throw Error('Malformed ownership filing index entry');
+  if(!validAccession(accession)||!validDate(filingDate)||typeof primaryDocument!=='string'||!primaryDocument.split('/').every(segment=>/^[\w.-]+$/.test(segment)&&segment!=='.'&&segment!=='..'))throw Error('Malformed ownership filing index entry');
   if(seen.has(accession))throw Error('Duplicate SEC accession in recent index');
   seen.add(accession);
   const directory=accession.replaceAll('-','');
