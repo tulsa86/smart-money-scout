@@ -11,3 +11,5 @@ test('preserves verified SEC acceptance timestamps and distinguishes missing val
 test('rejects invalid acceptance time and impossible filing date',()=>{const s=structuredClone(sample);s.filings.recent.acceptanceDateTime=[null,'yesterday',null];assert.throws(()=>indexRecentOwnershipFilings(s),/acceptance timestamp/);delete s.filings.recent.acceptanceDateTime;s.filings.recent.filingDate[1]='2026-02-30';assert.throws(()=>indexRecentOwnershipFilings(s),/Malformed ownership/)});
 
 test('SEC local acceptance timestamps are not misrepresented as UTC',()=>{const s=structuredClone(sample);s.filings.recent.acceptanceDateTime=[null,'2026-10-02T16:15:00',null];const r=indexRecentOwnershipFilings(s);assert.equal(r[0].acceptanceTime,'2026-10-02T16:15:00');assert.equal(r[0].acceptanceTimezone,'America/New_York')});
+
+test('reporting owner accession prefix need not equal issuer CIK',()=>{const s=structuredClone(sample);s.filings.recent.accessionNumber[1]='0000001234-26-000102';const r=indexRecentOwnershipFilings(s);assert.equal(r[0].accession,'0000001234-26-000102')});
