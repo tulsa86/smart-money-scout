@@ -12,4 +12,4 @@ test('rejects invalid acceptance time and impossible filing date',()=>{const s=s
 
 test('SEC local acceptance timestamps are not misrepresented as UTC',()=>{const s=structuredClone(sample);s.filings.recent.acceptanceDateTime=[null,'2026-10-02T16:15:00',null];const r=indexRecentOwnershipFilings(s);assert.equal(r[0].acceptanceTime,'2026-10-02T16:15:00');assert.equal(r[0].acceptanceTimezone,'America/New_York')});
 
-test('reporting owner accession prefix need not equal issuer CIK',()=>{const s=structuredClone(sample);s.filings.recent.accessionNumber[1]='0000001234-26-000102';const r=indexRecentOwnershipFilings(s);assert.equal(r[0].accession,'0000001234-26-000102')});
+test('reporting owner accession prefix need not equal issuer CIK',()=>{const s=structuredClone(sample);s.filings.recent.accessionNumber[1]='0000001234-26-000102';const r=indexRecentOwnershipFilings(s);assert.equal(r[0].accession,'0000001234-26-000102');assert.equal(r[0].cik,'320193');assert.equal(r[0].archiveCik,'1234');assert.match(r[0].filingIndexUrl,/\/data\/1234\/000000123426000102\//)});
