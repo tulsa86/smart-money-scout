@@ -15,9 +15,10 @@ export async function fetchSecText(url,{fetchImpl=fetch,userAgent,signal}={}){
  if(!response.ok)throw Error('SEC HTTP '+response.status);
  const size=Number(response.headers?.get?.('content-length'));
  if(Number.isFinite(size)&&size>MAX_BYTES)throw Error('SEC response too large');
- const text=await response.text();
- if(text.length>MAX_BYTES)throw Error('SEC response too large');
- return text;
+ if(!response.body?.getReader){const text=await response.text();if(Buffer.byteLength(text,'utf8')>MAX_BYTES)throw Error('SEC response too large');return text;}
+ const reader=response.body.getReader(),chunks=[];let total=0;
+ try{while(true){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>MAX_BYTES)throw Error('SEC response too large');chunks.push(value)}}finally{reader.releaseLock()}
+ return Buffer.concat(chunks.map(x=>Buffer.from(x)),total).toString('utf8');
 }
 export function selectOwnershipXml(index){
  const items=index?.directory?.item;
