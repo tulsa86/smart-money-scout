@@ -25,3 +25,5 @@ test('joint reporting owners are flagged rather than assigned a single buyer',()
 
 test('XML rejects unknown entities instead of silently preserving corrupted values',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('Common Stock','Common &bogus; Stock'),meta),/entity/)});
 test('XML rejects stray text outside ownership document',()=>{assert.throws(()=>extractForm4Purchases('unexpected'+wrap(),meta),/outside ownership/)});
+
+test('XML accepts standard escaped ampersands in reporting owner names',()=>{const x=wrap().replace('Example Officer','Smith &amp; Jones');assert.equal(extractForm4Purchases(x,meta)[0].ownerNames[0],'Smith & Jones')});
