@@ -91,3 +91,18 @@ test('retrieves SEC filing when filing agent accession prefix differs from filer
  const r=await retrieveForm4Candidate({...filing,accession:'0001140361-26-040540',archiveCik:'320193',submitterCik:'320193',filingIndexUrl:agentBase,primaryDocumentUrl:agentBase+'form4.xml',primaryDocument:'form4.xml'},{userAgent:ua,fetchImpl});
  assert.equal(r.cik,'320193');assert.equal(r.transactions.length,1);
 });
+
+test('SEC acceptance wall-clock remains provenance, not verified public timestamp',async()=>{
+ const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);
+ const r=await retrieveForm4Candidate({...filing,acceptanceTime:'2026-10-27T16:20:00',acceptanceTimezone:'America/New_York'},{userAgent:ua,fetchImpl});
+ assert.equal(r.publicAvailabilityStatus,'sec_acceptance_time_publication_unverified');
+ assert.equal(r.transactions[0].secAcceptanceTime,'2026-10-27T16:20:00');
+ assert.equal(r.transactions[0].secAcceptanceTimezone,'America/New_York');
+ assert.equal(r.transactions[0].filedAt,null);
+ assert.equal(r.transactions[0].investmentSignal,false);
+});
+test('unverified or missing acceptance time cannot become public-availability timestamp',async()=>{
+ const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);
+ const r=await retrieveForm4Candidate({...filing,acceptanceTime:'2026-10-27T16:20:00'},{userAgent:ua,fetchImpl});
+ assert.equal(r.publicAvailabilityStatus,'unknown');assert.equal(r.transactions[0].secAcceptanceTime,null);assert.equal(r.transactions[0].filedAt,null);
+});
