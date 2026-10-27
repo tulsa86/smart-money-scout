@@ -6,8 +6,8 @@ import {parseOwnershipXml,val,children,first} from './form4-xml.mjs';
 // Download original bytes, reject unexpected content, and save SHA-256 evidence.
 const filings=[
  {accession:'0000080424-26-000218',url:'https://www.sec.gov/Archives/edgar/data/80424/000008042426000218/form4.xml',form:'4',code:'A',issuerCik:'80424'},
- {accession:'0001140361-26-036978',url:'https://www.sec.gov/Archives/edgar/data/1820096/000114036126036978/form4.xml',form:'4',code:'P'},
- {accession:'0001493152-26-036585',url:'https://www.sec.gov/Archives/edgar/data/1276551/000149315226036585/ownership.xml',form:'4/A',code:'P',issuerCik:'1849296'}
+ {accession:'0001140361-26-036978',url:'https://www.sec.gov/Archives/edgar/data/1820096/000114036126036978/form4.xml',form:'4',code:'P',issuerCik:'1820096'},
+ {accession:'0001193125-26-354277',url:'https://www.sec.gov/Archives/edgar/data/1089872/000119312526354277/ownership.xml',form:'4/A',code:'P',issuerCik:'1089872'}
 ];
 const ua=process.env.SEC_USER_AGENT;
 if(!ua||!/.+@.+\..+/.test(ua))throw Error('SEC_USER_AGENT must identify a genuine contact email');
