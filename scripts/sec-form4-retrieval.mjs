@@ -34,8 +34,9 @@ export async function fetchRecentOwnershipFilings(cik,{fetchImpl=fetch,userAgent
 export function selectOwnershipXml(index,{primaryDocument}={}){
  const items=index?.directory?.item;
  if(!Array.isArray(items))throw Error('Invalid SEC archive index');
- const candidates=items.filter(i=>typeof i?.name==='string'&&/^[\w.-]+\.xml$/i.test(i.name)&&!/^(?:index|filing[-_]?summary|metadata)\.xml$/i.test(i.name));
- if(typeof primaryDocument==='string'&&/^[\w.-]+\.xml$/i.test(primaryDocument)&&candidates.some(i=>i.name===primaryDocument))return primaryDocument;
+ const safeXmlName=name=>typeof name==='string'&&name.split('/').every(part=>/^[\w.-]+$/.test(part)&&part!=='.'&&part!=='..')&&/\.xml$/i.test(name);
+ const candidates=items.filter(i=>safeXmlName(i?.name)&&!/^(?:index|filing[-_]?summary|metadata)\.xml$/i.test(i.name.split('/').at(-1)));
+ if(safeXmlName(primaryDocument)&&candidates.some(i=>i.name===primaryDocument))return primaryDocument;
  if(candidates.length!==1)throw Error('Ownership XML requires manual selection');
  return candidates[0].name;
 }
