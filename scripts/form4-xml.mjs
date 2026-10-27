@@ -16,12 +16,13 @@ export function parseOwnershipXml(xml){
  for(const token of tokens){
   if(token.startsWith('<!--')){if(!token.endsWith('-->')||token.slice(4,-3).includes('--'))throw Error('Malformed XML comment');continue}
   if(token.startsWith('<?')){if(!token.endsWith('?>'))throw Error('Malformed XML declaration');continue}
-  if(token.startsWith('<![CDATA[')){stack.at(-1).text+=token.slice(9,-3);continue}
+  if(token.startsWith('<![CDATA[')){if(stack.length===1)throw Error('CDATA outside ownership XML root');stack.at(-1).text+=token.slice(9,-3);continue}
   if(token.startsWith('</')){
    const m=token.match(/^<\/([\w.:-]+)\s*>$/);if(!m||stack.length<2||stack.at(-1).name!==m[1].split(':').at(-1))throw Error('XML closing tag mismatch');
    stack.pop();continue;
   }
   if(token.startsWith('<')){
+   if(stack.length===1&&root.children.length)throw Error('Multiple XML roots');
    const m=token.match(/^<([\w.:-]+)(?:\s[^<>]*?)?\s*\/?>$/);if(!m)throw Error('Malformed XML tag');
    const node={name:m[1].split(':').at(-1),children:[],text:''};stack.at(-1).children.push(node);
    if(!token.endsWith('/>'))stack.push(node);
