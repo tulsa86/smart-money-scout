@@ -23,6 +23,20 @@ test('SEC fixture manifest schema and genuine-source provenance',()=>{
   assert.equal(createHash('sha256').update(xml).digest('hex'),item.sha256);
   const root=parseOwnershipXml(xml.toString('utf8'));
   assert.ok(['4','4/A'].includes(val(root,'documentType')));
+  if(item.accession==='0001140361-26-036978'||item.accession==='0001193125-26-354277'){
+   const amendment=item.accession==='0001193125-26-354277';
+   const ticker=amendment?'GAIA':'XBP',cik=amendment?'1089872':'1839530';
+   assert.equal(val(root,'documentType'),amendment?'4/A':'4');
+   const purchases=extractForm4Purchases(xml.toString('utf8'),{ticker,cik,accession:item.accession,filingUrl:item.sourceUrl});
+   assert.equal(purchases.length,1);
+   assert.equal(purchases[0].shares,amendment?70750:72394);
+   assert.equal(purchases[0].pricePerShare,amendment?1.2166:2.83);
+   assert.equal(purchases[0].transactionCode,'P');
+   assert.equal(purchases[0].isResearchWorthy,false);
+   assert.equal(purchases[0].investmentSignal,false);
+   assert.equal(purchases[0].amendmentStatus,amendment?'requires_reconciliation':'original');
+   if(!amendment)assert.equal(purchases[0].ownerAttribution,'multiple_reporting_owners_requires_review');
+  }
   if(item.accession==='0000080424-26-000218'){
    assert.equal(val(root,'documentType'),'4');
    assert.equal(val(root.children.find(n=>n.name==='issuer'),'issuerCik'),'0000080424');
