@@ -10,14 +10,14 @@ export function reconcileForm4Filings(filings){
  for(const filing of filings){
   if(!filing||!Array.isArray(filing.transactions)||!filing.transactions.every(validRecord))throw Error('Invalid filing transactions');
   if(!accessionOk(filing.accession)||!/^\d+$/.test(String(filing.cik??'')))throw Error('Invalid filing identity');
-  if(filing.transactions.some(t=>t.accession!==filing.accession||BigInt(t.cik)!==BigInt(filing.cik)))throw Error('Transaction filing mismatch');
+  if(filing.transactions.some(t=>t.accession!==filing.accession||BigInt(t.cik)!==BigInt(filing.cik)||t.formType!==filing.formType))throw Error('Transaction filing mismatch');
   const key=filingKey(filing);
   if(byKey.has(key))throw Error('Duplicate accession in input');
   byKey.set(key,{...filing,key});
  }
  const superseded=new Set(),unresolved=[],uncertainIssuers=new Set();
  for(const filing of byKey.values()){
-  const amendment=filing.transactions.some(t=>t.formType==='4/A')||filing.formType==='4/A';
+  const amendment=filing.formType==='4/A';
   if(!amendment)continue;
   const original=filing.amendsAccession;
   if(!accessionOk(original)){uncertainIssuers.add(issuerKey(filing.cik));unresolved.push({accession:filing.accession,reason:'missing_original_accession'});continue}
