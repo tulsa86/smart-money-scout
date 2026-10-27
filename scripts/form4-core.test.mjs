@@ -41,3 +41,6 @@ test('XML rejects unquoted attributes',()=>{assert.throws(()=>extractForm4Purcha
 test('XML rejects unterminated attribute quotes',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer id="bad>'),meta),/Malformed XML attributes/)});
 test('XML rejects duplicate attribute names',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer id="a" id="b">'),meta),/Duplicate XML attribute/)});
 test('XML accepts quoted attributes on issuer elements',()=>{assert.equal(extractForm4Purchases(wrap().replace('<issuer>','<issuer id="ok">'),meta).length,1)});
+
+test('XML rejects declarations after ownership root',()=>{assert.throws(()=>extractForm4Purchases(wrap()+'<?xml version="1.0"?>',meta),/Malformed XML declaration/)});
+test('XML rejects mismatched qualified namespace closing tags',()=>{const x=wrap().replace('<ownershipDocument>','<a:ownershipDocument>').replace('</ownershipDocument>','</b:ownershipDocument>');assert.throws(()=>extractForm4Purchases(x,meta),/closing tag mismatch/)});
