@@ -47,3 +47,5 @@ test('XML rejects mismatched qualified namespace closing tags',()=>{const x=wrap
 
 test('XML accepts a literal greater-than character inside quoted attributes',()=>{const x=wrap().replace('<issuer>','<issuer note="a>b">');assert.equal(extractForm4Purchases(x,meta).length,1)});
 test('XML rejects an unterminated attribute containing greater-than',()=>{const x=wrap().replace('<issuer>','<issuer note="a>b>');assert.throws(()=>extractForm4Purchases(x,meta),/Malformed XML/)});
+
+test('raw purchases never become investment signals from metadata',()=>{const p=extractForm4Purchases(wrap(),meta)[0];assert.equal(p.isResearchWorthy,false);assert.equal(p.investmentSignal,false);assert.equal(p.researchQuality,'not_assessed');assert.equal(p.publicAvailabilityStatus,'unknown')});
