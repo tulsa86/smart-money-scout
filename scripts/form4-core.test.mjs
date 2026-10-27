@@ -34,3 +34,5 @@ test('XML rejects malformed double-hyphen comments',()=>{assert.throws(()=>extra
 
 test('XML rejects CDATA outside the ownership root',()=>{assert.throws(()=>extractForm4Purchases('<![CDATA[unexpected]]>'+wrap(),meta),/CDATA outside/)});
 test('XML rejects multiple ownership roots',()=>{assert.throws(()=>extractForm4Purchases(wrap()+wrap(),meta),/Multiple XML roots/)});
+
+test('XML rejects malformed entity references in attributes',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer bad="&bogus;">'),meta),/entity/)});
