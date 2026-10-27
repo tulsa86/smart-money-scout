@@ -1,7 +1,7 @@
 import {parseOwnershipXml,children,first,val} from './form4-xml.mjs';
 // SEC Form 4 Table I reported purchase candidates, NOT investment signals.
 const numeric=v=>v!==null&&/^\d+(?:\.\d+)?$/.test(v)?Number(v):null;
-const dateOk=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!Number.isNaN(Date.parse(v+'T00:00:00Z'));
+const dateOk=v=>{if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;const d=new Date(v+'T00:00:00Z');return !Number.isNaN(d.valueOf())&&d.toISOString().slice(0,10)===v};
 const common=v=>typeof v==='string'&&/\b(common stock|common shares|ordinary shares|class [a-z] common|class [a-z] ordinary)\b/i.test(v);
 const text=node=>node?.text?.trim()||null;
 export function extractForm4Purchases(xml,{ticker,cik,accession,filingUrl,filedAt}={}){
