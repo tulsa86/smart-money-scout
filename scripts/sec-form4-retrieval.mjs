@@ -31,10 +31,11 @@ export async function fetchRecentOwnershipFilings(cik,{fetchImpl=fetch,userAgent
  if(BigInt(submissions.cik)!==BigInt(cik))throw Error('SEC submissions issuer CIK mismatch');
  return indexRecentOwnershipFilings(submissions,{limit});
 }
-export function selectOwnershipXml(index){
+export function selectOwnershipXml(index,{primaryDocument}={}){
  const items=index?.directory?.item;
  if(!Array.isArray(items))throw Error('Invalid SEC archive index');
- const candidates=items.filter(i=>typeof i?.name==='string'&&/^[\w.-]+\.xml$/i.test(i.name)&&!/^(?:index|filing-summary|metadata)\.xml$/i.test(i.name));
+ const candidates=items.filter(i=>typeof i?.name==='string'&&/^[\w.-]+\.xml$/i.test(i.name)&&!/^(?:index|filing[-_]?summary|metadata)\.xml$/i.test(i.name));
+ if(typeof primaryDocument==='string'&&/^[\w.-]+\.xml$/i.test(primaryDocument)&&candidates.some(i=>i.name===primaryDocument))return primaryDocument;
  if(candidates.length!==1)throw Error('Ownership XML requires manual selection');
  return candidates[0].name;
 }
@@ -42,7 +43,7 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  if(!filing||!['4','4/A'].includes(filing.formType)||!filing.filingIndexUrl||!filing.primaryDocumentUrl)throw Error('Invalid indexed Form 4');
  const indexUrl=allowedUrl(filing.filingIndexUrl+'index.json');
  const index=JSON.parse(await fetchSecText(indexUrl,{fetchImpl,userAgent,signal}));
- const xmlName=selectOwnershipXml(index);
+ const xmlName=selectOwnershipXml(index,{primaryDocument:filing.primaryDocument});
  const xmlUrl=allowedUrl(filing.filingIndexUrl+xmlName);
  const xml=await fetchSecText(xmlUrl,{fetchImpl,userAgent,signal});
  const actualForm=val(parseOwnershipXml(xml),'documentType');
