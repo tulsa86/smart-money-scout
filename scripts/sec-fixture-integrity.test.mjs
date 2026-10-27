@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {resolve,join} from 'node:path';
 import {parseOwnershipXml,val} from './form4-xml.mjs';
+import {extractForm4Purchases} from './form4-core.mjs';
 
 const directory=resolve('tests/fixtures/sec');
 const manifest=JSON.parse(readFileSync(join(directory,'manifest.json'),'utf8'));
@@ -22,5 +23,13 @@ test('SEC fixture manifest schema and genuine-source provenance',()=>{
   assert.equal(createHash('sha256').update(xml).digest('hex'),item.sha256);
   const root=parseOwnershipXml(xml.toString('utf8'));
   assert.ok(['4','4/A'].includes(val(root,'documentType')));
+  if(item.accession==='0000080424-26-000218'){
+   assert.equal(val(root,'documentType'),'4');
+   assert.equal(val(root.children.find(n=>n.name==='issuer'),'issuerCik'),'0000080424');
+   const tx=root.children.find(n=>n.name==='nonDerivativeTable')?.children.find(n=>n.name==='nonDerivativeTransaction');
+   assert.equal(val(tx.children.find(n=>n.name==='transactionCoding'),'transactionCode'),'A');
+   assert.equal(val(tx.children.find(n=>n.name==='transactionAmounts'),'transactionPricePerShare'),'0');
+   assert.deepEqual(extractForm4Purchases(xml.toString('utf8'),{ticker:'PG',cik:'80424',accession:item.accession,filingUrl:item.sourceUrl}),[]);
+  }
  }
 });
