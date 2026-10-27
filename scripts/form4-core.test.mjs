@@ -18,3 +18,5 @@ test('XML parser rejects malformed closing tags and DTD',()=>{assert.throws(()=>
 test('plan footnote prompts review, never automatically marks a scheduled plan',()=>{const x=wrap().replace('</ownershipDocument>','<footnotes><footnote id="F1">Rule 10b5-1 plan referenced</footnote></footnotes></ownershipDocument>');assert.equal(extractForm4Purchases(x,meta)[0].rule10b5_1,'requires_review')});
 
 test('rejects impossible calendar dates',()=>{assert.equal(extractForm4Purchases(wrap().replace('2026-10-26','2026-02-30'),meta).length,0)});
+
+test('10b5-1 flag within transactionCoding is honored',()=>{const x=wrap().replace('<transactionCode>P</transactionCode>','<transactionCode>P</transactionCode><aff10b5One>1</aff10b5One>');assert.equal(extractForm4Purchases(x,meta)[0].rule10b5_1,'yes')});
