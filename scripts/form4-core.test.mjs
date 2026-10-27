@@ -7,9 +7,9 @@ test('extracts a verified coded purchase and preserves provenance',()=>{const p=
 test('rejects sales, grants, dispositions and missing prices',()=>{for(const xml of [wrap('S'),wrap('A'),wrap('P','D'),wrap('P','A','')])assert.equal(extractForm4Purchases(xml,meta).length,0)});
 test('rejects mismatched issuer and invalid document',()=>{assert.throws(()=>extractForm4Purchases(wrap(),{...meta,cik:'0000000001'}),/mismatch/);assert.throws(()=>extractForm4Purchases('<notForm/>',meta),/Invalid ownership/);assert.throws(()=>extractForm4Purchases(wrap().replace('<documentType>4</documentType>','<documentType>5</documentType>'),meta),/Not a Form/)});
 
-test('zero transactions',()=>{assert.equal(extractForm4Purchases(wrap().replace(/<nonDerivativeTransaction>[\\s\\S]*?<\\/nonDerivativeTransaction>/,''),meta).length,0)});
+test('zero transactions',()=>{assert.equal(extractForm4Purchases(wrap().replace(/<nonDerivativeTransaction>[\s\S]*?<\/nonDerivativeTransaction>/,''),meta).length,0)});
 test('zero price and dollar-formatted price are rejected',()=>{for(const price of ['0','$14.50'])assert.equal(extractForm4Purchases(wrap('P','A',price),meta).length,0)});
-test('multiple transactions stay separate',()=>{const x=wrap();const t=x.match(/<nonDerivativeTransaction>[\\s\\S]*?<\\/nonDerivativeTransaction>/)[0];assert.equal(extractForm4Purchases(x.replace(t,t+t),meta).length,2)});
+test('multiple transactions stay separate',()=>{const x=wrap();const t=x.match(/<nonDerivativeTransaction>[\s\S]*?<\/nonDerivativeTransaction>/)[0];assert.equal(extractForm4Purchases(x.replace(t,t+t),meta).length,2)});
 test('amendments are not assumed reconciled',()=>{const p=extractForm4Purchases(wrap().replace('<documentType>4</documentType>','<documentType>4/A</documentType>'),meta);assert.equal(p[0].amendmentStatus,'requires_reconciliation')});
 test('Table II P is ignored',()=>{const x=wrap().replace('nonDerivativeTable','derivativeTable').replace('nonDerivativeTable','derivativeTable').replaceAll('nonDerivativeTransaction','derivativeTransaction');assert.equal(extractForm4Purchases(x,meta).length,0)});
 
