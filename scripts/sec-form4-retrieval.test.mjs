@@ -12,3 +12,5 @@ test('retrieves source XML and preserves filing provenance',async()=>{const requ
 test('HTTP failures propagate rather than producing empty data',async()=>{await assert.rejects(fetchSecText(base+'index.json',{userAgent:ua,fetchImpl:async()=>({ok:false,status:429,headers:{get:()=>null}})}),/429/)});
 
 test('SEC fetch explicitly rejects HTTP redirects',async()=>{let redirect;await fetchSecText(base+'index.json',{userAgent:ua,fetchImpl:async(_url,opts)=>{redirect=opts.redirect;return response('{}')}});assert.equal(redirect,'error')});
+
+test('streamed SEC responses are size-limited before full buffering',async()=>{let reads=0;const stream=new ReadableStream({pull(controller){reads++;controller.enqueue(new Uint8Array(3_000_000));if(reads===2)controller.close()}});await assert.rejects(fetchSecText(base+'index.json',{userAgent:ua,fetchImpl:async()=>({ok:true,headers:{get:()=>null},body:stream})}),/too large/)});
