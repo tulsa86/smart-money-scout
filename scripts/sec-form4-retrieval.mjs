@@ -42,7 +42,7 @@ export function selectOwnershipXml(index,{primaryDocument}={}){
 export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,signal}={}){
  if(!filing||!['4','4/A'].includes(filing.formType)||!filing.filingIndexUrl||!filing.primaryDocumentUrl)throw Error('Invalid indexed Form 4');
  const accession=filing.accession;
- if(typeof accession!=='string'||!/^\d{10}-\d{2}-\d{6}$/.test(accession)||!/^\d{1,10}$/.test(String(filing.cik))||BigInt(filing.cik)===0n)throw Error('Invalid filing identity');
+ if(typeof accession!=='string'||!/^\d{10}-\d{2}-\d{6}$/.test(accession)||filing.cik!==null&&filing.cik!==undefined&&(!/^\d{1,10}$/.test(String(filing.cik))||BigInt(filing.cik)===0n))throw Error('Invalid filing identity');
  const expectedArchiveCik=String(BigInt(accession.slice(0,10)));
  const expectedBase='https://www.sec.gov/Archives/edgar/data/'+expectedArchiveCik+'/'+accession.replaceAll('-','')+'/';
  if(filing.filingIndexUrl!==expectedBase||!filing.primaryDocumentUrl.startsWith(expectedBase))throw Error('SEC archive identity mismatch');
@@ -51,9 +51,13 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  const xmlName=selectOwnershipXml(index,{primaryDocument:filing.primaryDocument});
  const xmlUrl=allowedUrl(filing.filingIndexUrl+xmlName);
  const xml=await fetchSecText(xmlUrl,{fetchImpl,userAgent,signal});
- const actualForm=val(parseOwnershipXml(xml),'documentType');
+ const root=parseOwnershipXml(xml);
+ const actualForm=val(root,'documentType');
+ const issuerCik=val(root.children.find(n=>n.name==='issuer'),'issuerCik');
+ if(!/^\d{1,10}$/.test(String(issuerCik??''))||BigInt(issuerCik)===0n)throw Error('Missing Form 4 issuer CIK');
+ if(filing.cik!==null&&filing.cik!==undefined&&BigInt(filing.cik)!==BigInt(issuerCik))throw Error('Form 4 issuer CIK mismatch');
  if(actualForm!==filing.formType)throw Error('Indexed filing type mismatch');
- const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:filing.cik,accession:filing.accession,filingUrl:xmlUrl});
+ const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:issuerCik,accession:filing.accession,filingUrl:xmlUrl});
  if(transactions.some(t=>t.formType!==filing.formType))throw Error('Indexed filing type mismatch');
- return {accession:filing.accession,cik:filing.cik,formType:filing.formType,filingDate:filing.filingDate,acceptanceTime:filing.acceptanceTime??null,acceptanceTimezone:filing.acceptanceTimezone??null,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
+ return {accession:filing.accession,cik:String(BigInt(issuerCik)),submitterCik:filing.submitterCik??null,formType:filing.formType,filingDate:filing.filingDate,acceptanceTime:filing.acceptanceTime??null,acceptanceTimezone:filing.acceptanceTimezone??null,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
 }
