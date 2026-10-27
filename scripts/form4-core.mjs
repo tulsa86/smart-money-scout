@@ -4,7 +4,7 @@ const numeric=v=>v!==null&&/^\d+(?:\.\d+)?$/.test(v)?Number(v):null;
 const dateOk=v=>{if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;const d=new Date(v+'T00:00:00Z');return !Number.isNaN(d.valueOf())&&d.toISOString().slice(0,10)===v};
 const common=v=>typeof v==='string'&&/\b(common stock|common shares|ordinary shares|class [a-z] common|class [a-z] ordinary)\b/i.test(v);
 const text=node=>node?.text?.trim()||null;
-export function extractForm4Purchases(xml,{ticker,cik,accession,filingUrl,filedAt}={}){
+export function extractForm4Purchases(xml,{ticker,cik,accession,filingUrl}={}){
  const root=parseOwnershipXml(xml);
  const form=val(root,'documentType');
  if(form!=='4'&&form!=='4/A')throw Error('Not a Form 4 filing');
@@ -29,7 +29,7 @@ export function extractForm4Purchases(xml,{ticker,cik,accession,filingUrl,filedA
    const explicit=flag==='1'||flag==='true'?'yes':flag==='0'||flag==='false'?'no':'unknown';
    const possiblePlanReference=footnotes.some(s=>/10b5[\s-]?1|rule\s*10b5|pre.arranged/i.test(s));
    const rule10b5_1=explicit==='yes'?'yes':possiblePlanReference?'requires_review':explicit;
-   output.push({ticker,cik,accession,filingUrl,filedAt,publicAvailabilityStatus:'unknown',researchQuality:'not_assessed',isResearchWorthy:false,investmentSignal:false,formType:form,transactionDate:date,ownerNames,ownerCiks,securityTitle,shares,pricePerShare:price,reportedPurchaseValue:Math.round(shares*price*100)/100,sharesOwnedAfter:numeric(val(first(tx,'postTransactionAmounts'),'sharesOwnedFollowingTransaction')),transactionCode:'P',acquiredDisposedCode:'A',rule10b5_1,ownerAttribution:owners.length===1?'single_reporting_owner':owners.length>1?'multiple_reporting_owners_requires_review':'missing_reporting_owner_requires_review',amendmentStatus:form==='4/A'?'requires_reconciliation':'original',classification:'reported_purchase_candidate',source:'SEC Form 4',note:'Table I reported common-equity purchase candidate. Code P may include private purchases; no investment implication. Amendments require reconciliation.'});
+   output.push({ticker,cik,accession,filingUrl,filedAt:null,publicAvailabilityStatus:'unknown',researchQuality:'not_assessed',isResearchWorthy:false,investmentSignal:false,formType:form,transactionDate:date,ownerNames,ownerCiks,securityTitle,shares,pricePerShare:price,reportedPurchaseValue:Math.round(shares*price*100)/100,sharesOwnedAfter:numeric(val(first(tx,'postTransactionAmounts'),'sharesOwnedFollowingTransaction')),transactionCode:'P',acquiredDisposedCode:'A',rule10b5_1,ownerAttribution:owners.length===1?'single_reporting_owner':owners.length>1?'multiple_reporting_owners_requires_review':'missing_reporting_owner_requires_review',amendmentStatus:form==='4/A'?'requires_reconciliation':'original',classification:'reported_purchase_candidate',source:'SEC Form 4',note:'Table I reported common-equity purchase candidate. Code P may include private purchases; no investment implication. Amendments require reconciliation.'});
   }
  }
  return output;
