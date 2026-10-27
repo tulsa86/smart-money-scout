@@ -1,0 +1,42 @@
+name: Collect genuine SEC Form 4 fixture
+on:
+  workflow_dispatch:
+    inputs:
+      archive_cik:
+        description: 'Archive filer CIK (not necessarily issuer CIK)'
+        required: true
+        type: string
+      accession:
+        description: 'SEC accession, e.g. 0001234567-26-000001'
+        required: true
+        type: string
+      document_name:
+        description: 'Actual XML filename from SEC filing archive index'
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Fetch and validate authentic SEC XML
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          ARCHIVE_CIK: ${{ inputs.archive_cik }}
+          ACCESSION: ${{ inputs.accession }}
+          DOCUMENT_NAME: ${{ inputs.document_name }}
+        run: node scripts/sec-collect-fixture.mjs "$ARCHIVE_CIK" "$ACCESSION" "$DOCUMENT_NAME"
+      - name: Preserve original SEC bytes and checksum manifest
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: genuine-sec-xml-fixture
+          path: sec-fixture-output/
+          retention-days: 30
+          if-no-files-found: error
