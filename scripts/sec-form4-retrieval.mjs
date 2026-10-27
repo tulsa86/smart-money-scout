@@ -59,7 +59,18 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  if(!/^\d{1,10}$/.test(String(issuerCik??''))||BigInt(issuerCik)===0n)throw Error('Missing Form 4 issuer CIK');
  if(filing.cik!==null&&filing.cik!==undefined&&BigInt(filing.cik)!==BigInt(issuerCik))throw Error('Form 4 issuer CIK mismatch');
  if(actualForm!==filing.formType)throw Error('Indexed filing type mismatch');
+ // SEC submissions acceptanceDateTime is an Eastern wall-clock timestamp, not UTC.
+ // Preserve its provenance and never substitute transactionDate for public availability.
+ const rawAcceptance=filing.acceptanceTime;
+ const acceptanceValid=typeof rawAcceptance==='string'&&/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?$/.test(rawAcceptance)&&filing.acceptanceTimezone==='America/New_York';
+ const publicAvailabilityStatus=acceptanceValid?'sec_acceptance_time_publication_unverified':'unknown';
  const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:issuerCik,accession:filing.accession,filingUrl:xmlUrl});
+ for(const transaction of transactions){
+  transaction.filedAt=null;
+  transaction.secAcceptanceTime=acceptanceValid?rawAcceptance:null;
+  transaction.secAcceptanceTimezone=acceptanceValid?'America/New_York':null;
+  transaction.publicAvailabilityStatus=publicAvailabilityStatus;
+ }
  if(transactions.some(t=>t.formType!==filing.formType))throw Error('Indexed filing type mismatch');
- return {accession:filing.accession,cik:String(BigInt(issuerCik)),submitterCik:filing.submitterCik??null,formType:filing.formType,filingDate:filing.filingDate,acceptanceTime:filing.acceptanceTime??null,acceptanceTimezone:filing.acceptanceTimezone??null,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
+ return {accession:filing.accession,cik:String(BigInt(issuerCik)),submitterCik:filing.submitterCik??null,formType:filing.formType,filingDate:filing.filingDate,acceptanceTime:filing.acceptanceTime??null,acceptanceTimezone:filing.acceptanceTimezone??null,sourceUrl:xmlUrl,publicAvailabilityStatus,transactions,validationStatus:'parsed_not_reconciled'};
 }
