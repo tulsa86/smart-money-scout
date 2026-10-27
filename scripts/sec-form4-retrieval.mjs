@@ -11,7 +11,7 @@ const allowedUrl=url=>{
 export async function fetchSecText(url,{fetchImpl=fetch,userAgent,signal}={}){
  if(typeof userAgent!=='string'||!/.+@.+\..+/.test(userAgent)||userAgent.length>200)throw Error('SEC contact User-Agent required');
  const safe=allowedUrl(url);
- const response=await fetchImpl(safe,{headers:{'User-Agent':userAgent,'Accept':'application/xml,text/xml,application/json,text/plain'},signal});
+ const response=await fetchImpl(safe,{headers:{'User-Agent':userAgent,'Accept':'application/xml,text/xml,application/json,text/plain'},redirect:'error',signal});
  if(!response.ok)throw Error('SEC HTTP '+response.status);
  const size=Number(response.headers?.get?.('content-length'));
  if(Number.isFinite(size)&&size>MAX_BYTES)throw Error('SEC response too large');
@@ -35,7 +35,7 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  const xml=await fetchSecText(xmlUrl,{fetchImpl,userAgent,signal});
  const actualForm=val(parseOwnershipXml(xml),'documentType');
  if(actualForm!==filing.formType)throw Error('Indexed filing type mismatch');
- const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:filing.cik,accession:filing.accession,filingUrl:xmlUrl,filedAt:filing.filingDate});
+ const transactions=extractForm4Purchases(xml,{ticker:filing.ticker,cik:filing.cik,accession:filing.accession,filingUrl:xmlUrl});
  if(transactions.some(t=>t.formType!==filing.formType))throw Error('Indexed filing type mismatch');
- return {accession:filing.accession,cik:filing.cik,formType:filing.formType,filingDate:filing.filingDate,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
+ return {accession:filing.accession,cik:filing.cik,formType:filing.formType,filingDate:filing.filingDate,acceptanceTime:null,sourceUrl:xmlUrl,transactions,validationStatus:'parsed_not_reconciled'};
 }
