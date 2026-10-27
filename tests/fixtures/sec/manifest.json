@@ -1,4 +1,12 @@
 {
   "schemaVersion": 1,
-  "filings": []
+  "filings": [
+    {
+      "file": "0000080424-26-000218.xml",
+      "accession": "0000080424-26-000218",
+      "sourceUrl": "https://www.sec.gov/Archives/edgar/data/80424/000008042426000218/form4.xml",
+      "retrievedAt": "2026-10-27T19:21:31.437Z",
+      "sha256": "055cf9077856c2d0468bd967da2920b269b051199d4d674d0fe80abde7a408ab"
+    }
+  ]
 }
