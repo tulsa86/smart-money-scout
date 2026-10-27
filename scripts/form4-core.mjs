@@ -1,31 +1,35 @@
-// Deterministic Form 4 non-derivative open-market purchase extraction.
-// A transaction is a candidate only when code P, acquired A, and complete data agree.
-// No HTML scraping, estimates, or inference from grants/derivatives.
+// Conservative Form 4 Table I purchase-candidate extraction.
+// Candidate != discretionary trade, exchange purchase, or investment signal.
+// For production ingestion replace this minimal XML reader with a schema-aware parser.
 const blocks=(xml,tag)=>[...xml.matchAll(new RegExp('<(?:[\\w.-]+:)?'+tag+'(?:\\s[^>]*)?>([\\s\\S]*?)<\\/(?:[\\w.-]+:)?'+tag+'>','g'))].map(m=>m[1]);
-const value=(xml,tag)=>{const block=blocks(xml,tag)[0];if(block===undefined)return null;const v=blocks(block,'value')[0]??block;return v.replace(/<[^>]*>/g,'').trim()||null;};
-const number=(v)=>v!==null&&/^(?:\d+)(?:\.\d+)?$/.test(v)?Number(v):null;
+const value=(xml,tag)=>{const b=blocks(xml,tag)[0];if(b===undefined)return null;return (blocks(b,'value')[0]??b).replace(/<[^>]*>/g,'').trim()||null;};
+const numeric=v=>v!==null&&/^\d+(?:\.\d+)?$/.test(v)?Number(v):null;
+const dateOk=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!Number.isNaN(Date.parse(v+'T00:00:00Z'));
+const common=v=>typeof v==='string'&&/\b(common stock|common shares|ordinary shares|class [a-z] common|class [a-z] ordinary)\b/i.test(v);
 export function extractForm4Purchases(xml,{ticker,cik,accession,filingUrl,filedAt}={}){
- if(typeof xml!=='string'||!xml.includes('ownershipDocument'))throw Error('Not a Form 4 ownership document');
+ if(typeof xml!=='string'||!/<ownershipDocument(?:\s|>)/.test(xml))throw Error('Not a Form 4 ownership document');
  const form=value(xml,'documentType');
  if(form!=='4'&&form!=='4/A')throw Error('Not a Form 4 filing');
- const issuers=blocks(xml,'issuer');
- const issuerCik=issuers.length?value(issuers[0],'issuerCik'):null;
- if(!issuerCik||String(Number(issuerCik))!==String(Number(cik)))throw Error('Issuer CIK mismatch');
+ const issuer=blocks(xml,'issuer')[0],issuerCik=issuer?value(issuer,'issuerCik'):null;
+ if(!issuerCik||!/^\d+$/.test(issuerCik)||!/^\d+$/.test(String(cik??''))||BigInt(issuerCik)!==BigInt(cik))throw Error('Issuer CIK mismatch');
  const owners=blocks(xml,'reportingOwner');
  const ownerNames=owners.map(o=>value(o,'rptOwnerName')).filter(Boolean);
+ const ownerCiks=owners.map(o=>value(o,'rptOwnerCik')).filter(Boolean);
  const output=[];
  for(const table of blocks(xml,'nonDerivativeTable')){
   for(const tx of blocks(table,'nonDerivativeTransaction')){
    const coding=blocks(tx,'transactionCoding')[0]??'';
    const amounts=blocks(tx,'transactionAmounts')[0]??'';
-   const code=value(coding,'transactionCode'),acquired=value(amounts,'transactionAcquiredDisposedCode');
-   if(code!=='P'||acquired!=='A')continue;
-   const shares=number(value(amounts,'transactionShares')),price=number(value(amounts,'transactionPricePerShare'));
+   if(value(coding,'transactionCode')!=='P'||value(amounts,'transactionAcquiredDisposedCode')!=='A')continue;
+   const securityTitle=value(blocks(tx,'securityTitle')[0]??'','value');
+   if(!common(securityTitle))continue;
+   const shares=numeric(value(amounts,'transactionShares')),price=numeric(value(amounts,'transactionPricePerShare'));
    const date=value(blocks(tx,'transactionDate')[0]??'','value');
-   if(!shares||price===null||!Number.isFinite(shares*price)||!/^\d{4}-\d{2}-\d{2}$/.test(date??''))continue;
-   const amount=shares*price;
+   if(shares===null||shares<=0||price===null||price<=0||!Number.isFinite(shares*price)||!dateOk(date))continue;
    const post=blocks(tx,'postTransactionAmounts')[0]??'';
-   output.push({ticker,cik,accession,filingUrl,filedAt,transactionDate:date,ownerNames,shares,pricePerShare:price,reportedPurchaseValue:Math.round(amount*100)/100,sharesOwnedAfter:number(value(post,'sharesOwnedFollowingTransaction')),transactionCode:'P',acquiredDisposedCode:'A',source:'SEC Form 4',note:'Reported open-market acquisition; not independently verified as discretionary or unscheduled'});
+   const planFlag=value(tx,'aff10b5One')??value(xml,'aff10b5One');
+   const rule10b5_1=planFlag==='1'||planFlag==='true'?'yes':planFlag==='0'||planFlag==='false'?'no':'unknown';
+   output.push({ticker,cik,accession,filingUrl,filedAt,formType:form,transactionDate:date,ownerNames,ownerCiks,securityTitle,shares,pricePerShare:price,reportedPurchaseValue:Math.round(shares*price*100)/100,sharesOwnedAfter:numeric(value(post,'sharesOwnedFollowingTransaction')),transactionCode:'P',acquiredDisposedCode:'A',rule10b5_1,amendmentStatus:form==='4/A'?'requires_reconciliation':'original',classification:'reported_purchase_candidate',source:'SEC Form 4',note:'Table I reported common-equity purchase candidate. Code P may include private purchases. Footnotes and amendment lineage require review.'});
   }
  }
  return output;
