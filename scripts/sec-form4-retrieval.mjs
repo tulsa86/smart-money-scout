@@ -20,7 +20,7 @@ export async function fetchSecText(url,{fetchImpl=fetch,userAgent,signal}={}){
  if(Number.isFinite(size)&&size>MAX_BYTES)throw Error('SEC response too large');
  if(!response.body?.getReader){const text=await response.text();if(Buffer.byteLength(text,'utf8')>MAX_BYTES)throw Error('SEC response too large');return text;}
  const reader=response.body.getReader(),chunks=[];let total=0;
- try{while(true){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>MAX_BYTES)throw Error('SEC response too large');chunks.push(value)}}finally{reader.releaseLock()}
+ try{while(true){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>MAX_BYTES){await reader.cancel('SEC response too large');throw Error('SEC response too large')}chunks.push(value)}}finally{reader.releaseLock()}
  return Buffer.concat(chunks.map(x=>Buffer.from(x)),total).toString('utf8');
 }
 export async function fetchRecentOwnershipFilings(cik,{fetchImpl=fetch,userAgent,signal,limit=100}={}){
