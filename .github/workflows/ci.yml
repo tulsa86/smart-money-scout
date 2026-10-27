@@ -22,6 +22,20 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Test suite (offline)
-        run: npm test
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee test-output.log
       - name: Build
-        run: npm run build
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee build-output.log
+      - name: Upload reproducible CI logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: node24-ci-logs
+          path: |
+            test-output.log
+            build-output.log
+          if-no-files-found: warn
+          retention-days: 14
