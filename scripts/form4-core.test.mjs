@@ -27,3 +27,7 @@ test('XML rejects unknown entities instead of silently preserving corrupted valu
 test('XML rejects stray text outside ownership document',()=>{assert.throws(()=>extractForm4Purchases('unexpected'+wrap(),meta),/outside ownership/)});
 
 test('XML accepts standard escaped ampersands in reporting owner names',()=>{const x=wrap().replace('Example Officer','Smith &amp; Jones');assert.equal(extractForm4Purchases(x,meta)[0].ownerNames[0],'Smith & Jones')});
+
+test('XML rejects forbidden numeric control characters',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('Example Officer','Example &#0; Officer'),meta),/Invalid XML character/)});
+test('XML accepts numeric newline references',()=>{assert.equal(extractForm4Purchases(wrap().replace('Example Officer','Example&#10;Officer'),meta)[0].ownerNames[0],'Example\nOfficer')});
+test('XML rejects malformed double-hyphen comments',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<!--bad--comment--><issuer>'),meta),/Malformed XML comment/)});
