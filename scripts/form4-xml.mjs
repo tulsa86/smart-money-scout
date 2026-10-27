@@ -24,9 +24,17 @@ export function parseOwnershipXml(xml){
   if(token.startsWith('<')){
    if(stack.length===1&&root.children.length)throw Error('Multiple XML roots');
    const m=token.match(/^<([\w.:-]+)(?:\s[^<>]*?)?\s*\/?>$/);if(!m)throw Error('Malformed XML tag');
-   // Validate entity references in attributes too; otherwise malformed XML can be silently accepted.
-   const attributes=token.slice(1+ m[1].length,token.length-(token.endsWith('/>')?2:1));
-   for(const quoted of attributes.matchAll(/(["'])(.*?)\1/g))decode(quoted[2]);
+   // Consume every attribute: reject unquoted values, broken quotes and duplicate names.
+   let attributes=token.slice(1+m[1].length,token.length-(token.endsWith('/>')?2:1));
+   const attributeNames=new Set();
+   while(attributes.trim()){
+    const attribute=/^\s+([A-Za-z_:][\w.:-]*)\s*=\s*(["'])(.*?)\2/s.exec(attributes);
+    if(!attribute)throw Error('Malformed XML attributes');
+    if(attributeNames.has(attribute[1]))throw Error('Duplicate XML attribute');
+    attributeNames.add(attribute[1]);
+    decode(attribute[3]);
+    attributes=attributes.slice(attribute[0].length);
+   }
    const node={name:m[1].split(':').at(-1),children:[],text:''};stack.at(-1).children.push(node);
    if(!token.endsWith('/>'))stack.push(node);
   }else {if(stack.length===1&&token.trim())throw Error('Text outside ownership XML root');stack.at(-1).text+=decode(token)}
