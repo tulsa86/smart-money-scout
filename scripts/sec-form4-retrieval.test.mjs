@@ -14,3 +14,5 @@ test('HTTP failures propagate rather than producing empty data',async()=>{await 
 test('SEC fetch explicitly rejects HTTP redirects',async()=>{let redirect;await fetchSecText(base+'index.json',{userAgent:ua,fetchImpl:async(_url,opts)=>{redirect=opts.redirect;return response('{}')}});assert.equal(redirect,'error')});
 
 test('streamed SEC responses are size-limited before full buffering',async()=>{let reads=0;const stream=new ReadableStream({pull(controller){reads++;controller.enqueue(new Uint8Array(3_000_000));if(reads===2)controller.close()}});await assert.rejects(fetchSecText(base+'index.json',{userAgent:ua,fetchImpl:async()=>({ok:true,headers:{get:()=>null},body:stream})}),/too large/)});
+
+test('retains independently supplied SEC acceptance time',async()=>{const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);const r=await retrieveForm4Candidate({...filing,acceptanceTime:'2026-10-27T18:12:00.000Z'},{userAgent:ua,fetchImpl});assert.equal(r.acceptanceTime,'2026-10-27T18:12:00.000Z')});
