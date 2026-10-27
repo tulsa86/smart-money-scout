@@ -63,3 +63,24 @@ test('retrieval rejects conflicting known issuer and ownership XML',async()=>{
  const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);
  await assert.rejects(retrieveForm4Candidate({...filing,cik:'1234'},{userAgent:ua,fetchImpl}),/issuer CIK mismatch/);
 });
+
+
+test('end-to-end discovery to XML resolves issuer distinct from submissions filer',async()=>{
+ const filingAccession='0000320193-26-000001';
+ const issuerXml=xml.replace('<issuerCik>320193</issuerCik>','<issuerCik>1234</issuerCik>');
+ const fetchImpl=async url=>{
+  if(url.includes('data.sec.gov/submissions/'))return response(JSON.stringify({cik:320193,filings:{recent:{accessionNumber:[filingAccession],form:['4'],filingDate:['2026-10-27'],primaryDocument:['primary.html'],acceptanceDateTime:['2026-10-27T16:20:00']}}}));
+  if(url.endsWith('/index.json'))return response(JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}));
+  if(url.endsWith('/ownership.xml'))return response(issuerXml);
+  throw Error('Unexpected URL: '+url);
+ };
+ const filings=await fetchRecentOwnershipFilings('320193',{userAgent:ua,fetchImpl});
+ assert.equal(filings[0].cik,null);
+ assert.equal(filings[0].submitterCik,'320193');
+ const result=await retrieveForm4Candidate(filings[0],{userAgent:ua,fetchImpl});
+ assert.equal(result.cik,'1234');
+ assert.equal(result.submitterCik,'320193');
+ assert.equal(result.transactions[0].cik,'1234');
+ assert.equal(result.transactions[0].reportedPurchaseValue,20);
+ assert.equal(result.acceptanceTime,'2026-10-27T16:20:00');
+});
