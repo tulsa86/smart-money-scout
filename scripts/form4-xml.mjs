@@ -1,9 +1,12 @@
 // Strict, dependency-free XML tree reader for SEC ownership documents.
 // Rejects malformed XML rather than silently extracting partial transactions.
-const decode=s=>s.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi,(_,e)=>{
+const decode=s=>{const decoded=s.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi,(_,e)=>{
  if(e[0]==='#'){const n=e[1].toLowerCase()==='x'?parseInt(e.slice(2),16):parseInt(e.slice(1),10);if(n<0||n>0x10ffff||n>=0xd800&&n<=0xdfff)throw Error('Invalid XML character');return String.fromCodePoint(n)}
  return {amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"}[e.toLowerCase()]
 });
+ if(/&(?:#|[a-z])/i.test(decoded))throw Error('Unknown or malformed XML entity');
+ return decoded;
+};
 export function parseOwnershipXml(xml){
  if(typeof xml!=='string'||xml.length>5_000_000)throw Error('Invalid XML size');
  if(/<!DOCTYPE|<!ENTITY/i.test(xml))throw Error('XML DTD and entities forbidden');
@@ -21,7 +24,7 @@ export function parseOwnershipXml(xml){
    const m=token.match(/^<([\w.:-]+)(?:\s[^<>]*?)?\s*\/?>$/);if(!m)throw Error('Malformed XML tag');
    const node={name:m[1].split(':').at(-1),children:[],text:''};stack.at(-1).children.push(node);
    if(!token.endsWith('/>'))stack.push(node);
-  }else stack.at(-1).text+=decode(token);
+  }else {if(stack.length===1&&token.trim())throw Error('Text outside ownership XML root');stack.at(-1).text+=decode(token)}
  }
  if(stack.length!==1||root.children.length!==1||root.children[0].name!=='ownershipDocument')throw Error('Invalid ownership document XML');
  return root.children[0];
