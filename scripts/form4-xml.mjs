@@ -11,7 +11,7 @@ export function parseOwnershipXml(xml){
  if(typeof xml!=='string'||xml.length>5_000_000)throw Error('Invalid XML size');
  if(/<!DOCTYPE|<!ENTITY/i.test(xml))throw Error('XML DTD and entities forbidden');
  const root={name:'#document',children:[],text:''},stack=[root];
- const tokens=xml.match(/<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\?[\s\S]*?\?>|<[^>]*>|[^<]+/g)||[];
+ const tokens=xml.match(/<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\?[\s\S]*?\?>|<(?:[^>\"']|\"[^\"]*\"|'[^']*')*>|[^<]+/g)||[];
  if(tokens.join('')!==xml)throw Error('Malformed XML');
  for(const token of tokens){
   if(token.startsWith('<!--')){if(!token.endsWith('-->')||token.slice(4,-3).includes('--'))throw Error('Malformed XML comment');continue}
@@ -23,7 +23,7 @@ export function parseOwnershipXml(xml){
   }
   if(token.startsWith('<')){
    if(stack.length===1&&root.children.length)throw Error('Multiple XML roots');
-   const m=token.match(/^<([\w.:-]+)(?:\s[^<>]*?)?\s*\/?>$/);if(!m)throw Error('Malformed XML tag');
+   const m=token.match(/^<([\w.:-]+)(?:\s[\s\S]*?)?\s*\/?>$/);if(!m)throw Error('Malformed XML tag');
    // Consume every attribute: reject unquoted values, broken quotes and duplicate names.
    let attributes=token.slice(1+m[1].length,token.length-(token.endsWith('/>')?2:1));
    const attributeNames=new Set();
