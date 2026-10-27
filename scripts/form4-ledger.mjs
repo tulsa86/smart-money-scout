@@ -14,14 +14,14 @@ export function reconcileForm4Filings(filings){
   if(byKey.has(key))throw Error('Duplicate accession in input');
   byKey.set(key,{...filing,key});
  }
- const superseded=new Set(),unresolved=[];
+ const superseded=new Set(),unresolved=[],uncertainIssuers=new Set();
  for(const filing of byKey.values()){
   const amendment=filing.transactions.some(t=>t.formType==='4/A')||filing.formType==='4/A';
   if(!amendment)continue;
   const original=filing.amendsAccession;
-  if(!accessionOk(original)){unresolved.push({accession:filing.accession,reason:'missing_original_accession'});continue}
+  if(!accessionOk(original)){uncertainIssuers.add(String(filing.cik));unresolved.push({accession:filing.accession,reason:'missing_original_accession'});continue}
   const prior=byKey.get(filingKey({...filing,accession:original}));
-  if(!prior||prior.accession===filing.accession){unresolved.push({accession:filing.accession,reason:'original_not_found'});continue}
+  if(!prior||prior.accession===filing.accession){uncertainIssuers.add(String(filing.cik));unresolved.push({accession:filing.accession,reason:'original_not_found'});continue}
   // An amendment can change only selected rows. Without authoritative transaction-level
   // linkage, neither original nor amended transactions are safe to aggregate.
   superseded.add(prior.key);
@@ -29,7 +29,7 @@ export function reconcileForm4Filings(filings){
  }
  const reported=[],quarantined=[];
  for(const filing of byKey.values()){
-  const uncertain=superseded.has(filing.key)||unresolved.some(u=>u.accession===filing.accession);
+  const uncertain=superseded.has(filing.key)||uncertainIssuers.has(String(filing.cik))||unresolved.some(u=>u.accession===filing.accession);
   for(const t of filing.transactions)(uncertain?quarantined:reported).push({...t,ledgerStatus:uncertain?'requires_reconciliation':'reported_only'});
  }
  return {reported,quarantined,unresolved,supersededAccessions:[...superseded].map(k=>byKey.get(k).accession)};
