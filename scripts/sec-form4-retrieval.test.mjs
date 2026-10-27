@@ -84,3 +84,10 @@ test('end-to-end discovery to XML resolves issuer distinct from submissions file
  assert.equal(result.transactions[0].reportedPurchaseValue,20);
  assert.equal(result.acceptanceTime,'2026-10-27T16:20:00');
 });
+
+test('retrieves SEC filing when filing agent accession prefix differs from filer CIK',async()=>{
+ const agentBase='https://www.sec.gov/Archives/edgar/data/320193/000114036126040540/';
+ const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'form4.xml'}]}}):xml);
+ const r=await retrieveForm4Candidate({...filing,accession:'0001140361-26-040540',archiveCik:'320193',submitterCik:'320193',filingIndexUrl:agentBase,primaryDocumentUrl:agentBase+'form4.xml',primaryDocument:'form4.xml'},{userAgent:ua,fetchImpl});
+ assert.equal(r.cik,'320193');assert.equal(r.transactions.length,1);
+});
