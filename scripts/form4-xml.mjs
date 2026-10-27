@@ -15,10 +15,10 @@ export function parseOwnershipXml(xml){
  if(tokens.join('')!==xml)throw Error('Malformed XML');
  for(const token of tokens){
   if(token.startsWith('<!--')){if(!token.endsWith('-->')||token.slice(4,-3).includes('--'))throw Error('Malformed XML comment');continue}
-  if(token.startsWith('<?')){if(!token.endsWith('?>'))throw Error('Malformed XML declaration');continue}
+  if(token.startsWith('<?')){if(!token.endsWith('?>')||stack.length!==1||root.children.length)throw Error('Malformed XML declaration');continue}
   if(token.startsWith('<![CDATA[')){if(stack.length===1)throw Error('CDATA outside ownership XML root');stack.at(-1).text+=token.slice(9,-3);continue}
   if(token.startsWith('</')){
-   const m=token.match(/^<\/([\w.:-]+)\s*>$/);if(!m||stack.length<2||stack.at(-1).name!==m[1].split(':').at(-1))throw Error('XML closing tag mismatch');
+   const m=token.match(/^<\/([\w.:-]+)\s*>$/);if(!m||stack.length<2||stack.at(-1).qualifiedName!==m[1])throw Error('XML closing tag mismatch');
    stack.pop();continue;
   }
   if(token.startsWith('<')){
@@ -35,7 +35,7 @@ export function parseOwnershipXml(xml){
     decode(attribute[3]);
     attributes=attributes.slice(attribute[0].length);
    }
-   const node={name:m[1].split(':').at(-1),children:[],text:''};stack.at(-1).children.push(node);
+   const node={name:m[1].split(':').at(-1),qualifiedName:m[1],children:[],text:''};stack.at(-1).children.push(node);
    if(!token.endsWith('/>'))stack.push(node);
   }else {if(stack.length===1&&token.trim())throw Error('Text outside ownership XML root');stack.at(-1).text+=decode(token)}
  }
