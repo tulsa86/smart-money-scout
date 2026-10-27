@@ -14,7 +14,7 @@ export function indexRecentOwnershipFilings(submissions,{limit=100}={}){
  for(let i=0;i<n&&out.length<limit;i++){
   const form=recent.form[i],accession=recent.accessionNumber[i],filingDate=recent.filingDate[i],primaryDocument=recent.primaryDocument[i];
   if(form!=='4'&&form!=='4/A')continue;
-  if(!validAccession(accession)||!validDate(filingDate)||typeof primaryDocument!=='string'||!primaryDocument.split('/').every(segment=>/^[\w.-]+$/.test(segment)&&segment!=='.'&&segment!=='..'))throw Error('Malformed ownership filing index entry');
+  if(!validAccession(accession)||BigInt(accession.slice(0,10))!==BigInt(cik)||!validDate(filingDate)||typeof primaryDocument!=='string'||!primaryDocument.split('/').every(segment=>/^[\w.-]+$/.test(segment)&&segment!=='.'&&segment!=='..'))throw Error('Malformed ownership filing index entry');
   const rawAcceptance=recent.acceptanceDateTime?.[i];
   if(rawAcceptance!==undefined&&rawAcceptance!==null&&!validAcceptance(rawAcceptance))throw Error('Invalid SEC acceptance timestamp');
   // SEC submissions acceptanceDateTime is an Eastern local wall-clock value with no UTC offset.
