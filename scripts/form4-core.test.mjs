@@ -44,3 +44,6 @@ test('XML accepts quoted attributes on issuer elements',()=>{assert.equal(extrac
 
 test('XML rejects declarations after ownership root',()=>{assert.throws(()=>extractForm4Purchases(wrap()+'<?xml version="1.0"?>',meta),/Malformed XML declaration/)});
 test('XML rejects mismatched qualified namespace closing tags',()=>{const x=wrap().replace('<ownershipDocument>','<a:ownershipDocument>').replace('</ownershipDocument>','</b:ownershipDocument>');assert.throws(()=>extractForm4Purchases(x,meta),/closing tag mismatch/)});
+
+test('XML accepts a literal greater-than character inside quoted attributes',()=>{const x=wrap().replace('<issuer>','<issuer note="a>b">');assert.equal(extractForm4Purchases(x,meta).length,1)});
+test('XML rejects an unterminated attribute containing greater-than',()=>{const x=wrap().replace('<issuer>','<issuer note="a>b>');assert.throws(()=>extractForm4Purchases(x,meta),/Malformed XML/)});
