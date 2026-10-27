@@ -41,6 +41,11 @@ export function selectOwnershipXml(index,{primaryDocument}={}){
 }
 export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,signal}={}){
  if(!filing||!['4','4/A'].includes(filing.formType)||!filing.filingIndexUrl||!filing.primaryDocumentUrl)throw Error('Invalid indexed Form 4');
+ const accession=filing.accession;
+ if(typeof accession!=='string'||!/^\d{10}-\d{2}-\d{6}$/.test(accession)||!/^[1-9]\d{0,9}$/.test(String(filing.cik)))throw Error('Invalid filing identity');
+ const expectedArchiveCik=String(BigInt(accession.slice(0,10)));
+ const expectedBase='https://www.sec.gov/Archives/edgar/data/'+expectedArchiveCik+'/'+accession.replaceAll('-','')+'/';
+ if(filing.filingIndexUrl!==expectedBase||!filing.primaryDocumentUrl.startsWith(expectedBase))throw Error('SEC archive identity mismatch');
  const indexUrl=allowedUrl(filing.filingIndexUrl+'index.json');
  const index=JSON.parse(await fetchSecText(indexUrl,{fetchImpl,userAgent,signal}));
  const xmlName=selectOwnershipXml(index,{primaryDocument:filing.primaryDocument});
