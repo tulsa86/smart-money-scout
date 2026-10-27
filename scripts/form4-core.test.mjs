@@ -49,3 +49,6 @@ test('XML accepts a literal greater-than character inside quoted attributes',()=
 test('XML rejects an unterminated attribute containing greater-than',()=>{const x=wrap().replace('<issuer>','<issuer note="a>b>');assert.throws(()=>extractForm4Purchases(x,meta),/Malformed XML/)});
 
 test('raw purchases never become investment signals from metadata',()=>{const p=extractForm4Purchases(wrap(),meta)[0];assert.equal(p.isResearchWorthy,false);assert.equal(p.investmentSignal,false);assert.equal(p.researchQuality,'not_assessed');assert.equal(p.publicAvailabilityStatus,'unknown')});
+
+test('XML rejects literal less-than inside quoted attributes',()=>{assert.throws(()=>extractForm4Purchases(wrap().replace('<issuer>','<issuer note="a<b">'),meta),/Malformed XML attributes/)});
+test('XML accepts escaped less-than inside quoted attributes',()=>{assert.equal(extractForm4Purchases(wrap().replace('<issuer>','<issuer note="a&lt;b">'),meta).length,1)});
