@@ -1,7 +1,7 @@
 // SEC submissions discovery only: does not fetch or validate ownership XML.
 const validAccession=x=>typeof x==='string'&&/^\d{10}-\d{2}-\d{6}$/.test(x);
 const validDate=x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)&&!Number.isNaN(Date.parse(x))&&new Date(x).toISOString().slice(0,10)===x;
-const validAcceptance=x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(x)&&!Number.isNaN(Date.parse(x));
+const validAcceptance=x=>{if(typeof x!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/.test(x))return false;const [date,time]=x.split('T');const [h,m,s]=time.split(':').map(Number);return validDate(date)&&h<=23&&m<=59&&s<60};
 export function indexRecentOwnershipFilings(submissions,{limit=100}={}){
  const cik=submissions?.cik;
  if(!Number.isSafeInteger(cik)||cik<=0)throw Error('Invalid SEC submissions CIK');
@@ -17,12 +17,14 @@ export function indexRecentOwnershipFilings(submissions,{limit=100}={}){
   if(!validAccession(accession)||!validDate(filingDate)||typeof primaryDocument!=='string'||!primaryDocument.split('/').every(segment=>/^[\w.-]+$/.test(segment)&&segment!=='.'&&segment!=='..'))throw Error('Malformed ownership filing index entry');
   const rawAcceptance=recent.acceptanceDateTime?.[i];
   if(rawAcceptance!==undefined&&rawAcceptance!==null&&!validAcceptance(rawAcceptance))throw Error('Invalid SEC acceptance timestamp');
-  const acceptanceTime=validAcceptance(rawAcceptance)?new Date(rawAcceptance).toISOString():null;
+  // SEC submissions acceptanceDateTime is an Eastern local wall-clock value with no UTC offset.
+  // Never parse it as machine-local or UTC; DST ambiguity needs separate resolution.
+  const acceptanceTime=validAcceptance(rawAcceptance)?rawAcceptance:null;
   if(seen.has(accession))throw Error('Duplicate SEC accession in recent index');
   seen.add(accession);
   const directory=accession.replaceAll('-','');
   const base='https://www.sec.gov/Archives/edgar/data/'+cikDigits+'/'+directory+'/';
-  out.push({cik:cikDigits,accession,formType:form,filingDate,acceptanceTime,primaryDocument,filingIndexUrl:base,primaryDocumentUrl:base+primaryDocument,xmlStatus:'not_fetched',validationStatus:'pending'});
+  out.push({cik:cikDigits,accession,formType:form,filingDate,acceptanceTime,acceptanceTimezone:acceptanceTime?'America/New_York':null,primaryDocument,filingIndexUrl:base,primaryDocumentUrl:base+primaryDocument,xmlStatus:'not_fetched',validationStatus:'pending'});
  }
  return out;
 }
