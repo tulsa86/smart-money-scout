@@ -43,7 +43,9 @@ export async function retrieveForm4Candidate(filing,{fetchImpl=fetch,userAgent,s
  if(!filing||!['4','4/A'].includes(filing.formType)||!filing.filingIndexUrl||!filing.primaryDocumentUrl)throw Error('Invalid indexed Form 4');
  const accession=filing.accession;
  if(typeof accession!=='string'||!/^\d{10}-\d{2}-\d{6}$/.test(accession)||filing.cik!==null&&filing.cik!==undefined&&(!/^\d{1,10}$/.test(String(filing.cik))||BigInt(filing.cik)===0n))throw Error('Invalid filing identity');
- const expectedArchiveCik=String(BigInt(accession.slice(0,10)));
+ const archiveIdentity=filing.archiveCik??filing.submitterCik??filing.cik;
+ if(!/^\d{1,10}$/.test(String(archiveIdentity??''))||BigInt(archiveIdentity)===0n)throw Error('Missing SEC archive filer CIK');
+ const expectedArchiveCik=String(BigInt(archiveIdentity));
  const expectedBase='https://www.sec.gov/Archives/edgar/data/'+expectedArchiveCik+'/'+accession.replaceAll('-','')+'/';
  if(filing.filingIndexUrl!==expectedBase||!filing.primaryDocumentUrl.startsWith(expectedBase))throw Error('SEC archive identity mismatch');
  const indexUrl=allowedUrl(filing.filingIndexUrl+'index.json');
