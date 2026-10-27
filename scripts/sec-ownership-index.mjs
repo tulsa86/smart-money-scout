@@ -26,7 +26,7 @@ export function indexRecentOwnershipFilings(submissions,{limit=100}={}){
   // SEC archive directory follows the filing accession's submitter CIK, which may differ from issuer CIK.
   const archiveCik=String(BigInt(accession.slice(0,10)));
   const base='https://www.sec.gov/Archives/edgar/data/'+archiveCik+'/'+directory+'/';
-  out.push({cik:cikDigits,archiveCik,accession,formType:form,filingDate,acceptanceTime,acceptanceTimezone:acceptanceTime?'America/New_York':null,primaryDocument,filingIndexUrl:base,primaryDocumentUrl:base+primaryDocument,xmlStatus:'not_fetched',validationStatus:'pending'});
+  out.push({cik:null,submitterCik:cikDigits,archiveCik,accession,formType:form,filingDate,acceptanceTime,acceptanceTimezone:acceptanceTime?'America/New_York':null,primaryDocument,filingIndexUrl:base,primaryDocumentUrl:base+primaryDocument,xmlStatus:'not_fetched',validationStatus:'pending'});
  }
  return out;
 }
