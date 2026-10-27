@@ -6,7 +6,7 @@ import {parseOwnershipXml,val,children,first} from './form4-xml.mjs';
 // Download original bytes, reject unexpected content, and save SHA-256 evidence.
 const filings=[
  {accession:'0000080424-26-000218',url:'https://www.sec.gov/Archives/edgar/data/80424/000008042426000218/form4.xml',form:'4',code:'A',issuerCik:'80424'},
- {accession:'0001140361-26-036978',url:'https://www.sec.gov/Archives/edgar/data/1820096/000114036126036978/form4.xml',form:'4',code:'P',issuerCik:'1820096'},
+ {accession:'0001140361-26-036978',url:'https://www.sec.gov/Archives/edgar/data/1820096/000114036126036978/form4.xml',form:'4',code:'P'},
  {accession:'0001193125-26-354277',url:'https://www.sec.gov/Archives/edgar/data/1089872/000119312526354277/ownership.xml',form:'4/A',code:'P',issuerCik:'1089872'}
 ];
 const ua=process.env.SEC_USER_AGENT;
@@ -30,6 +30,6 @@ for(const item of filings){
  writeFileSync(dir+'/'+filename,buffer);
  const entry={file:filename,accession:item.accession,sourceUrl:item.url,retrievedAt:new Date().toISOString(),sha256:createHash('sha256').update(buffer).digest('hex')};
  manifest.filings.push(entry);
- console.log('Verified SEC document',item.accession,'form',item.form,'bytes',buffer.length,'sha256',entry.sha256);
+ console.log('Verified SEC document',item.accession,'form',item.form,'issuerCik',issuerCik,'codes',codes.join(','),'bytes',buffer.length,'sha256',entry.sha256);
 }
 writeFileSync(dir+'/manifest.json',JSON.stringify(manifest,null,2)+'\n');
