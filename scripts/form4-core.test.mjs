@@ -20,3 +20,5 @@ test('plan footnote prompts review, never automatically marks a scheduled plan',
 test('rejects impossible calendar dates',()=>{assert.equal(extractForm4Purchases(wrap().replace('2026-10-26','2026-02-30'),meta).length,0)});
 
 test('10b5-1 flag within transactionCoding is honored',()=>{const x=wrap().replace('<transactionCode>P</transactionCode>','<transactionCode>P</transactionCode><aff10b5One>1</aff10b5One>');assert.equal(extractForm4Purchases(x,meta)[0].rule10b5_1,'yes')});
+
+test('joint reporting owners are flagged rather than assigned a single buyer',()=>{const x=wrap().replace('</reportingOwner>','</reportingOwner><reportingOwner><reportingOwnerId><rptOwnerName>Second Owner</rptOwnerName></reportingOwnerId></reportingOwner>');const r=extractForm4Purchases(x,meta);assert.equal(r[0].ownerAttribution,'multiple_reporting_owners_requires_review');assert.equal(r[0].ownerNames.length,2)});
