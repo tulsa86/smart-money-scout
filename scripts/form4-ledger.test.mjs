@@ -10,3 +10,5 @@ test('duplicate accession rejected, even when amounts differ',()=>{assert.throws
 test('transaction accession mismatch rejected',()=>{assert.throws(()=>reconcileForm4Filings([{...original,transactions:[{...original.transactions[0],accession:amendment.accession}]}]),/mismatch/)});
 
 test('unresolved amendment does not quarantine unrelated issuers',()=>{const other={...original,cik:'0000000001',transactions:[{...original.transactions[0],cik:'0000000001'}]};const r=reconcileForm4Filings([original,{...amendment,amendsAccession:undefined},other]);assert.equal(r.reported.length,1);assert.equal(r.quarantined.length,2)});
+
+test('CIK leading zeros do not evade amendment quarantine',()=>{const padded={...original,cik:'320193',transactions:[{...original.transactions[0],cik:'320193'}]};const amended={...amendment,amendsAccession:undefined};const r=reconcileForm4Filings([padded,amended]);assert.equal(r.reported.length,0);assert.equal(r.quarantined.length,2)});
