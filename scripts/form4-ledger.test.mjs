@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {reconcileForm4Filings} from './form4-ledger.mjs';
+const original={accession:'0000320193-26-000001',cik:'0000320193',formType:'4',transactions:[{accession:'0000320193-26-000001',cik:'0000320193',formType:'4',shares:100}]};
+const amendment={accession:'0000320193-26-000002',cik:'0000320193',formType:'4/A',amendsAccession:original.accession,transactions:[{accession:'0000320193-26-000002',cik:'0000320193',formType:'4/A',shares:150}]};
+test('original filing stays reported-only without amendment',()=>{const r=reconcileForm4Filings([original]);assert.equal(r.reported.length,1);assert.equal(r.quarantined.length,0)});
+test('linked amendment quarantines original and amended rows',()=>{const r=reconcileForm4Filings([original,amendment]);assert.equal(r.reported.length,0);assert.equal(r.quarantined.length,2);assert.deepEqual(r.supersededAccessions,[original.accession]);assert.equal(r.unresolved[0].reason,'amendment_requires_transaction_review')});
+test('unlinked amendment quarantined, never silently added',()=>{const r=reconcileForm4Filings([original,{...amendment,amendsAccession:undefined}]);assert.equal(r.reported.length,1);assert.equal(r.quarantined.length,1);assert.equal(r.unresolved[0].reason,'missing_original_accession')});
+test('duplicate accession rejected, even when amounts differ',()=>{assert.throws(()=>reconcileForm4Filings([original,{...original,transactions:[{...original.transactions[0],shares:200}]}]),/Duplicate accession/)});
+test('transaction accession mismatch rejected',()=>{assert.throws(()=>reconcileForm4Filings([{...original,transactions:[{...original.transactions[0],accession:amendment.accession}]}]),/mismatch/)});
