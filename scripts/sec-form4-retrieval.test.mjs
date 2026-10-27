@@ -51,3 +51,15 @@ test('retrieval accepts padded issuer CIK independent of archive submitter',asyn
  const result=await retrieveForm4Candidate({...filing,cik:'0000320193'},{userAgent:ua,fetchImpl});
  assert.equal(result.transactions.length,1);
 });
+
+test('ownership XML supplies issuer CIK when SEC submissions filer differs',async()=>{
+ const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);
+ const r=await retrieveForm4Candidate({...filing,cik:null,submitterCik:'320193'},{userAgent:ua,fetchImpl});
+ assert.equal(r.cik,'320193');
+ assert.equal(r.transactions[0].cik,'320193');
+ assert.equal(r.submitterCik,'320193');
+});
+test('retrieval rejects conflicting known issuer and ownership XML',async()=>{
+ const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);
+ await assert.rejects(retrieveForm4Candidate({...filing,cik:'1234'},{userAgent:ua,fetchImpl}),/issuer CIK mismatch/);
+});
