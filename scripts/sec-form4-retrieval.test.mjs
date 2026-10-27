@@ -106,3 +106,13 @@ test('unverified or missing acceptance time cannot become public-availability ti
  const r=await retrieveForm4Candidate({...filing,acceptanceTime:'2026-10-27T16:20:00'},{userAgent:ua,fetchImpl});
  assert.equal(r.publicAvailabilityStatus,'unknown');assert.equal(r.transactions[0].secAcceptanceTime,null);assert.equal(r.transactions[0].filedAt,null);
 });
+
+test('invalid SEC acceptance calendar and clock values never become provenance',async()=>{
+ const fetchImpl=async url=>response(url.endsWith('index.json')?JSON.stringify({directory:{item:[{name:'ownership.xml'}]}}):xml);
+ for(const acceptanceTime of ['2026-02-30T16:20:00','2026-10-27T25:20:00','2026-10-27T16:60:00']){
+  const r=await retrieveForm4Candidate({...filing,acceptanceTime,acceptanceTimezone:'America/New_York'},{userAgent:ua,fetchImpl});
+  assert.equal(r.publicAvailabilityStatus,'unknown');
+  assert.equal(r.transactions[0].secAcceptanceTime,null);
+  assert.equal(r.transactions[0].filedAt,null);
+ }
+});
