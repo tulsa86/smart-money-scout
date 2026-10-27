@@ -24,7 +24,7 @@ export function extractForm4Purchases(xml,{ticker,cik,accession,filingUrl,filedA
    const shares=numeric(val(amounts,'transactionShares')),price=numeric(val(amounts,'transactionPricePerShare'));
    const date=val(tx,'transactionDate');
    if(shares===null||shares<=0||price===null||price<=0||!Number.isFinite(shares*price)||!dateOk(date))continue;
-   const flag=val(tx,'aff10b5One')??val(root,'aff10b5One')??val(tx,'affirmative10b5Flag')??val(root,'affirmative10b5Flag');
+   const flag=val(coding,'aff10b5One')??val(tx,'aff10b5One')??val(root,'aff10b5One')??val(coding,'affirmative10b5Flag')??val(tx,'affirmative10b5Flag')??val(root,'affirmative10b5Flag');
    const explicit=flag==='1'||flag==='true'?'yes':flag==='0'||flag==='false'?'no':'unknown';
    const possiblePlanReference=footnotes.some(s=>/10b5[\s-]?1|rule\s*10b5|pre.arranged/i.test(s));
    const rule10b5_1=explicit==='yes'?'yes':possiblePlanReference?'requires_review':explicit;
