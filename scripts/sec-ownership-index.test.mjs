@@ -15,3 +15,13 @@ test('SEC local acceptance timestamps are not misrepresented as UTC',()=>{const 
 test('reporting owner accession prefix need not equal issuer CIK',()=>{const s=structuredClone(sample);s.filings.recent.accessionNumber[1]='0000001234-26-000102';const r=indexRecentOwnershipFilings(s);assert.equal(r[0].accession,'0000001234-26-000102');assert.equal(r[0].cik,null);assert.equal(r[0].submitterCik,'320193');assert.equal(r[0].archiveCik,'320193');assert.match(r[0].filingIndexUrl,/\/data\/320193\/000000123426000102\//)});
 
 test('SEC archive path uses filer CIK when accession prefix belongs to filing agent',()=>{const s=structuredClone(sample);s.filings.recent.accessionNumber[1]='0001140361-26-000102';const r=indexRecentOwnershipFilings(s);assert.equal(r[0].archiveCik,'320193');assert.match(r[0].filingIndexUrl,/\/data\/320193\/000114036126000102\//)});
+
+test('index exposes trustworthy UTC availability and fails closed on missing or ambiguous acceptance',()=>{
+ const s=structuredClone(sample);
+ s.filings.recent.acceptanceDateTime=[null,'2026-10-02T17:32:15.000',null];
+ const rows=indexRecentOwnershipFilings(s);
+ assert.equal(rows[0].availableAt,'2026-10-02T21:32:15.000Z');
+ assert.equal(rows[1].availableAt,null);
+ s.filings.recent.acceptanceDateTime[1]='2026-11-01T01:30:00';
+ assert.equal(indexRecentOwnershipFilings(s)[0].availableAt,null);
+});
