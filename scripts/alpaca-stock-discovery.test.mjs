@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {fetchAlpacaStockSnapshot,produceAlpacaDecision} from './alpaca-stock-discovery.mjs';
+import {appendStockDecisionJournal} from './stock-decision-journal.mjs';
+const decisionAt='2026-10-28T21:00:00Z';
+const bar=(t,c,v=1000000)=>({t,c,v});
+const calls=[];
+const fetchImpl=async url=>{
+ calls.push(url);
+ if(url.includes('most-actives'))return {ok:true,json:async()=>({most_actives:[{symbol:'ACME'},{symbol:'XYZ'}]})};
+ const symbol=new URL(url).searchParams.get('symbols');
+ return {ok:true,json:async()=>({bars:{[symbol]:[bar('2026-10-26T04:00:00Z',10),bar('2026-10-27T04:00:00Z',symbol==='ACME'?11:9),bar('2026-10-28T04:00:00Z',999)]}})};
+};
+test('fetches actual Alpaca endpoints and excludes decision-day candles',async()=>{
+ calls.length=0;
+ const x=await fetchAlpacaStockSnapshot({key:'test',secret:'test',decisionAt,fetchImpl});
+ assert.equal(x.rows.length,2);assert.equal(x.rows[0].close,11);
+ assert.ok(calls.some(x=>x.includes('/v1beta1/screener/stocks/most-actives')));
+ assert.ok(calls.some(x=>x.includes('/v2/stocks/bars?')));
+ assert.equal(x.discoveryMeta.completeMarketCoverage,false);
+});
+test('makes and journals a prospective decision without inventing fills',async()=>{
+ const {discovery,decision}=await produceAlpacaDecision({key:'test',secret:'test',decisionAt,fetchImpl});
+ assert.equal(decision.action,'BUY');assert.equal(decision.symbol,'ACME');
+ const journal=appendStockDecisionJournal([],{discovery,decision});
+ assert.equal(journal[0].executionStatus,'NOT_EXECUTED');assert.equal(journal[0].pnl,null);
+ assert.match(journal[0].digest,/^[a-f0-9]{64}$/);
+ assert.throws(()=>appendStockDecisionJournal(journal,{discovery,decision}),/Duplicate/);
+});
+test('fails closed on bad provider response and time',async()=>{
+ await assert.rejects(fetchAlpacaStockSnapshot({key:'x',secret:'y',decisionAt,fetchImpl:async()=>({ok:true,json:async()=>({})})}),/most_actives/);
+ await assert.rejects(fetchAlpacaStockSnapshot({key:'x',secret:'y',decisionAt:'not a time',fetchImpl}),/Valid Alpaca/);
+});
