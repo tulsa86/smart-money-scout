@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "test": "node --experimental-strip-types --test src/engine/core.test.ts src/stocks/research.test.ts src/stocks/fundamentals.test.ts src/stocks/screener.test.ts scripts/annual-facts.test.mjs scripts/ledger-core.test.mjs scripts/form4-core.test.mjs scripts/form4-research-assessment.test.mjs scripts/form4-ledger.test.mjs scripts/sec-ownership-index.test.mjs scripts/sec-form4-retrieval.test.mjs scripts/sec-fixture-integrity.test.mjs src/stocks/candles.test.ts src/stocks/backtest.test.ts src/stocks/portfolio.test.ts src/stocks/csv.test.ts scripts/stock-discovery.test.mjs scripts/alpaca-stock-discovery.test.mjs scripts/stock-simulated-execution.test.mjs"
+    "test": "node --experimental-strip-types --test src/engine/core.test.ts src/stocks/research.test.ts src/stocks/fundamentals.test.ts src/stocks/screener.test.ts scripts/annual-facts.test.mjs scripts/ledger-core.test.mjs scripts/form4-core.test.mjs scripts/form4-research-assessment.test.mjs scripts/form4-ledger.test.mjs scripts/sec-ownership-index.test.mjs scripts/sec-form4-retrieval.test.mjs scripts/sec-fixture-integrity.test.mjs src/stocks/candles.test.ts src/stocks/backtest.test.ts src/stocks/portfolio.test.ts src/stocks/csv.test.ts scripts/stock-discovery.test.mjs scripts/alpaca-stock-discovery.test.mjs scripts/stock-simulated-execution.test.mjs scripts/stock-ledger-persistence.test.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
