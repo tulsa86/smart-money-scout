@@ -31,3 +31,13 @@ test('fails closed on bad provider response and time',async()=>{
  await assert.rejects(fetchAlpacaStockSnapshot({key:'x',secret:'y',decisionAt,fetchImpl:async()=>({ok:true,json:async()=>({})})}),/most_actives/);
  await assert.rejects(fetchAlpacaStockSnapshot({key:'x',secret:'y',decisionAt:'not a time',fetchImpl}),/Valid Alpaca/);
 });
+
+test('hash chain detects altered or removed earlier decisions',async()=>{
+ const {discovery,decision}=await produceAlpacaDecision({key:'test',secret:'test',decisionAt,fetchImpl});
+ const first=appendStockDecisionJournal([],{discovery,decision});
+ const later={...decision,decisionAt:'2026-10-29T21:00:00Z'};
+ const second=appendStockDecisionJournal(first,{discovery,decision:later});
+ assert.equal(second[1].previousDigest,second[0].digest);
+ assert.throws(()=>appendStockDecisionJournal([{...second[0],digest:'0'.repeat(64)},second[1]],{discovery,decision:{...decision,decisionAt:'2026-10-30T21:00:00Z'}}),/integrity|chain/i);
+ assert.throws(()=>appendStockDecisionJournal([second[1]],{discovery,decision:{...decision,decisionAt:'2026-10-30T21:00:00Z'}}),/chain/i);
+});
