@@ -13,7 +13,7 @@ export function simulateNextSessionEntry(ledger,decision,openingBar){
  if(decision.action==='HOLD')return base;
  if(!openingBar||openingBar.symbol!==decision.symbol||!validTime(openingBar.observedAt)||!Number.isFinite(openingBar.open)||openingBar.open<=0||!Number.isSafeInteger(decision.shares)||decision.shares<=0)throw Error('Invalid opening bar or quantity');
  // Alpaca daily bars timestamp their session at 04:00/05:00 UTC; compare New York session dates, not bar timestamps.
- const nyDate=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
+ const nyDate=x=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(x)).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return p.year+'-'+p.month+'-'+p.day;};
  const session=nyDate(openingBar.observedAt),decisionSession=nyDate(decision.decisionAt);
  if(session<=decisionSession)throw Error('Opening session must follow decision session');
  if(Date.parse(openingBar.availableAt||'')<=Date.parse(decision.decisionAt)||!validTime(openingBar.availableAt))throw Error('Opening price availability must follow decision');
