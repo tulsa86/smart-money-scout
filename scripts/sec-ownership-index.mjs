@@ -1,3 +1,4 @@
+import {secAvailableAt} from './sec-availability.mjs';
 // SEC submissions discovery only: does not fetch or validate ownership XML.
 const validAccession=x=>typeof x==='string'&&/^\d{10}-\d{2}-\d{6}$/.test(x);
 const validDate=x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)&&!Number.isNaN(Date.parse(x))&&new Date(x).toISOString().slice(0,10)===x;
@@ -26,7 +27,7 @@ export function indexRecentOwnershipFilings(submissions,{limit=100}={}){
   // SEC archive data directory is keyed by submissions filer CIK, NOT the accession prefix (which can be a filing agent).
   const archiveCik=cikDigits;
   const base='https://www.sec.gov/Archives/edgar/data/'+archiveCik+'/'+directory+'/';
-  out.push({cik:null,submitterCik:cikDigits,archiveCik,accession,formType:form,filingDate,acceptanceTime,acceptanceTimezone:acceptanceTime?'America/New_York':null,primaryDocument,filingIndexUrl:base,primaryDocumentUrl:base+primaryDocument,xmlStatus:'not_fetched',validationStatus:'pending'});
+  out.push({cik:null,submitterCik:cikDigits,archiveCik,accession,formType:form,filingDate,acceptanceTime,acceptanceTimezone:acceptanceTime?'America/New_York':null,availableAt:secAvailableAt(acceptanceTime),primaryDocument,filingIndexUrl:base,primaryDocumentUrl:base+primaryDocument,xmlStatus:'not_fetched',validationStatus:'pending'});
  }
  return out;
 }
