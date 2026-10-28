@@ -4,7 +4,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: stock-prospective-decisions
+  group: smart-money-scout-writers
   cancel-in-progress: false
 jobs:
   record:
