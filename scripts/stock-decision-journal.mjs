@@ -1,5 +1,5 @@
 import {createHash} from 'node:crypto';
-const iso=x=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&/(Z|[+-]\\d\\d:\\d\\d)$/.test(x);
+const iso=x=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&/(Z|[+-]\d\d:\d\d)$/.test(x);
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 export function appendStockDecisionJournal(rows,{discovery,decision}){
  if(!Array.isArray(rows))throw Error('Journal must be an array');
