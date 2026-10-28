@@ -8,6 +8,11 @@ import {extractForm4Purchases} from './form4-core.mjs';
 
 const directory=resolve('tests/fixtures/sec');
 const manifest=JSON.parse(readFileSync(join(directory,'manifest.json'),'utf8'));
+const trustedFixtureHashes=Object.freeze({
+ '0000080424-26-000218':'055cf9077856c2d0468bd967da2920b269b051199d4d674d0fe80abde7a408ab',
+ '0001140361-26-036978':'afb6af1c277fd5d4747c3427116113f2ec7df120ebcec4e171efb4f2fb798321',
+ '0001193125-26-354277':'a303bed5bb0290eb36ace2c6a6e659ee34c12baf89dbcee1a616360d8d4ebb5a'
+});
 test('SEC fixture manifest schema and genuine-source provenance',()=>{
  assert.equal(manifest.schemaVersion,1);
  assert.ok(Array.isArray(manifest.filings));
@@ -18,6 +23,7 @@ test('SEC fixture manifest schema and genuine-source provenance',()=>{
   assert.match(item.accession,/^\d{10}-\d{2}-\d{6}$/);
   assert.match(item.sourceUrl,/^https:\/\/www\.sec\.gov\/Archives\/edgar\/data\/\d+\/\d+\/[\w./-]+\.xml$/);
   assert.match(item.sha256,/^[a-f0-9]{64}$/);
+  assert.equal(item.sha256,trustedFixtureHashes[item.accession],'fixture must match independently pinned checksum');
   assert.match(item.retrievedAt,/^\d{4}-\d{2}-\d{2}T/);
   const xml=readFileSync(join(directory,item.file));
   assert.equal(createHash('sha256').update(xml).digest('hex'),item.sha256);
