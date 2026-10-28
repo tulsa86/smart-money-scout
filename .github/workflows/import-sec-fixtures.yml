@@ -1,0 +1,50 @@
+name: Import verified SEC fixture artifact
+on:
+  push:
+    paths:
+      - .github/workflows/import-sec-fixtures.yml
+permissions:
+  contents: write
+  actions: read
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download, verify and commit SEC fixture bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/sec-fixtures
+          gh api repos/${{ github.repository }}/actions/artifacts/12765994156/zip > /tmp/sec-fixtures.zip
+          unzip -q /tmp/sec-fixtures.zip -d /tmp/sec-fixtures
+          python3 - <<'PY'
+          import json,hashlib,pathlib,shutil
+          src=pathlib.Path('/tmp/sec-fixtures')
+          dest=pathlib.Path('tests/fixtures/sec')
+          manifest=json.loads((src/'manifest.json').read_text())
+          expected={
+            '0000080424-26-000218':'055cf9077856c2d0468bd967da2920b269b051199d4d674d0fe80abde7a408ab',
+            '0001140361-26-036978':'afb6af1c277fd5d4747c3427116113f2ec7df120ebcec4e171efb4f2fb798321',
+            '0001193125-26-354277':'a303bed5bb0290eb36ace2c6a6e659ee34c12baf89dbcee1a616360d8d4ebb5a'
+          }
+          assert len(manifest['filings'])==3
+          assert {x['accession'] for x in manifest['filings']}==set(expected)
+          for entry in manifest['filings']:
+            data=(src/entry['file']).read_bytes()
+            digest=hashlib.sha256(data).hexdigest()
+            assert digest==expected[entry['accession']]==entry['sha256'],entry['file']
+            if entry['accession']!='0000080424-26-000218':
+              (dest/entry['file']).write_bytes(data)
+          (dest/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          print('Three SEC fixtures verified and staged.')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/fixtures/sec
+          git diff --cached --check
+          git commit -m "Import verified three-filing SEC fixture artifact"
+          git push
