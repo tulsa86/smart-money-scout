@@ -5,8 +5,22 @@
       "file": "0000080424-26-000218.xml",
       "accession": "0000080424-26-000218",
       "sourceUrl": "https://www.sec.gov/Archives/edgar/data/80424/000008042426000218/form4.xml",
-      "retrievedAt": "2026-10-27T19:21:31.437Z",
+      "retrievedAt": "2026-10-27T20:17:07.246Z",
       "sha256": "055cf9077856c2d0468bd967da2920b269b051199d4d674d0fe80abde7a408ab"
+    },
+    {
+      "file": "0001140361-26-036978.xml",
+      "accession": "0001140361-26-036978",
+      "sourceUrl": "https://www.sec.gov/Archives/edgar/data/1820096/000114036126036978/form4.xml",
+      "retrievedAt": "2026-10-27T20:17:07.319Z",
+      "sha256": "afb6af1c277fd5d4747c3427116113f2ec7df120ebcec4e171efb4f2fb798321"
+    },
+    {
+      "file": "0001193125-26-354277.xml",
+      "accession": "0001193125-26-354277",
+      "sourceUrl": "https://www.sec.gov/Archives/edgar/data/1089872/000119312526354277/ownership.xml",
+      "retrievedAt": "2026-10-27T20:17:07.430Z",
+      "sha256": "a303bed5bb0290eb36ace2c6a6e659ee34c12baf89dbcee1a616360d8d4ebb5a"
     }
   ]
 }
