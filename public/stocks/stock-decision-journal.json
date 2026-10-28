@@ -1,0 +1,209 @@
+[
+  {
+    "schemaVersion": 2,
+    "previousDigest": null,
+    "decisionAt": "2026-10-28T23:07:01.403Z",
+    "discovery": {
+      "schemaVersion": 1,
+      "kind": "STOCK_DISCOVERY",
+      "source": "Alpaca most-actives volume + Alpaca IEX 1Day bars; limited feed",
+      "asOf": "2026-10-28T23:07:01.403Z",
+      "coverage": {
+        "supplied": 20,
+        "eligible": 14,
+        "returned": 14,
+        "rejected": 6,
+        "completeMarketCoverage": false
+      },
+      "candidates": [
+        {
+          "symbol": "SPCX",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 148.59,
+          "previousClose": 146.91,
+          "volume": 3773568,
+          "dollarVolume": 560714469.12,
+          "changePct": 1.1435572799673333
+        },
+        {
+          "symbol": "NVDA",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 217.87,
+          "previousClose": 216.01,
+          "volume": 2379844,
+          "dollarVolume": 518496612.28000003,
+          "changePct": 0.8610712467015391
+        },
+        {
+          "symbol": "INTC",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 93.75,
+          "previousClose": 90.53,
+          "volume": 2713805,
+          "dollarVolume": 254419218.75,
+          "changePct": 3.556831989395781
+        },
+        {
+          "symbol": "SOXL",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 101.02,
+          "previousClose": 90.71,
+          "volume": 1894957,
+          "dollarVolume": 191428556.14,
+          "changePct": 11.365891301951269
+        },
+        {
+          "symbol": "EWZ",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 34.32,
+          "previousClose": 34.14,
+          "volume": 5026030,
+          "dollarVolume": 172493349.6,
+          "changePct": 0.5272407732864748
+        },
+        {
+          "symbol": "ORCL",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 130.56,
+          "previousClose": 126.07,
+          "volume": 1235904,
+          "dollarVolume": 161359626.24,
+          "changePct": 3.561513444911557
+        },
+        {
+          "symbol": "SOFI",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 16.405,
+          "previousClose": 14.46,
+          "volume": 5087624,
+          "dollarVolume": 83462471.72,
+          "changePct": 13.450899031811892
+        },
+        {
+          "symbol": "NVD",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 3.92,
+          "previousClose": 3.995,
+          "volume": 20795145,
+          "dollarVolume": 81516968.4,
+          "changePct": -1.8773466833541974
+        },
+        {
+          "symbol": "NU",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 12.405,
+          "previousClose": 12.59,
+          "volume": 5909531,
+          "dollarVolume": 73307732.05499999,
+          "changePct": -1.4694201747418645
+        },
+        {
+          "symbol": "SOXS",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 42.49,
+          "previousClose": 48,
+          "volume": 1124342,
+          "dollarVolume": 47773291.580000006,
+          "changePct": -11.479166666666663
+        },
+        {
+          "symbol": "NOK",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 8.895,
+          "previousClose": 8.63,
+          "volume": 2529986,
+          "dollarVolume": 22504225.47,
+          "changePct": 3.0706836616454014
+        },
+        {
+          "symbol": "BBD",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 2.9,
+          "previousClose": 2.925,
+          "volume": 5123355,
+          "dollarVolume": 14857729.5,
+          "changePct": -0.8547008547008517
+        },
+        {
+          "symbol": "SNXX",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 8.98,
+          "previousClose": 8.37,
+          "volume": 1390948,
+          "dollarVolume": 12490713.040000001,
+          "changePct": 7.287933094384713
+        },
+        {
+          "symbol": "STLA",
+          "observedAt": "2026-10-27T04:00:00Z",
+          "close": 4.155,
+          "previousClose": 4.09,
+          "volume": 2106289,
+          "dollarVolume": 8751630.795,
+          "changePct": 1.5892420537897411
+        }
+      ],
+      "rejected": [
+        {
+          "symbol": "DVLT",
+          "reason": "LIQUIDITY_OR_PRICE"
+        },
+        {
+          "symbol": "RCT",
+          "reason": "LIQUIDITY_OR_PRICE"
+        },
+        {
+          "symbol": "CDT",
+          "reason": "LIQUIDITY_OR_PRICE"
+        },
+        {
+          "symbol": "GPUS",
+          "reason": "LIQUIDITY_OR_PRICE"
+        },
+        {
+          "symbol": "GERN",
+          "reason": "LIQUIDITY_OR_PRICE"
+        },
+        {
+          "symbol": "SHFS",
+          "reason": "LIQUIDITY_OR_PRICE"
+        }
+      ]
+    },
+    "decision": {
+      "schemaVersion": 1,
+      "kind": "PROSPECTIVE_STOCK_DECISION",
+      "decisionAt": "2026-10-28T23:07:01.403Z",
+      "sourceAsOf": "2026-10-28T23:07:01.403Z",
+      "source": "Alpaca most-actives volume + Alpaca IEX 1Day bars; limited feed",
+      "ruleVersion": "stock-eod-momentum-v1",
+      "action": "BUY",
+      "symbol": "SOFI",
+      "shares": 12,
+      "referencePrice": 16.405,
+      "startingCashCents": 100000,
+      "allocationLimitCents": 20000,
+      "reason": "Prior-observation momentum threshold passed; simulated order NOT executed",
+      "discoveredSymbols": [
+        "SPCX",
+        "NVDA",
+        "INTC",
+        "SOXL",
+        "EWZ",
+        "ORCL",
+        "SOFI",
+        "NVD",
+        "NU",
+        "SOXS",
+        "NOK",
+        "BBD",
+        "SNXX",
+        "STLA"
+      ],
+      "status": "DECISION_ONLY_NO_FILL"
+    },
+    "executionStatus": "NOT_EXECUTED",
+    "pnl": null,
+    "digest": "4f9c3877688c82436b909ab58fbca3908f38ba36d90b68abd1354129ad7849cf"
+  }
+]
