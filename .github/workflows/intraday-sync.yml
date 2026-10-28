@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: intraday-sync
+  group: smart-money-scout-writers
   cancel-in-progress: false
 jobs:
   sync:
@@ -34,5 +34,6 @@ jobs:
           git add public/stocks/intraday/ public/stocks/forward-journal.json public/stocks/forward-report.json public/stocks/forward-ledger.json
           if ! git diff --cached --quiet; then
             git commit -m "Update historical stock candles"
+            git pull --rebase
             git push
           fi
