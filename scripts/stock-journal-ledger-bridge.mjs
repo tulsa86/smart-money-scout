@@ -28,7 +28,7 @@ export function applyJournalEvidence(ledgerJson,journalJson,evidenceByDigest={})
   const evidence=evidenceByDigest[row.digest];
   if(!evidence){outcomes.push({digest:row.digest,status:'AWAITING_VERIFIED_MARKET_EVIDENCE'});continue;}
   // Evidence must explicitly name the immutable journal entry. Never infer fills from a stale reference close.
-  if(evidence.journalDigest!==row.digest||evidence.symbol!==row.decision.symbol||evidence.source!=='ALPACA_1DAY_IES'&&evidence.source!=='ALPACA_1DAY_IEX')throw Error('Evidence source or journal digest mismatch');
+  if(evidence.journalDigest!==row.digest||evidence.symbol!==row.decision.symbol||evidence.source!=='ALPACA_1DAY_IEX')throw Error('Evidence source or journal digest mismatch');
   const next=simulateNextSessionEntry(ledger,row.decision,{symbol:evidence.symbol,observedAt:evidence.observedAt,availableAt:evidence.availableAt,open:evidence.open});
   ledger=next;
   outcomes.push({digest:row.digest,status:'SIMULATED_ENTRY_RECORDED'});
