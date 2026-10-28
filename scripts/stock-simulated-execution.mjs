@@ -1,5 +1,5 @@
 // Deterministic, offline-only simulated entry accounting. No broker client or order endpoints.
-const validTime=x=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&/(Z|[+-]\\d\\d:\\d\\d)$/.test(x);
+const validTime=x=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&/(Z|[+-]\d\d:\d\d)$/.test(x);
 const cents=x=>Number.isSafeInteger(x)&&x>=0;
 export function createSimulatedLedger(startingCashCents=100000){
  if(!cents(startingCashCents))throw Error('Invalid starting cash');
