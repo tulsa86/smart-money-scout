@@ -7,8 +7,8 @@ test('simulated entry accounts for cash and shares without broker orders',()=>{
  const initial=createSimulatedLedger();
  const next=simulateNextSessionEntry(initial,decision,bar);
  assert.equal(initial.fills.length,0);
- assert.equal(next.cashCents,80200);
- assert.deepEqual(next.positions.SOFI,{shares:12,costBasisCents:19800});
+ assert.equal(next.cashCents,80188);
+ assert.deepEqual(next.positions.SOFI,{shares:12,costBasisCents:19812});
  assert.equal(next.fills[0].simulationOnly,true);
  assert.throws(()=>simulateNextSessionEntry(next,decision,bar),/already processed/);
 });
@@ -21,4 +21,21 @@ test('hold does not change cash or create fills',()=>{
  const next=simulateNextSessionEntry(createSimulatedLedger(),{...decision,action:'HOLD'},null);
  assert.equal(next.cashCents,100000);
  assert.equal(next.fills.length,0);
+});
+
+test('5bps slippage rounds to cents and rejects post-slippage cash overflow',()=>{
+ const d={...decision,shares:1,allocationLimitCents:10000};
+ assert.throws(()=>simulateNextSessionEntry(createSimulatedLedger(10000),d,{...bar,open:100}),/Insufficient cash/);
+ const filled=simulateNextSessionEntry(createSimulatedLedger(10005),{...d,allocationLimitCents:10005},{...bar,open:100});
+ assert.equal(filled.fills[0].priceCents,10005);
+ assert.equal(filled.cashCents,0);
+});
+test('mark-to-market uses only available close and does not change cash',async()=>{
+ const l=simulateNextSessionEntry(createSimulatedLedger(),decision,bar);
+ const m={SOFI:{close:16,observedAt:'2026-10-30T04:00:00Z',availableAt:'2026-10-30T21:00:00Z',source:'IEX'}};
+ const {markSimulatedPortfolio}=await import('./stock-simulated-execution.mjs');
+ const v=markSimulatedPortfolio(l,m,{snapshotTime:'2026-10-30T22:00:00Z'});
+ assert.equal(v.totalEquityCents,v.cashCents+v.unrealizedEquityCents);
+ assert.equal(v.cashCents,l.cashCents);
+ assert.throws(()=>markSimulatedPortfolio(l,m,{snapshotTime:'2026-10-30T20:00:00Z'}),/Unavailable/);
 });
