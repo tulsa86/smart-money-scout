@@ -31,3 +31,16 @@ test('duplicate fill and conflicting outcome records fail ledger reconciliation'
  const contradicted={...ledger,executionOutcomes:[{journalDigest:digest,decisionAt:ledger.processedDecisions[0],status:'REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE'}]};
  assert.throws(()=>parseSimulatedLedger(JSON.stringify(contradicted)),/Rejected decision has fill/);
 });
+
+test('verified no-fill cannot coexist with a simulated fill',()=>{
+ const ledger=JSON.parse(newSimulatedLedgerFile());
+ const decisionAt='2026-11-02T20:00:00Z';
+ ledger.processedDecisions=[decisionAt];
+ ledger.fills=[{kind:'SIMULATED_ENTRY',simulationOnly:true,symbol:'SOFI',shares:1,priceCents:500,costCents:500,decisionAt}];
+ ledger.positions={SOFI:{shares:1,costBasisCents:500}};
+ ledger.cashCents=99500;
+ ledger.executionOutcomes=[{journalDigest:'b'.repeat(64),decisionAt,status:'NO_FILL_VERIFIED',detail:{reason:'HALT_OR_LULD',source:'MARKET_STATUS_ATTESTATION',sourceRecordId:'exchange-halt-20261102-SOFI',sessionAt:'2026-11-02T14:30:00Z',availableAt:'2026-11-02T14:35:00Z'}}];
+ assert.throws(()=>parseSimulatedLedger(JSON.stringify(ledger)),/Rejected decision has fill/);
+ ledger.fills=[];ledger.positions={};ledger.cashCents=100000;
+ assert.doesNotThrow(()=>parseSimulatedLedger(JSON.stringify(ledger)));
+});
