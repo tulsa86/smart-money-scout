@@ -24,7 +24,7 @@ test('explicit future evidence produces a simulated entry exactly once',()=>{
 test('tampered journal and same-day market evidence fail closed',()=>{
  assert.throws(()=>applyJournalEvidence(newSimulatedLedgerFile(),journal.replace('SOFI','FAKE')),/digest mismatch/);
  const evidence={[digest]:{journalDigest:digest,source:'ALPACA_1DAY_IEX',symbol:'SOFI',observedAt:'2026-10-28T04:00:00Z',availableAt:'2026-10-28T20:45:00Z',open:16.5}};
- assert.throws(()=>applyJournalEvidence(newSimulatedLedgerFile(),journal,evidence),/follow decision/);
+ assert.throws(()=>applyJournalEvidence(newSimulatedLedgerFile(),journal,evidence,{activationAt:'2026-10-28T22:00:00Z',evaluatedAt:'2026-10-29T21:00:00Z'}),/follow decision/);
 });
 
 test('activation boundary permanently excludes historical decisions even with supplied evidence',()=>{
