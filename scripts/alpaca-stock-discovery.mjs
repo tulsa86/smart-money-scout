@@ -31,9 +31,9 @@ export async function fetchAlpacaStockSnapshot({key,secret,decisionAt,fetchImpl=
   const bars=result.bars?.[symbol];
   if(!Array.isArray(bars))throw Error('Missing daily bars for '+symbol);
   const completed=bars.filter(b=>validTime(b.t)&&b.t.slice(0,10)<=until&&Number.isFinite(b.c)&&b.c>0&&Number.isFinite(b.v)&&b.v>=0).sort((a,b)=>Date.parse(a.t)-Date.parse(b.t));
-  if(completed.length<2)continue;
+  if(completed.length<4)continue;
   const latest=completed.at(-1),previous=completed.at(-2);
-  rows.push({symbol,close:latest.c,volume:latest.v,previousClose:previous.c,observedAt:latest.t});
+  rows.push({symbol,close:latest.c,volume:latest.v,previousClose:previous.c,priorCloses:completed.slice(-4,-1).map(b=>b.c),observedAt:latest.t});
  }
  if(!rows.length)throw Error('No eligible completed daily bars; refusing empty success');
  return {source:'Alpaca most-actives volume + Alpaca IEX 1Day bars; limited feed',asOf:decisionAt,rows,discoveryMeta:{feed:'iex',mostActiveSymbols:symbols.length,barEligibleSymbols:rows.length,completeMarketCoverage:false}};
