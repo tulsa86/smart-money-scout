@@ -16,8 +16,8 @@ export function verifyProspectiveJournal(rows){
 }
 export function applyJournalEvidence(ledgerJson,journalJson,evidenceByDigest={}, {activationAt=null, evaluatedAt=null}={}){
  const rows=verifyProspectiveJournal(JSON.parse(journalJson));
- if(activationAt!==null&&(!Number.isFinite(Date.parse(activationAt))||!/(Z|[+-]\\d{2}:\\d{2})$/.test(activationAt)))throw Error('Invalid activation boundary');
- if(evaluatedAt!==null&&(!Number.isFinite(Date.parse(evaluatedAt))||!/(Z|[+-]\\d{2}:\\d{2})$/.test(evaluatedAt)))throw Error('Invalid evaluation time');
+ if(activationAt!==null&&(!Number.isFinite(Date.parse(activationAt))||!/(Z|[+-]\d{2}:\d{2})$/.test(activationAt)))throw Error('Invalid activation boundary');
+ if(evaluatedAt!==null&&(!Number.isFinite(Date.parse(evaluatedAt))||!/(Z|[+-]\d{2}:\d{2})$/.test(evaluatedAt)))throw Error('Invalid evaluation time');
  let ledger=parseSimulatedLedger(ledgerJson);
  const outcomes=[];
  ledger.executionOutcomes=ledger.executionOutcomes||[];
