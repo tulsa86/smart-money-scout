@@ -2,7 +2,8 @@
 import {simulateNextSessionEntry} from './stock-simulated-execution.mjs';
 import {parseSimulatedLedger,serializeSimulatedLedger} from './stock-ledger-persistence.mjs';
 import {createHash} from 'node:crypto';
-export const SIMULATION_ACTIVATION_AT='2026-10-30T00:00:00.000Z'; // Immutable minimum; historical journal predates this boundary.\nconst hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
+export const SIMULATION_ACTIVATION_AT='2026-10-30T00:00:00.000Z'; // Immutable minimum; historical journal predates this boundary.
+const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 export function verifyProspectiveJournal(rows){
  if(!Array.isArray(rows))throw Error('Invalid journal');
  let prior=null,last='';
