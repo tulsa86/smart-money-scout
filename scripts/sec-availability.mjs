@@ -16,8 +16,13 @@ export function secAvailableAt(acceptanceTime){
  const milliseconds=Number((fraction+'000').slice(0,3));
  return new Date(matches[0]+milliseconds).toISOString();
 }
+export const SEC_DISSEMINATION_BUFFER_MINUTES=15;
+export function publiclyActionableAt(acceptanceTime){
+ const accepted=secAvailableAt(acceptanceTime);
+ return accepted?new Date(Date.parse(accepted)+SEC_DISSEMINATION_BUFFER_MINUTES*60000).toISOString():null;
+}
 export function canUseSecFilingAt(acceptanceTime,decisionAt){
- const availableAt=secAvailableAt(acceptanceTime);
+ const availableAt=publiclyActionableAt(acceptanceTime);
  if(!availableAt||typeof decisionAt!=='string'||!/^\d{4}-\d{2}-\d{2}T/.test(decisionAt)||!/(Z|[+-]\d{2}:\d{2})$/.test(decisionAt))return false;
  const decisionMs=Date.parse(decisionAt);
  return Number.isFinite(decisionMs)&&decisionMs>=Date.parse(availableAt);
