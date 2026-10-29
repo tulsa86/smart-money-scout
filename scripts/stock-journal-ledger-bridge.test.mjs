@@ -58,3 +58,25 @@ test('original SOFI decision is permanently historical even with backdated calle
  assert.equal(result.outcomes[0].status,'HISTORICAL_DECISION_ONLY');
  assert.equal(JSON.parse(result.ledgerJson).fills.length,0);
 });
+
+test('verified halt attestation produces terminal no-fill with zero cash movement',()=>{
+ const attestation={kind:'VERIFIED_NO_FILL',journalDigest:digest,symbol:'SOFI',source:'MARKET_STATUS_ATTESTATION',reason:'HALT_OR_LULD',sourceRecordId:'exchange-halt-20261102-SOFI',sessionAt:'2026-11-02T14:30:00Z',availableAt:'2026-11-02T14:35:00Z'};
+ const first=applyJournalEvidence(newSimulatedLedgerFile(),journal,{[digest]:attestation},{evaluatedAt:'2026-11-02T15:00:00Z'});
+ const ledger=JSON.parse(first.ledgerJson);
+ assert.equal(first.outcomes[0].status,'NO_FILL_VERIFIED');
+ assert.equal(ledger.cashCents,100000);
+ assert.equal(ledger.fills.length,0);
+ assert.equal(ledger.executionOutcomes[0].detail.sourceRecordId,attestation.sourceRecordId);
+ const second=applyJournalEvidence(first.ledgerJson,journal,{[digest]:{journalDigest:digest,source:'ALPACA_1DAY_IEX',symbol:'SOFI',observedAt:'2026-11-02T05:00:00Z',availableAt:'2026-11-02T21:45:00Z',open:16.5}},{evaluatedAt:'2026-11-02T22:00:00Z'});
+ assert.equal(second.outcomes[0].status,'ALREADY_PROCESSED');
+ assert.equal(JSON.parse(second.ledgerJson).fills.length,0);
+});
+test('unverified halt, API outage and premature attestation cannot close a decision',()=>{
+ const base={kind:'VERIFIED_NO_FILL',journalDigest:digest,symbol:'SOFI',source:'MARKET_STATUS_ATTESTATION',reason:'HALT_OR_LULD',sourceRecordId:'exchange-halt-20261102-SOFI',sessionAt:'2026-11-02T14:30:00Z',availableAt:'2026-11-02T14:35:00Z'};
+ for(const evidence of [{...base,source:'ALPACA_1DAY_IEX'},{...base,sourceRecordId:''},{...base,reason:'API_TIMEOUT'}]){
+  assert.throws(()=>applyJournalEvidence(newSimulatedLedgerFile(),journal,{[digest]:evidence},{evaluatedAt:'2026-11-02T15:00:00Z'}),/Invalid verified no-fill attestation/);
+ }
+ assert.throws(()=>applyJournalEvidence(newSimulatedLedgerFile(),journal,{[digest]:base},{evaluatedAt:'2026-11-02T14:34:00Z'}),/Evidence not available/);
+ const pending=applyJournalEvidence(newSimulatedLedgerFile(),journal);
+ assert.equal(pending.outcomes[0].status,'PENDING_MARKET_EVIDENCE');
+});
