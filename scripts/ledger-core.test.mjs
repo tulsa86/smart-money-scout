@@ -24,3 +24,11 @@ test('outage sessions preserve cash and cannot masquerade as trades',()=>{
  assert.equal(validateLedger(outage),100000);
  assert.throws(()=>validateLedger([row('2026-10-26',100000,1,'PIPELINE_OUTAGE')]),/Nontrade/);
 });
+
+test('forward session cash must reconcile to individual simulated trades',()=>{
+ const valid=row('2026-10-29',100000,1584,'TRADE_EXECUTED',[{netPnl:15.843305}]);
+ assert.equal(validateLedger([valid]),101584);
+ assert.throws(()=>validateLedger([row('2026-10-29',100000,1584,'TRADE_EXECUTED',[{netPnl:12.34}])]),/does not reconcile/);
+ assert.throws(()=>validateLedger([row('2026-10-29',100000,1584,'TRADE_EXECUTED',[{netPnl:NaN}])]),/Invalid simulated trade PnL/);
+ assert.equal(validateLedger([row('2026-10-29')]),100000);
+});
