@@ -2,7 +2,11 @@
 const iso = value => typeof value === 'string' && /Z$|[+-]\d\d:\d\d$/.test(value) && Number.isFinite(Date.parse(value));
 const ticker = value => typeof value === 'string' && /^[A-Z]{1,5}(?:[.-][A-Z])?$/.test(value);
 const finite = value => typeof value === 'number' && Number.isFinite(value);
-export const MIN_PRICE_CENTS=500;\nexport const MIN_DOLLAR_VOLUME=5_000_000;\nexport const MAX_DAILY_GAIN=0.15;\nexport const MAX_THREE_SESSION_GAIN=0.25;\nexport function discoverStocks(snapshot, {minPrice=MIN_PRICE_CENTS/100,minDollarVolume=MIN_DOLLAR_VOLUME,maxCandidates=50}={}) {
+export const MIN_PRICE_CENTS=500;
+export const MIN_DOLLAR_VOLUME=5_000_000;
+export const MAX_DAILY_GAIN=0.15;
+export const MAX_THREE_SESSION_GAIN=0.25;
+export function discoverStocks(snapshot, {minPrice=MIN_PRICE_CENTS/100,minDollarVolume=MIN_DOLLAR_VOLUME,maxCandidates=50}={}) {
  if (!snapshot || !iso(snapshot.asOf) || !Array.isArray(snapshot.rows) || typeof snapshot.source!=='string' || !snapshot.source.trim()) throw Error('Timestamped market snapshot and source required');
  if (!finite(minPrice)||minPrice<=0||!finite(minDollarVolume)||minDollarVolume<=0||!Number.isInteger(maxCandidates)||maxCandidates<1) throw Error('Invalid discovery parameters');
  const seen=new Set(), candidates=[], rejected=[];
@@ -12,7 +16,11 @@ export const MIN_PRICE_CENTS=500;\nexport const MIN_DOLLAR_VOLUME=5_000_000;\nex
   if (!iso(row.observedAt) || Date.parse(row.observedAt)>Date.parse(snapshot.asOf)) throw Error('Future or invalid market observation');
   if (!finite(row.close)||!finite(row.volume)||!finite(row.previousClose)||row.close<=0||row.previousClose<=0||row.volume<0) throw Error('Invalid market data');
   const dollarVolume=row.close*row.volume;
-  if(row.close<minPrice){rejected.push({symbol:row.symbol,reason:'BELOW_PRICE_FLOOR',rejectionReason:'BELOW_PRICE_FLOOR'});continue}\n  if(dollarVolume<minDollarVolume){rejected.push({symbol:row.symbol,reason:'INSUFFICIENT_DOLLAR_VOLUME',rejectionReason:'INSUFFICIENT_DOLLAR_VOLUME'});continue}\n  const dailyGain=row.close/row.previousClose-1;\n  const threeDayGain=Array.isArray(row.priorCloses)&&row.priorCloses.length>=3?row.close/row.priorCloses.at(-3)-1:null;\n  if(dailyGain>MAX_DAILY_GAIN||(threeDayGain!==null&&threeDayGain>MAX_THREE_SESSION_GAIN)){rejected.push({symbol:row.symbol,reason:'EXHAUSTION_RISK',rejectionReason:'EXHAUSTION_RISK'});continue}
+  if(row.close<minPrice){rejected.push({symbol:row.symbol,reason:'BELOW_PRICE_FLOOR',rejectionReason:'BELOW_PRICE_FLOOR'});continue}
+  if(dollarVolume<minDollarVolume){rejected.push({symbol:row.symbol,reason:'INSUFFICIENT_DOLLAR_VOLUME',rejectionReason:'INSUFFICIENT_DOLLAR_VOLUME'});continue}
+  const dailyGain=row.close/row.previousClose-1;
+  const threeDayGain=Array.isArray(row.priorCloses)&&row.priorCloses.length>=3?row.close/row.priorCloses.at(-3)-1:null;
+  if(dailyGain>MAX_DAILY_GAIN||(threeDayGain!==null&&threeDayGain>MAX_THREE_SESSION_GAIN)){rejected.push({symbol:row.symbol,reason:'EXHAUSTION_RISK',rejectionReason:'EXHAUSTION_RISK'});continue}
   candidates.push({symbol:row.symbol,observedAt:row.observedAt,close:row.close,previousClose:row.previousClose,volume:row.volume,dollarVolume,changePct:(row.close/row.previousClose-1)*100});
  }
  candidates.sort((a,b)=>b.dollarVolume-a.dollarVolume||a.symbol.localeCompare(b.symbol));
