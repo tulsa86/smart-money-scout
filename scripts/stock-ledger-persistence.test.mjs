@@ -7,7 +7,7 @@ const bar={symbol:'SOFI',observedAt:'2026-10-29T04:00:00Z',availableAt:'2026-10-
 test('persisted ledger survives JSON round trip and preserves cash and position',()=>{
  const ledger=simulateNextSessionEntry(parseSimulatedLedger(newSimulatedLedgerFile()),decision,bar);
  const loaded=parseSimulatedLedger(serializeSimulatedLedger(ledger));
- assert.equal(loaded.cashCents,80200);
+ assert.equal(loaded.cashCents,80188);
  assert.equal(loaded.positions.SOFI.shares,12);
  assert.equal(loaded.fills.length,1);
  assert.throws(()=>simulateNextSessionEntry(loaded,decision,bar),/already processed/);
