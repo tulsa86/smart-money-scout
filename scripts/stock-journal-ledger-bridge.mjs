@@ -35,8 +35,17 @@ export function applyJournalEvidence(ledgerJson,journalJson,evidenceByDigest={},
   const evidence=evidenceByDigest[row.digest];
   if(!evidence){outcomes.push({digest:row.digest,status:'PENDING_MARKET_EVIDENCE'});continue;}
   // Evidence must explicitly name the immutable journal entry. Never infer fills from a stale reference close.
-  if(evidence.journalDigest!==row.digest||evidence.symbol!==row.decision.symbol||evidence.source!=='ALPACA_1DAY_IEX')throw Error('Evidence source or journal digest mismatch');
-  if(!evaluatedAt||!Number.isFinite(Date.parse(evidence.availableAt))||Date.parse(evidence.availableAt)>Date.parse(evaluatedAt))throw Error('Evidence not available at evaluation time');
+  if(evidence.journalDigest!==row.digest||evidence.symbol!==row.decision.symbol)throw Error('Evidence source or journal digest mismatch');
+  if(!evaluatedAt||typeof evidence.availableAt!=='string'||!/(Z|[+-]\\d{2}:\\d{2})$/.test(evidence.availableAt)||!Number.isFinite(Date.parse(evidence.availableAt))||Date.parse(evidence.availableAt)>Date.parse(evaluatedAt))throw Error('Evidence not available at evaluation time');
+  if(evidence.kind==='VERIFIED_NO_FILL'){
+   // A missing bar or API failure is NOT evidence of a halt. Require an explicit
+   // externally sourced, timestamped market-status attestation for this decision.
+   if(evidence.source!=='MARKET_STATUS_ATTESTATION'||!['HALT_OR_LULD','NO_OPEN_SESSION'].includes(evidence.reason)||typeof evidence.sourceRecordId!=='string'||evidence.sourceRecordId.trim().length<8||typeof evidence.sessionAt!=='string'||!/(Z|[+-]\\d{2}:\\d{2})$/.test(evidence.sessionAt)||!Number.isFinite(Date.parse(evidence.sessionAt))||Date.parse(evidence.sessionAt)<=Date.parse(row.decisionAt)||Date.parse(evidence.sessionAt)>Date.parse(evidence.availableAt))throw Error('Invalid verified no-fill attestation');
+   ledger={...ledger,processedDecisions:[...ledger.processedDecisions,row.decisionAt]};
+   record(row,'NO_FILL_VERIFIED',{reason:evidence.reason,source:evidence.source,sourceRecordId:evidence.sourceRecordId,sessionAt:evidence.sessionAt,availableAt:evidence.availableAt});
+   continue;
+  }
+  if(evidence.kind!==undefined||evidence.source!=='ALPACA_1DAY_IEX')throw Error('Evidence source or journal digest mismatch');
   try{
    const next=simulateNextSessionEntry(ledger,row.decision,{symbol:evidence.symbol,observedAt:evidence.observedAt,availableAt:evidence.availableAt,open:evidence.open});
    ledger={...next,executionOutcomes:ledger.executionOutcomes};
