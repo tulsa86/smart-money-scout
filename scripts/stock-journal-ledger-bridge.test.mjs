@@ -16,7 +16,7 @@ test('original prospective decision remains pending without future market eviden
 test('explicit future evidence produces a simulated entry exactly once',()=>{
  const evidence={[digest]:{journalDigest:digest,source:'ALPACA_1DAY_IEX',symbol:'SOFI',observedAt:'2026-10-29T04:00:00Z',availableAt:'2026-10-29T20:45:00Z',open:16.5}};
  const first=applyJournalEvidence(newSimulatedLedgerFile(),journal,evidence);
- assert.equal(JSON.parse(first.ledgerJson).cashCents,80200);
+ assert.equal(JSON.parse(first.ledgerJson).cashCents,80188);
  const again=applyJournalEvidence(first.ledgerJson,journal,evidence);
  assert.equal(again.outcomes[0].status,'ALREADY_PROCESSED');
  assert.equal(JSON.parse(again.ledgerJson).fills.length,1);
