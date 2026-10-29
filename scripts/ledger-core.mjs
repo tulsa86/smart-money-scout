@@ -10,6 +10,15 @@ export function validateLedger(rows){
   if(r.startingCashCents!==cash||r.endingCashCents!==cash+r.pnlCents)throw new Error('Ledger cash continuity broken: '+r.day);
   if(['PIPELINE_OUTAGE','INSUFFICIENT_DATA','NO_CANDIDATE','QUALIFIED_NO_TRADE'].includes(r.status)&&(r.pnlCents!==0||r.trades?.length))throw new Error('Nontrade session contains trading activity');
   if(r.status==='TRADE_EXECUTED'&&(!Array.isArray(r.trades)||!r.trades.length))throw new Error('Executed status requires trades');
+  if(r.status==='TRADE_EXECUTED'){
+   let total=0;
+   for(const trade of r.trades){
+    if(!trade||!Number.isFinite(trade.netPnl))throw new Error('Invalid simulated trade PnL');
+    total+=trade.netPnl;
+   }
+   // Trade-level PnL is stored in dollars with sub-cent precision; session cash is cents.
+   if(!Number.isFinite(total)||Math.round((total+Number.EPSILON)*100)!==r.pnlCents)throw new Error('Session PnL does not reconcile with trades: '+r.day);
+  }
   cash=r.endingCashCents;priorDay=r.day;
  }
  return cash;
