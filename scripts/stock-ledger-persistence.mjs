@@ -5,17 +5,18 @@ export function parseSimulatedLedger(json){
  const x=JSON.parse(json);
  if(!x||x.schemaVersion!==1||!integer(x.startingCashCents)||!integer(x.cashCents)||!x.positions||Array.isArray(x.positions)||typeof x.positions!=='object'||!Array.isArray(x.fills)||!Array.isArray(x.processedDecisions)|| (x.executionOutcomes!==undefined&&!Array.isArray(x.executionOutcomes)))throw Error('Invalid persisted simulated ledger');
  if(new Set(x.processedDecisions).size!==x.processedDecisions.length||x.processedDecisions.some(t=>typeof t!=='string'||!Number.isFinite(Date.parse(t))))throw Error('Invalid processed decision IDs');
- if(x.executionOutcomes!==undefined){for(const event of x.executionOutcomes){if(!event||typeof event.journalDigest!=='string'||!/^[a-f0-9]{64}$/.test(event.journalDigest)||typeof event.decisionAt!=='string'||!Number.isFinite(Date.parse(event.decisionAt))||!['HISTORICAL_DECISION_ONLY','NO_FILL_MISSING_EVIDENCE','REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE','SIMULATED_ENTRY_RECORDED'].includes(event.status))throw Error('Invalid persisted execution outcome');}}
+ if(x.executionOutcomes!==undefined){for(const event of x.executionOutcomes){if(!event||typeof event.journalDigest!=='string'||!/^[a-f0-9]{64}$/.test(event.journalDigest)||typeof event.decisionAt!=='string'||!Number.isFinite(Date.parse(event.decisionAt))||!['HISTORICAL_DECISION_ONLY','NO_FILL_VERIFIED','REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE','SIMULATED_ENTRY_RECORDED'].includes(event.status))throw Error('Invalid persisted execution outcome');}}
  if(x.executionOutcomes!==undefined){
-  const terminal=new Set(['HISTORICAL_DECISION_ONLY','NO_FILL_MISSING_EVIDENCE','REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE','SIMULATED_ENTRY_RECORDED']);
+  const terminal=new Set(['HISTORICAL_DECISION_ONLY','NO_FILL_VERIFIED','REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE','SIMULATED_ENTRY_RECORDED']);
   const seen=new Set();
   for(const event of x.executionOutcomes){
    if(seen.has(event.journalDigest))throw Error('Duplicate terminal execution outcome');
    seen.add(event.journalDigest);
    if(!terminal.has(event.status))throw Error('Invalid terminal execution outcome');
    const processed=x.processedDecisions.includes(event.decisionAt);
+   if(event.status==='NO_FILL_VERIFIED'&&(!event.detail||!['HALT_OR_LULD','NO_OPEN_SESSION'].includes(event.detail.reason)||event.detail.source!=='MARKET_STATUS_ATTESTATION'||typeof event.detail.sourceRecordId!=='string'||event.detail.sourceRecordId.trim().length<8||!Number.isFinite(Date.parse(event.detail.sessionAt))||!Number.isFinite(Date.parse(event.detail.availableAt))||Date.parse(event.detail.sessionAt)>Date.parse(event.detail.availableAt)))throw Error('Invalid verified no-fill provenance');
    if(event.status==='HISTORICAL_DECISION_ONLY'&&processed)throw Error('Historical decision was processed');
-   if(['REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE','SIMULATED_ENTRY_RECORDED'].includes(event.status)&&!processed)throw Error('Terminal outcome missing processed decision');
+   if(['NO_FILL_VERIFIED','REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE','SIMULATED_ENTRY_RECORDED'].includes(event.status)&&!processed)throw Error('Terminal outcome missing processed decision');
   }
  }
  let spent=0;const reconstructed={};
@@ -28,7 +29,7 @@ export function parseSimulatedLedger(json){
   const p=reconstructed[fill.symbol]||{shares:0,costBasisCents:0};
   reconstructed[fill.symbol]={shares:p.shares+fill.shares,costBasisCents:p.costBasisCents+fill.costCents};
  }
- if(x.executionOutcomes!==undefined){for(const event of x.executionOutcomes){if(event.status==='SIMULATED_ENTRY_RECORDED'&&!fillDecisions.has(event.decisionAt))throw Error('Fill outcome without fill');if(event.status==='REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE'&&fillDecisions.has(event.decisionAt))throw Error('Rejected decision has fill');}}
+ if(x.executionOutcomes!==undefined){for(const event of x.executionOutcomes){if(event.status==='SIMULATED_ENTRY_RECORDED'&&!fillDecisions.has(event.decisionAt))throw Error('Fill outcome without fill');if(['NO_FILL_VERIFIED','REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE'].includes(event.status)&&fillDecisions.has(event.decisionAt))throw Error('Rejected decision has fill');}}
  if(!Number.isSafeInteger(spent)||x.startingCashCents-spent!==x.cashCents||JSON.stringify(Object.entries(reconstructed).sort())!==JSON.stringify(Object.entries(x.positions).sort()))throw Error('Simulated ledger accounting mismatch');
  return x;
 }
