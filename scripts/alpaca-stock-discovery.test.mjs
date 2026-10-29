@@ -9,7 +9,7 @@ const fetchImpl=async url=>{
  calls.push(url);
  if(url.includes('most-actives'))return {ok:true,json:async()=>({most_actives:[{symbol:'ACME'},{symbol:'XYZ'}]})};
  const symbol=new URL(url).searchParams.get('symbols');
- return {ok:true,json:async()=>({bars:{[symbol]:[bar('2026-10-26T04:00:00Z',10),bar('2026-10-27T04:00:00Z',symbol==='ACME'?11:9),bar('2026-10-28T04:00:00Z',999)]}})};
+ return {ok:true,json:async()=>({bars:{[symbol]:[bar('2026-10-23T04:00:00Z',9),bar('2026-10-26T04:00:00Z',10),bar('2026-10-27T04:00:00Z',symbol==='ACME'?11:9),bar('2026-10-28T04:00:00Z',999)]}})};
 };
 test('fetches actual Alpaca endpoints and excludes unfinished decision-day candles',async()=>{
  calls.length=0;
@@ -51,7 +51,7 @@ test('includes same-day daily bar only after New York close buffer',async()=>{
 test('DST changes the New York close cutoff automatically',async()=>{
  const winterFetch=async url=>{
   if(url.includes('most-actives'))return {ok:true,json:async()=>({most_actives:[{symbol:'ACME'}]})};
-  return {ok:true,json:async()=>({bars:{ACME:[bar('2026-11-02T05:00:00Z',10),bar('2026-11-03T05:00:00Z',11),bar('2026-11-04T05:00:00Z',12)]}})};
+  return {ok:true,json:async()=>({bars:{ACME:[bar('2026-10-30T04:00:00Z',9),bar('2026-11-02T05:00:00Z',10),bar('2026-11-03T05:00:00Z',11),bar('2026-11-04T05:00:00Z',12)]}})};
  };
  const before=await fetchAlpacaStockSnapshot({key:'test',secret:'test',decisionAt:'2026-11-04T21:29:00Z',fetchImpl:winterFetch});
  const after=await fetchAlpacaStockSnapshot({key:'test',secret:'test',decisionAt:'2026-11-04T21:31:00Z',fetchImpl:winterFetch});
