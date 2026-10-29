@@ -76,5 +76,20 @@
     "fixedSizeCumulativePnl": 22.21,
     "fixedSizeIllustrativeBalance": 1022.21,
     "spyReturnSinceAnchorPct": 0.922
+  },
+  {
+    "day": "2026-10-29",
+    "spyClose": 769.49,
+    "source": "Alpaca IEX five-minute candles",
+    "mode": "prior-session-momentum",
+    "symbol": "AMD",
+    "decision": "no-signal",
+    "note": "No qualifying trade",
+    "trades": [],
+    "pnl": 0,
+    "limitations": "Research-only replay; no orders. IEX volume is not consolidated. Rolling-window cash and PnL are not cumulative forward returns.",
+    "fixedSizeCumulativePnl": 22.21,
+    "fixedSizeIllustrativeBalance": 1022.21,
+    "spyReturnSinceAnchorPct": 0.5574
   }
 ]

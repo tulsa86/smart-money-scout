@@ -65,5 +65,20 @@
     "spyClose": 772.28,
     "recordedAt": "2026-10-28T23:06:49.819Z",
     "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
+  },
+  {
+    "schemaVersion": 1,
+    "day": "2026-10-29",
+    "status": "QUALIFIED_NO_TRADE",
+    "strategy": "prior-session-momentum-v1",
+    "feed": "Alpaca IEX 5m",
+    "startingCashCents": 102221,
+    "pnlCents": 0,
+    "endingCashCents": 102221,
+    "selectedTicker": "AMD",
+    "trades": [],
+    "spyClose": 769.49,
+    "recordedAt": "2026-10-29T23:08:22.166Z",
+    "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
   }
 ]
