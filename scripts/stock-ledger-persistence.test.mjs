@@ -18,3 +18,16 @@ test('rejects tampered cash, position, and fill accounting',()=>{
  assert.throws(()=>parseSimulatedLedger(JSON.stringify({...x,positions:{}})),/mismatch/);
  assert.throws(()=>parseSimulatedLedger(JSON.stringify({...x,fills:[{...x.fills[0],costCents:1}]})),/Invalid simulated fill/);
 });
+
+test('duplicate fill and conflicting outcome records fail ledger reconciliation',()=>{
+ const ledger=JSON.parse(newSimulatedLedgerFile());
+ ledger.processedDecisions=['2026-11-02T20:00:00Z'];
+ ledger.fills=[{kind:'SIMULATED_ENTRY',simulationOnly:true,symbol:'SOFI',shares:1,priceCents:500,costCents:500,decisionAt:ledger.processedDecisions[0]}];
+ ledger.positions={SOFI:{shares:1,costBasisCents:500}};
+ ledger.cashCents=99500;
+ const duplicated={...ledger,fills:[...ledger.fills,...ledger.fills],positions:{SOFI:{shares:2,costBasisCents:1000}},cashCents:99000};
+ assert.throws(()=>parseSimulatedLedger(JSON.stringify(duplicated)),/Duplicate fill/);
+ const digest='a'.repeat(64);
+ const contradicted={...ledger,executionOutcomes:[{journalDigest:digest,decisionAt:ledger.processedDecisions[0],status:'REJECTED_INSUFFICIENT_CASH_AFTER_SLIPPAGE'}]};
+ assert.throws(()=>parseSimulatedLedger(JSON.stringify(contradicted)),/Rejected decision has fill/);
+});
