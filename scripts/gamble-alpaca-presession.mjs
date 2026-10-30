@@ -33,9 +33,12 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
    if(!byDay.has(day))byDay.set(day,[]);
    byDay.get(day).push(b);
   }
+  const latestObservedDay=[...byDay.keys()].sort().at(-1);
+  if(latestObservedDay&&byDay.get(latestObservedDay).length!==78)throw Error('Latest observed session incomplete for '+symbol);
   const completed=[...byDay.entries()].filter(([,v])=>v.length===78&&new Set(v.map(b=>b.t)).size===78&&v.some(b=>nyClock(b.t)==='09:30')&&v.some(b=>nyClock(b.t)==='15:55')).sort((a,b)=>a[0].localeCompare(b[0]));
   if(completed.length<2)throw Error('Insufficient complete prior sessions for '+symbol);
   const [session,latest]=completed.at(-1);
+  if(session!==latestObservedDay)throw Error('Latest observed session invalid for '+symbol);
   if(commonLatest!==null&&session!==commonLatest)throw Error('Symbols do not share latest completed session');
   commonLatest=session;
   latest.sort((a,b)=>Date.parse(a.t)-Date.parse(b.t));
@@ -46,7 +49,8 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
  }
  // Fail closed unless the latest completed session was the most recent New York date before target.
  // A market holiday/weekend is allowed; stale data older than four calendar days is not.
- if((Date.parse(targetSession+'T00:00:00Z')-Date.parse(commonLatest+'T00:00:00Z'))/86400000>4)throw Error('Stale completed session');
+ const ageDays=(Date.parse(targetSession+'T00:00:00Z')-Date.parse(commonLatest+'T00:00:00Z'))/86400000;
+ if(ageDays<1||ageDays>4)throw Error('Stale or invalid completed session');
  const collectedAt=clock();
  if(!validTime(collectedAt)||Date.parse(collectedAt)<Date.parse(now)||nyDay(collectedAt)>=targetSession)throw Error('Collection completed too late');
  for(const observation of observations)observation.availableAt=collectedAt;
