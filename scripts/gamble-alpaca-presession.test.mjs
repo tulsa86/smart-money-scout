@@ -24,3 +24,7 @@ test('an incomplete newest day cannot be silently replaced by an older complete 
  const later={...bars[0],t:'2026-10-30T13:30:00Z'};
  await assert.rejects(()=>collectGamblePresession({...opts,targetSession:'2026-11-02',now:'2026-10-30T20:00:00Z',clock:()=> '2026-10-30T20:00:00Z',fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars,later]})})}),/Latest observed session incomplete/);
 });
+
+test('weekend target is rejected before any market-data request',async()=>{
+ await assert.rejects(()=>collectGamblePresession({...opts,targetSession:'2026-10-31'}),/Invalid prospective collection inputs/);
+});
