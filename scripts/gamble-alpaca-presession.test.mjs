@@ -12,10 +12,15 @@ test('Alpaca adapter creates two decision-only prospective records',async()=>{
  assert.equal(journal[1].mode,'selective');
 });
 test('missing bars and target-session leakage fail closed',async()=>{
- await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars.slice(0,77)]})})}),/Insufficient complete/);
+ await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars.slice(0,77)]})})}),/Latest observed session incomplete/);
  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars,{...bars[0],t:'2026-10-30T13:30:00Z'}]})})}),/Target-session/);
 });
 test('late collection and API errors fail closed',async()=>{
  await assert.rejects(()=>collectGamblePresession({...opts,clock:()=> '2026-10-30T14:00:00Z'}),/too late/);
  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:false,status:503})}),/HTTP 503/);
+});
+
+test('an incomplete newest day cannot be silently replaced by an older complete session',async()=>{
+ const later={...bars[0],t:'2026-10-30T13:30:00Z'};
+ await assert.rejects(()=>collectGamblePresession({...opts,targetSession:'2026-11-02',now:'2026-10-30T20:00:00Z',clock:()=> '2026-10-30T20:00:00Z',fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars,later]})})}),/Latest observed session incomplete/);
 });
