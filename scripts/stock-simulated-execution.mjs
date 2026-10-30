@@ -43,3 +43,28 @@ export function markSimulatedPortfolio(ledger,marks,{snapshotTime}={}){
  if(!Number.isSafeInteger(totalEquityCents)||!Number.isSafeInteger(costBasisCents))throw Error('Valuation overflow');
  return {snapshotTime,cashCents:ledger.cashCents,unrealizedEquityCents,totalEquityCents,unrealizedPnlCents:unrealizedEquityCents-costBasisCents,markEvidence};
 }
+
+/**
+ * Offline simulated closing fill. Uses a completed, available exit observation,
+ * never a broker order. Caller must choose the exit according to frozen rules.
+ * This is not an intraday execution guarantee.
+ */
+export function simulatePositionExit(ledger,{symbol,shares,exitBar,snapshotTime,reason='RULE_EXIT'}){
+ if(!ledger||ledger.schemaVersion!==1||!cents(ledger.cashCents)||!Array.isArray(ledger.fills)||!ledger.positions||!Array.isArray(ledger.processedDecisions))throw Error('Invalid ledger');
+ const position=ledger.positions[symbol];
+ if(!position||!Number.isSafeInteger(shares)||shares<=0||shares>position.shares||!cents(position.costBasisCents)||!Number.isSafeInteger(position.shares)||position.shares<=0)throw Error('Invalid exit position or quantity');
+ if(!exitBar||exitBar.symbol!==symbol||!validTime(exitBar.observedAt)||!validTime(exitBar.availableAt)||!validTime(snapshotTime)||!Number.isFinite(exitBar.close)||exitBar.close<=0||Date.parse(exitBar.availableAt)<Date.parse(exitBar.observedAt)||Date.parse(exitBar.availableAt)>Date.parse(snapshotTime))throw Error('Exit price is not available at snapshot');
+ const entries=ledger.fills.filter(f=>f.kind==='SIMULATED_ENTRY'&&f.symbol===symbol);
+ if(!entries.length||Date.parse(exitBar.observedAt)<=Math.max(...entries.map(f=>Date.parse(f.recordedAt))))throw Error('Exit observation must follow available entry');
+ if(ledger.fills.some(f=>f.kind==='SIMULATED_EXIT'&&f.symbol===symbol&&f.priceAvailableAt===exitBar.availableAt))throw Error('Duplicate exit observation');
+ const priceCents=Math.round(exitBar.close*(1-SLIPPAGE_BPS/10000)*100);
+ if(!cents(priceCents)||priceCents===0)throw Error('Invalid exit price after slippage');
+ const proceedsCents=priceCents*shares;
+ if(!Number.isSafeInteger(proceedsCents)||!Number.isSafeInteger(ledger.cashCents+proceedsCents))throw Error('Exit proceeds overflow');
+ const releasedCostBasisCents=shares===position.shares?position.costBasisCents:Math.round(position.costBasisCents*shares/position.shares);
+ const positions={...ledger.positions};
+ if(shares===position.shares)delete positions[symbol];
+ else positions[symbol]={shares:position.shares-shares,costBasisCents:position.costBasisCents-releasedCostBasisCents};
+ return {...ledger,cashCents:ledger.cashCents+proceedsCents,positions,
+  fills:[...ledger.fills,{kind:'SIMULATED_EXIT',symbol,shares,priceCents,proceedsCents,releasedCostBasisCents,realizedPnlCents:proceedsCents-releasedCostBasisCents,slippageBps:SLIPPAGE_BPS,reason,observedAt:exitBar.observedAt,priceAvailableAt:exitBar.availableAt,recordedAt:snapshotTime,simulationOnly:true}]};
+}
