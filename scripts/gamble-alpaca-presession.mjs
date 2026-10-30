@@ -2,9 +2,10 @@
 import {planGamblePresession} from './gamble-presession-planner.mjs';
 const nyDay=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
 const nyClock=x=>new Intl.DateTimeFormat('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(x));
+const isWeekday=x=>!['Sat','Sun'].includes(new Intl.DateTimeFormat('en-US',{timeZone:'UTC',weekday:'short'}).format(new Date(x+'T12:00:00Z')));
 const validTime=x=>typeof x==='string'&&/(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
 export async function collectGamblePresession({key,secret,targetSession,now=new Date().toISOString(),fetchImpl=fetch,clock=()=>new Date().toISOString(),symbols=['SPY','QQQ','NVDA','AMD','TSLA']}){
- if(!key||!secret||!validTime(now)||!/^\d{4}-\d{2}-\d{2}$/.test(targetSession)||nyDay(now)>=targetSession||!Array.isArray(symbols)||symbols.length<1||new Set(symbols).size!==symbols.length)throw Error('Invalid prospective collection inputs');
+ if(!key||!secret||!validTime(now)||!/^\d{4}-\d{2}-\d{2}$/.test(targetSession)||nyDay(now)>=targetSession||!isWeekday(targetSession)||!Array.isArray(symbols)||symbols.length<1||new Set(symbols).size!==symbols.length)throw Error('Invalid prospective collection inputs');
  const observations=[];
  let commonLatest=null;
  for(const symbol of symbols){
