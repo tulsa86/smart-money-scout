@@ -3,9 +3,11 @@ import {planGamblePresession} from './gamble-presession-planner.mjs';
 const nyDay=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
 const nyClock=x=>new Intl.DateTimeFormat('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(x));
 const validTime=x=>typeof x==='string'&&/(Z|[+-]\\d{2}:\\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
-export async function collectGamblePresession({key,secret,targetSession,now=new Date().toISOString(),fetchImpl=fetch,symbols=['SPY','QQQ','NVDA','AMD','TSLA']}){
+export async function collectGamblePresession({key,secret,targetSession,now=new Date().toISOString(),fetchImpl=fetch,clock=()=>new Date().toISOString(),symbols=['SPY','QQQ','NVDA','AMD','TSLA']}){
  if(!key||!secret||!validTime(now)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(targetSession)||nyDay(now)>=targetSession||!Array.isArray(symbols)||symbols.length<1||new Set(symbols).size!==symbols.length)throw Error('Invalid prospective collection inputs');
  const observations=[];
+ const collectedAt=clock();
+ if(!validTime(collectedAt)||Date.parse(collectedAt)<Date.parse(now)||nyDay(collectedAt)>=targetSession)throw Error('Collection completed too late');
  let commonLatest=null;
  for(const symbol of symbols){
   if(!/^[A-Z]{1,5}$/.test(symbol))throw Error('Invalid symbol');
@@ -40,14 +42,14 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
   const previous=completed.slice(0,-1).map(([,v])=>v.reduce((n,b)=>n+b.v,0));
   const meanPriorVolume=previous.reduce((a,b)=>a+b,0)/previous.length;
   if(meanPriorVolume<=0)throw Error('Invalid prior volume baseline');
-  observations.push({symbol,sessionCloseAt:latest.at(-1).t,availableAt:now,open:latest[0].o,close:latest.at(-1).c,volume:latest.reduce((n,b)=>n+b.v,0),meanPriorVolume});
+  observations.push({symbol,sessionCloseAt:latest.at(-1).t,availableAt:collectedAt,open:latest[0].o,close:latest.at(-1).c,volume:latest.reduce((n,b)=>n+b.v,0),meanPriorVolume});
  }
  // Fail closed unless the latest completed session was the most recent New York date before target.
  // A market holiday/weekend is allowed; stale data older than four calendar days is not.
  if((Date.parse(targetSession+'T00:00:00Z')-Date.parse(commonLatest+'T00:00:00Z'))/86400000>4)throw Error('Stale completed session');
- return {source:'Alpaca IEX 5Min read-only collection (five-symbol fixed universe)',sourceFetchedAt:now,observations};
+ return {source:'Alpaca IEX 5Min read-only collection (five-symbol fixed universe)',sourceFetchedAt:collectedAt,observations};
 }
 export async function collectAndPlanGamble(rows,options){
  const evidence=await collectGamblePresession(options);
- return planGamblePresession(rows,{...evidence,targetSession:options.targetSession,recordedAt:options.now,bankrollCents:options.bankrollCents??100000});
+ return planGamblePresession(rows,{...evidence,targetSession:options.targetSession,recordedAt:evidence.sourceFetchedAt,bankrollCents:options.bankrollCents??100000});
 }
