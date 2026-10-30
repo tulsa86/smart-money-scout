@@ -25,7 +25,9 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
   }
   const byDay=new Map();
   for(const b of bars){
-   if(!validTime(b.t)||Date.parse(b.t)>Date.parse(now)||![b.o,b.c,b.v].every(Number.isFinite)||b.o<=0||b.c<=0||b.v<0)throw Error('Invalid Alpaca bar');
+   if(!validTime(b.t)||![b.o,b.c,b.v].every(Number.isFinite)||b.o<=0||b.c<=0||b.v<0)throw Error('Invalid Alpaca bar');
+   if(nyDay(b.t)>=targetSession)throw Error('Target-session data would leak into decision');
+   if(Date.parse(b.t)>Date.parse(now))throw Error('Future Alpaca bar');
    const clock=nyClock(b.t);if(clock<'09:30'||clock>'15:55')continue;
    const day=nyDay(b.t);if(day>=targetSession)throw Error('Target-session data would leak into decision');
    if(!byDay.has(day))byDay.set(day,[]);
