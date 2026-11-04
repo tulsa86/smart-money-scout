@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {appendGambleDecision} from './gamble-decision-journal.mjs';
 import {newMvpLedger} from './gamble-mvp-ledger.mjs';
 import {settleMvp,validateSettlement} from './settle-gamble-mvp.mjs';
-const targetSession='2026-11-05',now='2026-11-06T03:00:00Z';
+const targetSession='2026-11-05',now='2026-11-06T14:00:00Z';
 function journal(action='SKIP'){
  return appendGambleDecision([],{mode:'selective',targetSession,recordedAt:'2026-11-04T20:00:00Z',snapshot:{asOf:'2026-11-04T19:59:00Z',source:'test evidence',candidates:[{symbol:'SPY'}]},action,symbol:action==='BUY_INTENT'?'SPY':null,ruleVersion:'gamble-mvp-v1',reason:'test'});
 }
