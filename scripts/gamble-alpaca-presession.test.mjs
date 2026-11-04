@@ -28,3 +28,22 @@ test('an incomplete newest day cannot be silently replaced by an older complete 
 test('weekend target is rejected before any market-data request',async()=>{
  await assert.rejects(()=>collectGamblePresession({...opts,targetSession:'2026-10-31'}),/Invalid prospective collection inputs/);
 });
+
+test('MVP adapter forwards selective-only mode and frozen rule version',async()=>{
+ const journal=await collectAndPlanGamble([],{...opts,modes:['selective'],ruleVersion:'gamble-mvp-v1'});
+ assert.equal(journal.length,1);
+ assert.equal(journal[0].mode,'selective');
+ assert.equal(journal[0].ruleVersion,'gamble-mvp-v1');
+ assert.equal(journal[0].action,'BUY_INTENT');
+ assert.equal(journal[0].symbol,'AMD');
+ assert.equal(journal[0].snapshot.candidates[0].score>0,true);
+});
+test('MVP no-signal collection skips without forced fallback',async()=>{
+ const falling=bars.map(b=>({...b,c:99}));
+ const journal=await collectAndPlanGamble([],{...opts,modes:['selective'],ruleVersion:'gamble-mvp-v1',fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...falling]})})});
+ assert.equal(journal.length,1);
+ assert.equal(journal[0].mode,'selective');
+ assert.equal(journal[0].ruleVersion,'gamble-mvp-v1');
+ assert.equal(journal[0].action,'SKIP');
+ assert.equal(journal[0].symbol,null);
+});
