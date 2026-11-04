@@ -23,3 +23,14 @@ test('late and incomplete source evidence fail closed',()=>{
  assert.throws(()=>planGamblePresession([],{...base,targetSession:'2026-10-30'}),/late/);
  assert.throws(()=>planGamblePresession([],{...base,observations:[base.observations[0],base.observations[0]]}),/duplicate/);
 });
+
+test('MVP selective-only mode never creates forced fallback',()=>{
+ const noSignal=base.observations.map(o=>({...o,close:o.open*0.99}));
+ const rows=planGamblePresession([],{...base,observations:noSignal,modes:['selective'],ruleVersion:'gamble-mvp-v1'});
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].mode,'selective');
+ assert.equal(rows[0].action,'SKIP');
+ assert.equal(rows[0].symbol,null);
+ assert.equal(verifyGambleDecisionJournal(rows).length,1);
+ assert.throws(()=>planGamblePresession([],{...base,modes:['selective','selective']}),/Invalid selection modes/);
+});
