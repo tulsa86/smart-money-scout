@@ -136,5 +136,31 @@
     "spyClose": 754.38,
     "recordedAt": "2026-11-03T23:13:57.843Z",
     "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
+  },
+  {
+    "schemaVersion": 1,
+    "day": "2026-11-04",
+    "status": "TRADE_EXECUTED",
+    "strategy": "prior-session-momentum-v1",
+    "feed": "Alpaca IEX 5m",
+    "startingCashCents": 100546,
+    "pnlCents": -2044,
+    "endingCashCents": 98502,
+    "selectedTicker": "AMD",
+    "trades": [
+      {
+        "entryTime": "2026-11-04T14:40:00Z",
+        "exitTime": "2026-11-04T15:25:00Z",
+        "entryPrice": 498.86931,
+        "exitPrice": 488.647478,
+        "shares": 2,
+        "netPnl": -20.443664,
+        "reason": "stop",
+        "strategy": "breakout"
+      }
+    ],
+    "spyClose": 766.73,
+    "recordedAt": "2026-11-04T23:13:06.830Z",
+    "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
   }
 ]
