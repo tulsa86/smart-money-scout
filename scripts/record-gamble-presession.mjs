@@ -13,7 +13,7 @@ try{existing=JSON.parse(await readFile(path,'utf8'))}
 catch(error){if(error.code!=='ENOENT')throw error}
 verifyGambleDecisionJournal(existing);
 if(existing.some(row=>row.targetSession===targetSession))throw Error('Session already recorded');
-const next=await collectAndPlanGamble(existing,{targetSession,key,secret});
+const next=await collectAndPlanGamble(existing,{targetSession,key,secret,modes:['selective'],ruleVersion:'gamble-mvp-v1'});
 await mkdir('public/stocks',{recursive:true});
 await writeFile(path,JSON.stringify(next,null,2)+'\n');
 console.log('Recorded pre-session decisions only; no fills or orders');
