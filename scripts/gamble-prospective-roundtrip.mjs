@@ -2,6 +2,7 @@
 // This module does not fetch prices, schedule jobs, or place orders.
 import {createSimulatedLedger,simulateNextSessionEntry,simulatePositionExit,markSimulatedPortfolio} from './stock-simulated-execution.mjs';
 export const MODES=Object.freeze(['forced-daily','selective']);
+const nySession=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
 export function createGambleAccounts(){
  return Object.fromEntries(MODES.map(mode=>[mode,createSimulatedLedger(100000)]));
 }
@@ -14,6 +15,7 @@ export function processGambleSession(accounts,inputs,{snapshotTime}={}){
   let updated=simulateNextSessionEntry(ledger,item.decision,item.openingBar??null);
   if(item.decision.action==='BUY'){
    if(!item.exitBar)throw Error('Missing exit evidence for '+mode);
+   if(!item.openingBar||!item.exitBar.observedAt||!item.exitBar.availableAt||!item.openingBar.availableAt||!Number.isFinite(Date.parse(item.exitBar.observedAt))||!Number.isFinite(Date.parse(item.exitBar.availableAt))||nySession(item.openingBar.observedAt)!==nySession(item.exitBar.observedAt)||Date.parse(item.openingBar.availableAt)>=Date.parse(item.exitBar.observedAt))throw Error('Intraday entry/exit timing invalid for '+mode);
    updated=simulatePositionExit(updated,{symbol:item.decision.symbol,shares:item.decision.shares,exitBar:item.exitBar,snapshotTime,reason:'SESSION_END'});
   }
   const valuation=markSimulatedPortfolio(updated,{}, {snapshotTime});
