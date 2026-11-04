@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {appendGambleDecision} from './gamble-decision-journal.mjs';
-import {newMvpLedger,applyMvpSession} from './gamble-mvp-ledger.mjs';
+import {newMvpLedger,applyMvpSession,applyMvpSessionIdempotent} from './gamble-mvp-ledger.mjs';
 const session='2026-11-05';
 const decisionAt='2026-11-04T21:30:00Z';
 const candidate={symbol:'AMD',score:0.04};
@@ -35,4 +35,16 @@ test('rejects premature and mismatched evidence, and unaffordable shares',()=>{
  const unaffordable=applyMvpSession(newMvpLedger(),j,{targetSession:session,evidence:{...evidence,open:300,close:290},recordedAt:at});
  assert.equal(unaffordable.sessions[0].status,'SKIP_UNAFFORDABLE');
  assert.equal(unaffordable.cashCents,100000);
+});
+
+test('rerun is a no-op and conflicting decisions or evidence cannot rewrite history',()=>{
+ const j=journal('BUY_INTENT');
+ const first=applyMvpSessionIdempotent(newMvpLedger(),j,{targetSession:session,evidence,recordedAt:at});
+ assert.equal(first.alreadyRecorded,false);
+ const repeat=applyMvpSessionIdempotent(first.ledger,j,{targetSession:session,recordedAt:at});
+ assert.equal(repeat.alreadyRecorded,true);
+ assert.strictEqual(repeat.ledger,first.ledger);
+ assert.throws(()=>applyMvpSessionIdempotent(first.ledger,j,{targetSession:session,recordedAt:at,slippageBps:25}),/Conflicting rerun/);
+ const missing=applyMvpSessionIdempotent(newMvpLedger(),j,{targetSession:session,recordedAt:at}).ledger;
+ assert.throws(()=>applyMvpSessionIdempotent(missing,j,{targetSession:session,evidence,recordedAt:at}),/Cannot silently replace/);
 });
