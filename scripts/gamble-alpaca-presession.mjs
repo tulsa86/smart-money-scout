@@ -4,6 +4,12 @@ const nyDay=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year
 const nyClock=x=>new Intl.DateTimeFormat('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(x));
 const isWeekday=x=>!['Sat','Sun'].includes(new Intl.DateTimeFormat('en-US',{timeZone:'UTC',weekday:'short'}).format(new Date(x+'T12:00:00Z')));
 const validTime=x=>typeof x==='string'&&/(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
+const completeRegularSession=v=>{
+ if(v.length!==78)return false;
+ const sorted=[...v].sort((a,b)=>Date.parse(a.t)-Date.parse(b.t));
+ if(nyClock(sorted[0].t)!=='09:30'||nyClock(sorted.at(-1).t)!=='15:55')return false;
+ return sorted.every((b,i)=>i===0||Date.parse(b.t)-Date.parse(sorted[i-1].t)===300000);
+};
 export async function collectGamblePresession({key,secret,targetSession,now=new Date().toISOString(),fetchImpl=fetch,clock=()=>new Date().toISOString(),symbols=['SPY','QQQ','NVDA','AMD','TSLA']}){
  if(!key||!secret||!validTime(now)||!/^\d{4}-\d{2}-\d{2}$/.test(targetSession)||nyDay(now)>=targetSession||!isWeekday(targetSession)||!Array.isArray(symbols)||symbols.length<1||new Set(symbols).size!==symbols.length)throw Error('Invalid prospective collection inputs');
  const observations=[];
@@ -35,8 +41,8 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
    byDay.get(day).push(b);
   }
   const latestObservedDay=[...byDay.keys()].sort().at(-1);
-  if(latestObservedDay&&byDay.get(latestObservedDay).length!==78)throw Error('Latest observed session incomplete for '+symbol);
-  const completed=[...byDay.entries()].filter(([,v])=>v.length===78&&new Set(v.map(b=>b.t)).size===78&&v.some(b=>nyClock(b.t)==='09:30')&&v.some(b=>nyClock(b.t)==='15:55')).sort((a,b)=>a[0].localeCompare(b[0]));
+  if(latestObservedDay&&!completeRegularSession(byDay.get(latestObservedDay)))throw Error('Latest observed session incomplete for '+symbol);
+  const completed=[...byDay.entries()].filter(([,v])=>completeRegularSession(v)).sort((a,b)=>a[0].localeCompare(b[0]));
   if(completed.length<2)throw Error('Insufficient complete prior sessions for '+symbol);
   const [session,latest]=completed.at(-1);
   if(session!==latestObservedDay)throw Error('Latest observed session invalid for '+symbol);
