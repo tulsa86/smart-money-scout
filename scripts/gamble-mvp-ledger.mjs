@@ -25,3 +25,16 @@ export function applyMvpSession(ledger,journal,{targetSession,evidence=null,reco
  if(!Number.isSafeInteger(cashCents)||cashCents<0)throw Error('Accounting overflow');
  return {...ledger,cashCents,sessions:[...ledger.sessions,{targetSession,decisionDigest:d.digest,recordedAt,status,symbol:d.symbol,shares,entryPriceCents,exitPriceCents,pnlCents,cashCents,slippageBps,simulationOnly:true}]};
 }
+
+export function applyMvpSessionIdempotent(ledger,journal,input){
+ const existing=ledger?.sessions?.find(s=>s.targetSession===input?.targetSession);
+ if(existing){
+  verifyGambleDecisionJournal(journal);
+  const row=journal.find(r=>r.mode==='selective'&&r.targetSession===input.targetSession&&r.ruleVersion==='gamble-mvp-v1');
+  if(!row||row.digest!==existing.decisionDigest)throw Error('Conflicting rerun decision');
+  if(input.slippageBps!==undefined&&input.slippageBps!==existing.slippageBps)throw Error('Conflicting rerun slippage');
+  if(input.evidence&&existing.status!=='SIMULATED_ROUND_TRIP'&&existing.status!=='SKIP_UNAFFORDABLE')throw Error('Cannot silently replace recorded outcome');
+  return {ledger,alreadyRecorded:true};
+ }
+ return {ledger:applyMvpSession(ledger,journal,input),alreadyRecorded:false};
+}
