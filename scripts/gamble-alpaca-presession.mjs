@@ -59,5 +59,5 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
 }
 export async function collectAndPlanGamble(rows,options){
  const evidence=await collectGamblePresession(options);
- return planGamblePresession(rows,{...evidence,targetSession:options.targetSession,recordedAt:evidence.sourceFetchedAt,bankrollCents:options.bankrollCents??100000});
+ return planGamblePresession(rows,{...evidence,targetSession:options.targetSession,recordedAt:evidence.sourceFetchedAt,bankrollCents:options.bankrollCents??100000,...(options.modes===undefined?{}:{modes:options.modes}),...(options.ruleVersion===undefined?{}:{ruleVersion:options.ruleVersion})});
 }
