@@ -47,3 +47,12 @@ test('MVP no-signal collection skips without forced fallback',async()=>{
  assert.equal(journal[0].action,'SKIP');
  assert.equal(journal[0].symbol,null);
 });
+
+test('presession rejects duplicate intervals even with 78 bars',async()=>{
+ const duplicate=bars.map((b,i)=>i===20?{...b,t:bars[19].t}:b);
+ await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...duplicate]})})}),/Latest observed session incomplete/);
+});
+test('presession rejects a missing interval disguised by an extra late bar',async()=>{
+ const gap=bars.map((b,i)=>i>=20?{...b,t:new Date(Date.parse(b.t)+300000).toISOString()}:b);
+ await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...gap]})})}),/Latest observed session incomplete/);
+});
