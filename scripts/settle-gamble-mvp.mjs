@@ -1,3 +1,4 @@
+import {isBeforeTargetOpen} from './gamble-presession-time.mjs';
 // Manual, read-only settlement of an already committed selective Gamble decision.
 // Never creates retrospective decisions or sends broker orders.
 import {readFile,mkdir,writeFile} from 'node:fs/promises';
@@ -12,7 +13,7 @@ export function validateSettlement({targetSession,now,journal,ledger}){
  const matches=journal.filter(row=>row.targetSession===targetSession&&row.mode==='selective'&&row.ruleVersion==='gamble-mvp-v1');
  if(matches.length!==1)throw Error('No unique precommitted selective MVP decision; never backfill');
  const decision=matches[0];
- if(nyDay(decision.recordedAt)>=targetSession)throw Error('Decision was not pre-session');
+ if(!isBeforeTargetOpen(decision.recordedAt,targetSession))throw Error('Decision was not pre-session');
  if(ledger?.kind!=='GAMBLE_MVP_LEDGER'||!Array.isArray(ledger.sessions))throw Error('Invalid MVP ledger');
  if(ledger.sessions.length&&targetSession<ledger.sessions.at(-1).targetSession)throw Error('Cannot backfill earlier session');
  return decision;
