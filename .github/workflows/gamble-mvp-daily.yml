@@ -1,8 +1,6 @@
 name: Gamble MVP unattended daily experiment
 on:
-  schedule:
-    # 12:15 UTC is 07:15 EST / 08:15 EDT, before the open.
-    - cron: '15 12 * * 1-5'
+  # Scheduled runs paused pending signed protocol approval.
   workflow_dispatch:
 permissions:
   contents: write
@@ -19,14 +17,16 @@ jobs:
         with:
           node-version: '24'
       - name: Test experiment calendar and code
+        id: tests
         run: npm ci && npm test && node --test scripts/gamble-market-calendar.test.mjs
       - name: Run prospective decision and prior settlement
+        id: experiment
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
           ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
         run: node scripts/run-gamble-mvp-daily.mjs
       - name: Commit verified records
-        if: success()
+        if: always() && steps.tests.outcome == 'success' && (steps.experiment.outcome == 'success' || steps.experiment.outcome == 'failure')
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
