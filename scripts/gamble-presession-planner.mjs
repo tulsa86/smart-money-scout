@@ -1,10 +1,11 @@
+import {isBeforeTargetOpen} from './gamble-presession-time.mjs';
 // Deterministic pre-session selection from already available, completed prior-session evidence.
 // No network calls, broker orders, or historical replay modifications.
 import {appendGambleDecision} from './gamble-decision-journal.mjs';
 const validTime=x=>typeof x==='string'&&/(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
 const nyDay=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
 export function planGamblePresession(rows,{targetSession,recordedAt,source,sourceFetchedAt,observations,bankrollCents=100000,ruleVersion='gamble-prior-session-v1',modes=['forced-daily','selective']}){
- if(!validTime(recordedAt)||!validTime(sourceFetchedAt)||Date.parse(sourceFetchedAt)>Date.parse(recordedAt)||nyDay(recordedAt)>=targetSession||typeof source!=='string'||!source.trim()||!Array.isArray(observations)||!observations.length)throw Error('Invalid or late pre-session evidence');
+ if(!validTime(recordedAt)||!validTime(sourceFetchedAt)||Date.parse(sourceFetchedAt)>Date.parse(recordedAt)||!isBeforeTargetOpen(recordedAt,targetSession)||typeof source!=='string'||!source.trim()||!Array.isArray(observations)||!observations.length)throw Error('Invalid or late pre-session evidence');
  if(!Array.isArray(modes)||!modes.length||new Set(modes).size!==modes.length||modes.some(m=>!['forced-daily','selective'].includes(m)))throw Error('Invalid selection modes');
  const candidates=[];const seen=new Set();
  for(const o of observations){
