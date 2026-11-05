@@ -173,5 +173,31 @@
     "fixedSizeCumulativePnl": -14.98,
     "fixedSizeIllustrativeBalance": 985.02,
     "spyReturnSinceAnchorPct": 0.1967
+  },
+  {
+    "day": "2026-11-05",
+    "spyClose": 733.43,
+    "source": "Alpaca IEX five-minute candles",
+    "mode": "prior-session-momentum",
+    "symbol": "TSLA",
+    "decision": "simulated-trade",
+    "note": "Prior-session momentum selection; historical replay",
+    "trades": [
+      {
+        "entryTime": "2026-11-05T19:20:00Z",
+        "exitTime": "2026-11-05T20:55:00Z",
+        "entryPrice": 343.766798,
+        "exitPrice": 343.378225,
+        "shares": 2,
+        "netPnl": -0.777145,
+        "reason": "session-end",
+        "strategy": "breakout"
+      }
+    ],
+    "pnl": -0.78,
+    "limitations": "Research-only replay; no orders. IEX volume is not consolidated. Rolling-window cash and PnL are not cumulative forward returns.",
+    "fixedSizeCumulativePnl": -15.76,
+    "fixedSizeIllustrativeBalance": 984.24,
+    "spyReturnSinceAnchorPct": -4.155
   }
 ]
