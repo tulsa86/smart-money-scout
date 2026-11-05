@@ -56,3 +56,11 @@ test('presession rejects a missing interval disguised by an extra late bar',asyn
  const gap=bars.map((b,i)=>i>=20?{...b,t:new Date(Date.parse(b.t)+300000).toISOString()}:b);
  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...gap]})})}),/Latest observed session incomplete/);
 });
+
+test('same-day 08:15 NY collection is permitted and post-open is rejected',async()=>{
+ const morning='2026-10-30T12:15:00Z';
+ const journal=await collectAndPlanGamble([],{...opts,now:morning,clock:()=>morning,modes:['selective'],ruleVersion:'gamble-mvp-v1'});
+ assert.equal(journal.length,1);
+ assert.equal(journal[0].targetSession,'2026-10-30');
+ await assert.rejects(()=>collectGamblePresession({...opts,now:'2026-10-30T13:30:00Z',clock:()=> '2026-10-30T13:30:00Z'}),/Invalid prospective collection inputs/);
+});
