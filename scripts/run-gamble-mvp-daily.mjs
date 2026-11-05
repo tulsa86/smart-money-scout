@@ -1,5 +1,6 @@
 // Scheduled at 07:00 EST / 08:00 EDT. Never backfill a missed prediction.
 import {readFile} from 'node:fs/promises';
+import {executeDailyExperiment} from './gamble-mvp-daily-steps.mjs';
 import {spawnSync} from 'node:child_process';
 import {isRegularMarketDay,nyToday} from './gamble-market-calendar.mjs';
 const now=new Date(),today=nyToday(now);
@@ -15,9 +16,5 @@ const run=(script,session)=>{const r=spawnSync(process.execPath,[script],{stdio:
 const pending=decisions.filter(x=>!ledger.sessions.some(s=>s.targetSession===x.targetSession)&&x.targetSession<today).sort((a,b)=>a.targetSession.localeCompare(b.targetSession));
 if(pending.length>1)throw Error('Multiple unsettled sessions require investigation; no silent backfill');
 // A previously recorded prediction may be settled late; never create a past prediction.
-let settlementFailure=null;
-if(pending.length===1){try{run('scripts/settle-gamble-mvp.mjs',pending[0].targetSession)}catch(error){settlementFailure=error;console.error('Prior settlement failed; attempting today\'s independent prospective decision:',error.message)}}
-if(!decisions.length)console.log('First prospective experiment day; earlier dates will not be backfilled');
-if(!decisions.some(x=>x.targetSession===today))run('scripts/record-gamble-presession.mjs',today);
-else console.log('Already committed today; no duplicate decision');
-if(settlementFailure){console.error('Prior settlement requires investigation; new prospective decision was still attempted');process.exitCode=1;}
+const {settlementFailure,decisionFailure}=executeDailyExperiment({pending,decisions,today,run});
+if(settlementFailure||decisionFailure)process.exitCode=1;
