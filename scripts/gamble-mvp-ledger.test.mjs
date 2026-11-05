@@ -48,3 +48,11 @@ test('rerun is a no-op and conflicting decisions or evidence cannot rewrite hist
  const missing=applyMvpSessionIdempotent(newMvpLedger(),j,{targetSession:session,recordedAt:at}).ledger;
  assert.throws(()=>applyMvpSessionIdempotent(missing,j,{targetSession:session,evidence,recordedAt:at}),/Cannot silently replace/);
 });
+
+test('same-day premarket decision settles after session, but post-open decisions are rejected',()=>{
+ const make=(recordedAt)=>appendGambleDecision([],{mode:'selective',targetSession:session,recordedAt,snapshot:{asOf:recordedAt,source:'fixture',candidates:[candidate]},action:'SKIP',symbol:null,ruleVersion:'gamble-mvp-v1',reason:'fixture'});
+ const premarket=make('2026-11-05T13:15:00Z');
+ const result=applyMvpSession(newMvpLedger(),premarket,{targetSession:session,recordedAt:'2026-11-06T14:00:00Z'});
+ assert.equal(result.sessions[0].status,'SKIP');
+ assert.throws(()=>make('2026-11-05T14:30:00Z'),/retrospective/);
+});
