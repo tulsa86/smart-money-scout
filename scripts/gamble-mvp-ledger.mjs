@@ -1,4 +1,5 @@
 // Prospective, offline-only single-account MVP. No broker orders.
+import {isBeforeTargetOpen} from './gamble-presession-time.mjs';
 import {verifyGambleDecisionJournal} from './gamble-decision-journal.mjs';
 const day=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
 const valid=x=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&/(Z|[+-]\d\d:\d\d)$/.test(x);
@@ -10,7 +11,7 @@ export function applyMvpSession(ledger,journal,{targetSession,evidence=null,reco
  const rows=journal.filter(r=>r.mode==='selective'&&r.targetSession===targetSession&&r.ruleVersion==='gamble-mvp-v1');
  if(rows.length!==1)throw Error('Missing unique frozen MVP decision');
  const d=rows[0];
- if(Date.parse(recordedAt)<=Date.parse(d.recordedAt)||day(d.recordedAt)>=targetSession)throw Error('Invalid decision timing');
+ if(Date.parse(recordedAt)<=Date.parse(d.recordedAt)||!isBeforeTargetOpen(d.recordedAt,targetSession))throw Error('Invalid decision timing');
  let status=d.action==='SKIP'?'SKIP':'MISSING_EVIDENCE',shares=0,entryPriceCents=null,exitPriceCents=null,pnlCents=0;
  if(d.action==='BUY_INTENT'&&evidence){
   if(evidence.symbol!==d.symbol||evidence.targetSession!==targetSession||!valid(evidence.openObservedAt)||!valid(evidence.closeObservedAt)||!valid(evidence.availableAt)||day(evidence.openObservedAt)!==targetSession||day(evidence.closeObservedAt)!==targetSession||Date.parse(evidence.openObservedAt)>=Date.parse(evidence.closeObservedAt)||Date.parse(evidence.availableAt)<Date.parse(evidence.closeObservedAt)||Date.parse(evidence.availableAt)>Date.parse(recordedAt)||!Number.isFinite(evidence.open)||evidence.open<=0||!Number.isFinite(evidence.close)||evidence.close<=0)throw Error('Invalid or unavailable session evidence');
