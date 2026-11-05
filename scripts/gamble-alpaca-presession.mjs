@@ -1,3 +1,4 @@
+import {isBeforeTargetOpen} from './gamble-presession-time.mjs';
 // Alpaca IEX 5-minute adapter. Read-only market data; records retrieval time as availability.
 import {planGamblePresession} from './gamble-presession-planner.mjs';
 const nyDay=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
@@ -11,7 +12,7 @@ const completeRegularSession=v=>{
  return sorted.every((b,i)=>i===0||Date.parse(b.t)-Date.parse(sorted[i-1].t)===300000);
 };
 export async function collectGamblePresession({key,secret,targetSession,now=new Date().toISOString(),fetchImpl=fetch,clock=()=>new Date().toISOString(),symbols=['SPY','QQQ','NVDA','AMD','TSLA']}){
- if(!key||!secret||!validTime(now)||!/^\d{4}-\d{2}-\d{2}$/.test(targetSession)||nyDay(now)>=targetSession||!isWeekday(targetSession)||!Array.isArray(symbols)||symbols.length<1||new Set(symbols).size!==symbols.length)throw Error('Invalid prospective collection inputs');
+ if(!key||!secret||!validTime(now)||!/^\d{4}-\d{2}-\d{2}$/.test(targetSession)||!isBeforeTargetOpen(now,targetSession)||!isWeekday(targetSession)||!Array.isArray(symbols)||symbols.length<1||new Set(symbols).size!==symbols.length)throw Error('Invalid prospective collection inputs');
  const observations=[];
  let commonLatest=null;
  for(const symbol of symbols){
@@ -59,7 +60,7 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
  const ageDays=(Date.parse(targetSession+'T00:00:00Z')-Date.parse(commonLatest+'T00:00:00Z'))/86400000;
  if(ageDays<1||ageDays>4)throw Error('Stale or invalid completed session');
  const collectedAt=clock();
- if(!validTime(collectedAt)||Date.parse(collectedAt)<Date.parse(now)||nyDay(collectedAt)>=targetSession)throw Error('Collection completed too late');
+ if(!validTime(collectedAt)||Date.parse(collectedAt)<Date.parse(now)||!isBeforeTargetOpen(collectedAt,targetSession))throw Error('Collection completed too late');
  for(const observation of observations)observation.availableAt=collectedAt;
  return {source:'Alpaca IEX 5Min read-only collection (five-symbol fixed universe)',sourceFetchedAt:collectedAt,observations};
 }
