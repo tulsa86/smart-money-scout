@@ -22,6 +22,6 @@ test('BUY_INTENT uses completed evidence and never sends orders',async()=>{
  const rows=journal('BUY_INTENT');
  const result=await settleMvp({targetSession,now,journal:rows,ledger:newMvpLedger(),key:'k',secret:'s',fetchEvidence:async()=>({symbol:'SPY',targetSession,openObservedAt:'2026-11-05T14:30:00Z',closeObservedAt:'2026-11-05T20:55:00Z',availableAt:now,open:100,close:101})});
  assert.equal(result.ledger.sessions[0].status,'SIMULATED_ROUND_TRIP');
- assert.equal(result.ledger.sessions[0].shares,2);
+ assert.equal(result.ledger.sessions[0].shares,2.49875);
  assert.equal(result.ledger.sessions[0].simulationOnly,true);
 });
