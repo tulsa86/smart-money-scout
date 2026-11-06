@@ -11,7 +11,7 @@ test('retrieves complete Alpaca session without orders',async()=>{
  assert.equal(result.close,102);
 });
 test('fails closed on incomplete and unavailable data',async()=>{
- await assert.rejects(()=>fetchMvpSessionEvidence({...args,fetchImpl:async()=>({ok:true,json:async()=>({bars:bars.slice(0,-1)})})}),/Incomplete session/);
+ await assert.rejects(()=>fetchMvpSessionEvidence({...args,fetchImpl:async()=>({ok:true,json:async()=>({bars:bars.slice(0,-1)})})}),/Missing opening or closing bar/);
  await assert.rejects(()=>fetchMvpSessionEvidence({...args,availableAt:'2026-11-05T20:58:00Z',fetchImpl:async()=>({ok:true,json:async()=>({bars})})}),/not yet complete/);
  await assert.rejects(()=>fetchMvpSessionEvidence({...args,fetchImpl:async()=>({ok:false,status:429})}),/HTTP 429/);
 });
