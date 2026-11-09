@@ -1,0 +1,26 @@
+name: Recover November 6 historical market evidence
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate recovery script syntax
+        run: node --check scripts/recover-nov6-evidence.mjs
+      - name: Fetch November 6 Alpaca IEX candles
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: node scripts/recover-nov6-evidence.mjs
+      - name: Upload evidence for review (no repository writes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nov6-retrospective-evidence
+          path: recovery-evidence/2026-11-06/
+          if-no-files-found: error
