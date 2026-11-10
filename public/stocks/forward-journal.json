@@ -199,5 +199,51 @@
     "fixedSizeCumulativePnl": -15.76,
     "fixedSizeIllustrativeBalance": 984.24,
     "spyReturnSinceAnchorPct": -4.155
+  },
+  {
+    "day": "2026-11-09",
+    "spyClose": 752.72,
+    "source": "Alpaca IEX five-minute candles",
+    "mode": "prior-session-momentum",
+    "symbol": "AMD",
+    "decision": "simulated-trade",
+    "note": "Prior-session momentum selection; historical replay",
+    "trades": [
+      {
+        "entryTime": "2026-11-09T14:35:00Z",
+        "exitTime": "2026-11-09T14:45:00Z",
+        "entryPrice": 470.485125,
+        "exitPrice": 489.059878,
+        "shares": 2,
+        "netPnl": 37.149505,
+        "reason": "target",
+        "strategy": "breakout"
+      },
+      {
+        "entryTime": "2026-11-09T14:50:00Z",
+        "exitTime": "2026-11-09T18:45:00Z",
+        "entryPrice": 489.014385,
+        "exitPrice": 508.320673,
+        "shares": 2,
+        "netPnl": 38.612576,
+        "reason": "target",
+        "strategy": "breakout"
+      },
+      {
+        "entryTime": "2026-11-09T18:50:00Z",
+        "exitTime": "2026-11-09T20:55:00Z",
+        "entryPrice": 509.724735,
+        "exitPrice": 508.420663,
+        "shares": 2,
+        "netPnl": -2.608145,
+        "reason": "session-end",
+        "strategy": "breakout"
+      }
+    ],
+    "pnl": 73.15,
+    "limitations": "Research-only replay; no orders. IEX volume is not consolidated. Rolling-window cash and PnL are not cumulative forward returns.",
+    "fixedSizeCumulativePnl": 57.39,
+    "fixedSizeIllustrativeBalance": 1057.39,
+    "spyReturnSinceAnchorPct": -1.6342
   }
 ]
