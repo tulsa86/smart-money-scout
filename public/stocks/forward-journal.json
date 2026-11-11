@@ -245,5 +245,31 @@
     "fixedSizeCumulativePnl": 57.39,
     "fixedSizeIllustrativeBalance": 1057.39,
     "spyReturnSinceAnchorPct": -1.6342
+  },
+  {
+    "day": "2026-11-10",
+    "spyClose": 749.93,
+    "source": "Alpaca IEX five-minute candles",
+    "mode": "prior-session-momentum",
+    "symbol": "NVDA",
+    "decision": "simulated-trade",
+    "note": "Prior-session momentum selection; historical replay",
+    "trades": [
+      {
+        "entryTime": "2026-11-10T20:50:00Z",
+        "exitTime": "2026-11-10T20:55:00Z",
+        "entryPrice": 168.554235,
+        "exitPrice": 168.700608,
+        "shares": 1,
+        "netPnl": 0.146373,
+        "reason": "session-end",
+        "strategy": "fallback"
+      }
+    ],
+    "pnl": 0.15,
+    "limitations": "Research-only replay; no orders. IEX volume is not consolidated. Rolling-window cash and PnL are not cumulative forward returns.",
+    "fixedSizeCumulativePnl": 57.54,
+    "fixedSizeIllustrativeBalance": 1057.54,
+    "spyReturnSinceAnchorPct": -1.9988
   }
 ]
