@@ -57,7 +57,8 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
   if(commonLatest!==null&&session!==commonLatest)throw Error('Symbols do not share latest completed session');
   commonLatest=session;
   latest.sort((a,b)=>Date.parse(a.t)-Date.parse(b.t));
-  const normalizedVolume=v=>v.reduce((n,b)=>n+b.v,0)*78/v.length;\n  const previous=completed.slice(0,-1).map(([,v])=>normalizedVolume(v));
+  const normalizedVolume=v=>v.reduce((n,b)=>n+b.v,0)*78/v.length;
+  const previous=completed.slice(0,-1).map(([,v])=>normalizedVolume(v));
   const meanPriorVolume=previous.reduce((a,b)=>a+b,0)/previous.length;
   if(meanPriorVolume<=0)throw Error('Invalid prior volume baseline');
   observations.push({symbol,sessionCloseAt:latest.at(-1).t,availableAt:null,open:latest[0].o,close:latest.at(-1).c,volume:normalizedVolume(latest),meanPriorVolume});
