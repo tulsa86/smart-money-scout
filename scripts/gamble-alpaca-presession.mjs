@@ -5,11 +5,18 @@ const nyDay=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year
 const nyClock=x=>new Intl.DateTimeFormat('en-GB',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(x));
 const isWeekday=x=>!['Sat','Sun'].includes(new Intl.DateTimeFormat('en-US',{timeZone:'UTC',weekday:'short'}).format(new Date(x+'T12:00:00Z')));
 const validTime=x=>typeof x==='string'&&/(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
-const completeRegularSession=v=>{
- if(v.length!==78)return false;
+// IEX is a venue-specific feed: quiet five-minute intervals may contain no bars.
+// Accept only near-complete, correctly aligned sessions; never invent missing prices.
+const MIN_SESSION_BARS=75;
+const inspectRegularSession=v=>{
  const sorted=[...v].sort((a,b)=>Date.parse(a.t)-Date.parse(b.t));
- if(nyClock(sorted[0].t)!=='09:30'||nyClock(sorted.at(-1).t)!=='15:55')return false;
- return sorted.every((b,i)=>i===0||Date.parse(b.t)-Date.parse(sorted[i-1].t)===300000);
+ if(sorted.length<MIN_SESSION_BARS||sorted.length>78||nyClock(sorted[0].t)!=='09:30'||nyClock(sorted.at(-1).t)!=='15:55')return null;
+ const open=Date.parse(sorted[0].t);
+ if(!sorted.every((bar,i)=>{
+  const delta=Date.parse(bar.t)-open;
+  return delta>=0&&delta<78*300000&&delta%300000===0&&(i===0||Date.parse(bar.t)>Date.parse(sorted[i-1].t));
+ }))return null;
+ return {bars:sorted,coverage:sorted.length/78};
 };
 export async function collectGamblePresession({key,secret,targetSession,now=new Date().toISOString(),fetchImpl=fetch,clock=()=>new Date().toISOString(),symbols=['SPY','QQQ','NVDA','AMD','TSLA']}){
  if(!key||!secret||!validTime(now)||!/^\d{4}-\d{2}-\d{2}$/.test(targetSession)||!isBeforeTargetOpen(now,targetSession)||!isWeekday(targetSession)||!Array.isArray(symbols)||symbols.length<1||new Set(symbols).size!==symbols.length)throw Error('Invalid prospective collection inputs');
@@ -42,18 +49,18 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
    byDay.get(day).push(b);
   }
   const latestObservedDay=[...byDay.keys()].sort().at(-1);
-  if(latestObservedDay&&!completeRegularSession(byDay.get(latestObservedDay)))throw Error('Latest observed session incomplete for '+symbol);
-  const completed=[...byDay.entries()].filter(([,v])=>completeRegularSession(v)).sort((a,b)=>a[0].localeCompare(b[0]));
+  if(latestObservedDay&&!inspectRegularSession(byDay.get(latestObservedDay)))throw Error('Latest observed session incomplete for '+symbol);
+  const completed=[...byDay.entries()].filter(([,v])=>inspectRegularSession(v)).sort((a,b)=>a[0].localeCompare(b[0]));
   if(completed.length<2)throw Error('Insufficient complete prior sessions for '+symbol);
   const [session,latest]=completed.at(-1);
   if(session!==latestObservedDay)throw Error('Latest observed session invalid for '+symbol);
   if(commonLatest!==null&&session!==commonLatest)throw Error('Symbols do not share latest completed session');
   commonLatest=session;
   latest.sort((a,b)=>Date.parse(a.t)-Date.parse(b.t));
-  const previous=completed.slice(0,-1).map(([,v])=>v.reduce((n,b)=>n+b.v,0));
+  const normalizedVolume=v=>v.reduce((n,b)=>n+b.v,0)*78/v.length;\n  const previous=completed.slice(0,-1).map(([,v])=>normalizedVolume(v));
   const meanPriorVolume=previous.reduce((a,b)=>a+b,0)/previous.length;
   if(meanPriorVolume<=0)throw Error('Invalid prior volume baseline');
-  observations.push({symbol,sessionCloseAt:latest.at(-1).t,availableAt:null,open:latest[0].o,close:latest.at(-1).c,volume:latest.reduce((n,b)=>n+b.v,0),meanPriorVolume});
+  observations.push({symbol,sessionCloseAt:latest.at(-1).t,availableAt:null,open:latest[0].o,close:latest.at(-1).c,volume:normalizedVolume(latest),meanPriorVolume});
  }
  // Fail closed unless the latest completed session was the most recent New York date before target.
  // A market holiday/weekend is allowed; stale data older than four calendar days is not.
@@ -62,7 +69,7 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
  const collectedAt=clock();
  if(!validTime(collectedAt)||Date.parse(collectedAt)<Date.parse(now)||!isBeforeTargetOpen(collectedAt,targetSession))throw Error('Collection completed too late');
  for(const observation of observations)observation.availableAt=collectedAt;
- return {source:'Alpaca IEX 5Min read-only collection (five-symbol fixed universe)',sourceFetchedAt:collectedAt,observations};
+ return {source:'Alpaca IEX 5Min read-only collection (five-symbol fixed universe; >=75/78 interval coverage, normalized observed volume)',sourceFetchedAt:collectedAt,observations};
 }
 export async function collectAndPlanGamble(rows,options){
  const evidence=await collectGamblePresession(options);
