@@ -25,6 +25,8 @@ jobs:
         run: |
           set -o pipefail
           npm test 2>&1 | tee test-output.log
+      - name: Read-only IEX audit offline tests
+        run: node --test scripts/gamble-iex-coverage-audit.test.mjs
       - name: Build
         run: |
           set -o pipefail
