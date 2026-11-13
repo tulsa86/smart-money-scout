@@ -52,8 +52,8 @@ test('presession rejects duplicate intervals even with 78 bars',async()=>{
  const duplicate=bars.map((b,i)=>i===20?{...b,t:bars[19].t}:b);
  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...duplicate]})})}),/Latest observed session incomplete/);
 });
-test('presession rejects a missing interval disguised by an extra late bar',async()=>{
- const gap=bars.map((b,i)=>i>=20?{...b,t:new Date(Date.parse(b.t)+300000).toISOString()}:b);
+test('presession rejects four missing intervals even when an extra late bar is supplied',async()=>{
+ const gap=[...bars.filter((_,i)=>![20,21,22,23].includes(i)),{...bars[0],t:'2026-10-29T20:00:00Z'}];
  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...gap]})})}),/Latest observed session incomplete/);
 });
 
