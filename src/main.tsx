@@ -11,11 +11,11 @@ type Page='Scout Picks'|'Stock research'|'Gamble Lab'|'Forward performance';
 const pages:[Page,string,typeof Radar][]=[
  ['Scout Picks','Discover',Radar],
  ['Stock research','Research',Search],
- ['Gamble Lab','Gamble Lab',FlaskConical],
+ ['Gamble Lab','Daily results',FlaskConical],
  ['Forward performance','Performance',ChartNoAxesCombined]
 ];
 function App(){
- const [page,setPage]=useState<Page>('Scout Picks');
+ const [page,setPage]=useState<Page>('Gamble Lab');
  return <div className="shell scout-focused">
   <aside>
    <div className="brand"><span className="brand-icon"><Radar size={25}/></span><span>smart money<span className="brand-sub">SCOUT</span></span></div>
