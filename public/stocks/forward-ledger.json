@@ -311,5 +311,31 @@
     "spyClose": 757.16,
     "recordedAt": "2026-11-13T02:49:21.540Z",
     "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
+  },
+  {
+    "schemaVersion": 1,
+    "day": "2026-11-13",
+    "status": "TRADE_EXECUTED",
+    "strategy": "prior-session-momentum-v1",
+    "feed": "Alpaca IEX 5m",
+    "startingCashCents": 106699,
+    "pnlCents": 18,
+    "endingCashCents": 106717,
+    "selectedTicker": "NVDA",
+    "trades": [
+      {
+        "entryTime": "2026-11-13T20:50:00Z",
+        "exitTime": "2026-11-13T20:55:00Z",
+        "entryPrice": 162.58125,
+        "exitPrice": 162.75858,
+        "shares": 1,
+        "netPnl": 0.17733,
+        "reason": "session-end",
+        "strategy": "fallback"
+      }
+    ],
+    "spyClose": 754.27,
+    "recordedAt": "2026-11-14T02:37:11.592Z",
+    "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
   }
 ]
