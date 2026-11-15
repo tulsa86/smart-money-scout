@@ -8,7 +8,7 @@ test('duplicate timestamps fail eligibility',()=>{const x=auditBars([...bars,bar
 test('audit fetch is read-only and uses IEX feed',async()=>{
  let requests=0;
  const result=await fetchAudit({key:'test',secret:'test',now:new Date('2026-10-30T12:00:00Z'),symbols:['AMD'],fetchImpl:async(url,options)=>{requests++;assert.match(url,/feed=iex/);assert.equal(options.method,undefined);return {ok:true,json:async()=>({bars})}}});
- assert.equal(requests,1);assert.equal(result.symbols.AMD[0].eligible78,true);
+ assert.equal(requests,1);assert.equal(result.symbols.AMD.find(r=>r.day==='2026-10-29').eligible78,true);
 });
 test('provider failures are not silently accepted',async()=>{await assert.rejects(()=>fetchAudit({key:'x',secret:'y',symbols:['AMD'],fetchImpl:async()=>({ok:false,status:503})}),/HTTP 503/)});
 
