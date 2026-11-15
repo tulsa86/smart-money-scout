@@ -1,0 +1,32 @@
+name: One-time read-only Gamble IEX coverage audit
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type AUDIT_ONLY to acknowledge a read-only market-data request'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: gamble-iex-audit-manual
+  cancel-in-progress: false
+jobs:
+  audit:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.confirmation == 'AUDIT_ONLY' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate audit code with offline fixtures
+        run: node --test scripts/gamble-iex-coverage-audit.test.mjs
+      - name: Fetch read-only Alpaca IEX bars and print coverage report
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: node scripts/gamble-iex-coverage-audit.mjs
