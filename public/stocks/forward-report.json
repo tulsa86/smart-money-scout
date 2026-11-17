@@ -1,14 +1,14 @@
 {
   "mode": "Prospective simulated account, continuous whole-cent cash ledger; no real orders",
   "firstSession": "2026-10-26",
-  "lastSession": "2026-11-13",
-  "sessions": 14,
+  "lastSession": "2026-11-16",
+  "sessions": 15,
   "simulatedTrades": 12,
-  "noTradeSessions": 5,
+  "noTradeSessions": 6,
   "winRatePct": 58.33,
   "cumulativePnl": 67.17,
   "illustrativeBalance": 1067.17,
-  "spyCloseToCloseReturnPct": -1.432,
+  "spyCloseToCloseReturnPct": -3.291,
   "spyBenchmarkStart": "2026-10-26",
   "limitations": "Simulation uses completed market data after the session, not live orders. SPY comparison is price-only, not a matched total-return investment. Missed sessions are not backfilled as prospective."
 }
