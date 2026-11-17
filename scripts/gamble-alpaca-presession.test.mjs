@@ -4,7 +4,8 @@ import {collectGamblePresession,collectAndPlanGamble} from './gamble-alpaca-pres
 const day='2026-10-29';
 const bars=Array.from({length:78},(_,i)=>({t:new Date(Date.parse(day+'T13:30:00Z')+i*300000).toISOString(),o:100,c:101,v:100}));
 const prior=Array.from({length:78},(_,i)=>({t:new Date(Date.parse('2026-10-28T13:30:00Z')+i*300000).toISOString(),o:100,c:100,v:80}));
-const opts={key:'test',secret:'test',targetSession:'2026-10-30',now:'2026-10-29T21:00:00Z',clock:()=> '2026-10-29T21:00:00Z',symbols:['AMD'],fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars]})})};
+const history=['2026-10-22','2026-10-23','2026-10-26','2026-10-27'].flatMap(date=>Array.from({length:78},(_,i)=>({t:new Date(Date.parse(date+'T13:30:00Z')+i*300000).toISOString(),o:100,c:100,v:70})));
+const opts={key:'test',secret:'test',targetSession:'2026-10-30',now:'2026-10-29T21:00:00Z',clock:()=> '2026-10-29T21:00:00Z',symbols:['AMD'],fetchImpl:async()=>({ok:true,json:async()=>({bars:[...history,...prior,...bars]})})};
 test('Alpaca adapter creates two decision-only prospective records',async()=>{
  const journal=await collectAndPlanGamble([] ,opts);
  assert.equal(journal.length,2);
@@ -12,8 +13,8 @@ test('Alpaca adapter creates two decision-only prospective records',async()=>{
  assert.equal(journal[1].mode,'selective');
 });
 test('missing bars and target-session leakage fail closed',async()=>{
- await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars.slice(0,77)]})})}),/Latest observed session incomplete/);
- await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars,{...bars[0],t:'2026-10-30T13:30:00Z'}]})})}),/Target-session/);
+ await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...history,...prior,...bars.slice(0,77)]})})}),/Latest observed session incomplete/);
+ await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...history,...prior,...bars,{...bars[0],t:'2026-10-30T13:30:00Z'}]})})}),/Target-session/);
 });
 test('late collection and API errors fail closed',async()=>{
  await assert.rejects(()=>collectGamblePresession({...opts,clock:()=> '2026-10-30T14:00:00Z'}),/too late/);
@@ -22,7 +23,7 @@ test('late collection and API errors fail closed',async()=>{
 
 test('an incomplete newest day cannot be silently replaced by an older complete session',async()=>{
  const later={...bars[0],t:'2026-10-30T13:30:00Z'};
- await assert.rejects(()=>collectGamblePresession({...opts,targetSession:'2026-11-02',now:'2026-10-30T20:00:00Z',clock:()=> '2026-10-30T20:00:00Z',fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars,later]})})}),/Latest observed session incomplete/);
+ await assert.rejects(()=>collectGamblePresession({...opts,targetSession:'2026-11-02',now:'2026-10-30T20:00:00Z',clock:()=> '2026-10-30T20:00:00Z',fetchImpl:async()=>({ok:true,json:async()=>({bars:[...history,...prior,...bars,later]})})}),/Latest observed session incomplete/);
 });
 
 test('weekend target is rejected before any market-data request',async()=>{
@@ -40,7 +41,7 @@ test('MVP adapter forwards selective-only mode and frozen rule version',async()=
 });
 test('MVP no-signal collection skips without forced fallback',async()=>{
  const falling=bars.map(b=>({...b,c:99}));
- const journal=await collectAndPlanGamble([],{...opts,modes:['selective'],ruleVersion:'gamble-mvp-v1',fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...falling]})})});
+ const journal=await collectAndPlanGamble([],{...opts,modes:['selective'],ruleVersion:'gamble-mvp-v1',fetchImpl:async()=>({ok:true,json:async()=>({bars:[...history,...prior,...falling]})})});
  assert.equal(journal.length,1);
  assert.equal(journal[0].mode,'selective');
  assert.equal(journal[0].ruleVersion,'gamble-mvp-v1');
@@ -50,11 +51,11 @@ test('MVP no-signal collection skips without forced fallback',async()=>{
 
 test('presession rejects duplicate intervals even with 78 bars',async()=>{
  const duplicate=bars.map((b,i)=>i===20?{...b,t:bars[19].t}:b);
- await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...duplicate]})})}),/Latest observed session incomplete/);
+ await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...history,...prior,...duplicate]})})}),/Latest observed session incomplete/);
 });
 test('presession rejects a missing interval disguised by an extra late bar',async()=>{
  const gap=bars.map((b,i)=>i>=20?{...b,t:new Date(Date.parse(b.t)+300000).toISOString()}:b);
- await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...gap]})})}),/Latest observed session incomplete/);
+ await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...history,...prior,...gap]})})}),/Latest observed session incomplete/);
 });
 
 test('same-day 08:15 NY collection is permitted and post-open is rejected',async()=>{
@@ -63,4 +64,11 @@ test('same-day 08:15 NY collection is permitted and post-open is rejected',async
  assert.equal(journal.length,1);
  assert.equal(journal[0].targetSession,'2026-10-30');
  await assert.rejects(()=>collectGamblePresession({...opts,now:'2026-10-30T13:30:00Z',clock:()=> '2026-10-30T13:30:00Z'}),/Invalid prospective collection inputs/);
+});
+
+test('fixed five-session baseline is retained in decision evidence',async()=>{
+ const journal=await collectAndPlanGamble([],{...opts,modes:['selective'],ruleVersion:'gamble-mvp-v1'});
+ const observation=journal[0].snapshot.candidates[0];
+ assert.equal(observation.symbol,'AMD');
+ assert.equal(observation.relativeVolume>1,true);
 });

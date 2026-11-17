@@ -12,10 +12,10 @@ test('single account records $250 maximum exposure and full same-day simulated c
  const original=newMvpLedger();
  const result=applyMvpSession(original,journal('BUY_INTENT'),{targetSession:session,evidence,recordedAt:at});
  assert.equal(result.sessions[0].status,'SIMULATED_ROUND_TRIP');
- assert.equal(result.sessions[0].shares,2);
+ assert.equal(result.sessions[0].shares,2.49875);
  assert.equal(result.sessions[0].entryPriceCents,10005);
  assert.equal(result.sessions[0].exitPriceCents,10195);
- assert.equal(result.cashCents,100380);
+ assert.equal(result.cashCents,100475);
  assert.equal(original.cashCents,100000);
  assert.equal(result.sessions[0].simulationOnly,true);
  assert.throws(()=>applyMvpSession(result,journal('BUY_INTENT'),{targetSession:session,evidence,recordedAt:at}),/Duplicate or backfilled/);
@@ -33,8 +33,9 @@ test('rejects premature and mismatched evidence, and unaffordable shares',()=>{
  assert.throws(()=>applyMvpSession(newMvpLedger(),j,{targetSession:session,evidence,recordedAt:'2026-11-05T20:58:00Z'}),/Invalid or unavailable/);
  assert.throws(()=>applyMvpSession(newMvpLedger(),j,{targetSession:session,evidence:{...evidence,symbol:'TSLA'},recordedAt:at}),/Invalid or unavailable/);
  const unaffordable=applyMvpSession(newMvpLedger(),j,{targetSession:session,evidence:{...evidence,open:300,close:290},recordedAt:at});
- assert.equal(unaffordable.sessions[0].status,'SKIP_UNAFFORDABLE');
- assert.equal(unaffordable.cashCents,100000);
+ assert.equal(unaffordable.sessions[0].status,'SIMULATED_ROUND_TRIP');
+ assert.ok(unaffordable.sessions[0].shares>0&&unaffordable.sessions[0].shares<1);
+ assert.ok(unaffordable.cashCents<100000);
 });
 
 test('rerun is a no-op and conflicting decisions or evidence cannot rewrite history',()=>{
@@ -55,4 +56,15 @@ test('same-day premarket decision settles after session, but post-open decisions
  const result=applyMvpSession(newMvpLedger(),premarket,{targetSession:session,recordedAt:'2026-11-06T14:00:00Z'});
  assert.equal(result.sessions[0].status,'SKIP');
  assert.throws(()=>make('2026-11-05T14:30:00Z'),/retrospective/);
+});
+
+test('fractional positions obey the cap and conserve integer cash',()=>{
+ const j=journal('BUY_INTENT');
+ const l=applyMvpSession(newMvpLedger(),j,{targetSession:session,evidence:{...evidence,open:769.21,close:772.32},recordedAt:at});
+ const row=l.sessions[0];
+ assert.equal(row.status,'SIMULATED_ROUND_TRIP');
+ assert.ok(row.shares>0&&Number.isInteger(row.shares*1e6));
+ assert.ok(row.entryDebitCents<=25000);
+ assert.equal(row.exitCreditCents-row.entryDebitCents,row.pnlCents);
+ assert.equal(l.cashCents,100000+row.pnlCents);
 });

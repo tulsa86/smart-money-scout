@@ -12,7 +12,7 @@ export function planGamblePresession(rows,{targetSession,recordedAt,source,sourc
   if(!o||typeof o.symbol!=='string'||!/^[A-Z]{1,5}(?:[.-][A-Z])?$/.test(o.symbol)||seen.has(o.symbol)||!validTime(o.sessionCloseAt)||!validTime(o.availableAt)||Date.parse(o.availableAt)>Date.parse(sourceFetchedAt)||Date.parse(o.sessionCloseAt)>Date.parse(o.availableAt)||nyDay(o.sessionCloseAt)>=targetSession||![o.open,o.close,o.volume,o.meanPriorVolume].every(Number.isFinite)||o.open<=0||o.close<=0||o.volume<0||o.meanPriorVolume<=0)throw Error('Invalid, future, or duplicate completed session observation');
   seen.add(o.symbol);
   const momentum=o.close/o.open-1,relativeVolume=o.volume/o.meanPriorVolume;
-  candidates.push({symbol:o.symbol,sessionCloseAt:o.sessionCloseAt,availableAt:o.availableAt,momentum,relativeVolume,score:momentum>0&&relativeVolume>1?momentum*relativeVolume:null});
+  candidates.push({symbol:o.symbol,sessionCloseAt:o.sessionCloseAt,availableAt:o.availableAt,momentum,relativeVolume,score:momentum>0&&relativeVolume>1?momentum*relativeVolume:null,signalOpen:o.open,signalClose:o.close,signalVolume:o.volume,meanPriorVolume:o.meanPriorVolume,baselineVolumes:o.baselineVolumes??null,signalBarCount:o.signalBarCount??null});
  }
  const ranked=candidates.filter(c=>c.score!==null).sort((a,b)=>b.score-a.score||a.symbol.localeCompare(b.symbol));
  const snapshot={source,asOf:sourceFetchedAt,candidates,limitations:'Pre-session selection from supplied prior-session bars; no independent market-wide discovery or live fill.'};

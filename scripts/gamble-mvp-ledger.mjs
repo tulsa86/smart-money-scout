@@ -2,6 +2,8 @@
 import {isBeforeTargetOpen} from './gamble-presession-time.mjs';
 import {verifyGambleDecisionJournal} from './gamble-decision-journal.mjs';
 const day=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
+const floor6=x=>Math.floor((x+Number.EPSILON)*1e6)/1e6;
+const roundCents=x=>Math.round((x+Number.EPSILON)*100);
 const valid=x=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&/(Z|[+-]\d\d:\d\d)$/.test(x);
 export const newMvpLedger=()=>({schemaVersion:1,kind:'GAMBLE_MVP_LEDGER',startingCashCents:100000,cashCents:100000,sessions:[]});
 export function applyMvpSession(ledger,journal,{targetSession,evidence=null,recordedAt,slippageBps=5}={}){
@@ -12,19 +14,28 @@ export function applyMvpSession(ledger,journal,{targetSession,evidence=null,reco
  if(rows.length!==1)throw Error('Missing unique frozen MVP decision');
  const d=rows[0];
  if(Date.parse(recordedAt)<=Date.parse(d.recordedAt)||!isBeforeTargetOpen(d.recordedAt,targetSession))throw Error('Invalid decision timing');
- let status=d.action==='SKIP'?'SKIP':'MISSING_EVIDENCE',shares=0,entryPriceCents=null,exitPriceCents=null,pnlCents=0;
+ let status=d.action==='SKIP'?'SKIP':'MISSING_EVIDENCE',shares=0,entryPriceCents=null,exitPriceCents=null,pnlCents=0,entryDebitCents=0,exitCreditCents=0;
  if(d.action==='BUY_INTENT'&&evidence){
   if(evidence.symbol!==d.symbol||evidence.targetSession!==targetSession||!valid(evidence.openObservedAt)||!valid(evidence.closeObservedAt)||!valid(evidence.availableAt)||day(evidence.openObservedAt)!==targetSession||day(evidence.closeObservedAt)!==targetSession||Date.parse(evidence.openObservedAt)>=Date.parse(evidence.closeObservedAt)||Date.parse(evidence.availableAt)<Date.parse(evidence.closeObservedAt)||Date.parse(evidence.availableAt)>Date.parse(recordedAt)||!Number.isFinite(evidence.open)||evidence.open<=0||!Number.isFinite(evidence.close)||evidence.close<=0)throw Error('Invalid or unavailable session evidence');
-  entryPriceCents=Math.round(evidence.open*(1+slippageBps/10000)*100);
-  exitPriceCents=Math.round(evidence.close*(1-slippageBps/10000)*100);
+  const entryPrice=Number((evidence.open*(1+slippageBps/10000)).toFixed(6));
+  const exitPrice=Number((evidence.close*(1-slippageBps/10000)).toFixed(6));
+  entryPriceCents=roundCents(entryPrice);
+  exitPriceCents=roundCents(exitPrice);
   if(entryPriceCents<=0||exitPriceCents<=0)throw Error('Invalid fill price');
-  shares=Math.floor(Math.min(25000,ledger.cashCents)/entryPriceCents);
+  const budget=Math.min(25000,ledger.cashCents);
+  shares=floor6(budget/100/entryPrice);
+  while(shares>0&&roundCents(shares*entryPrice)>budget)shares=Number((shares-0.000001).toFixed(6));
   if(!shares)status='SKIP_UNAFFORDABLE';
-  else{pnlCents=shares*(exitPriceCents-entryPriceCents);status='SIMULATED_ROUND_TRIP';}
+  else{
+   entryDebitCents=roundCents(shares*entryPrice);
+   exitCreditCents=roundCents(shares*exitPrice);
+   pnlCents=exitCreditCents-entryDebitCents;
+   status='SIMULATED_ROUND_TRIP';
+  }
  }
  const cashCents=ledger.cashCents+pnlCents;
  if(!Number.isSafeInteger(cashCents)||cashCents<0)throw Error('Accounting overflow');
- return {...ledger,cashCents,sessions:[...ledger.sessions,{targetSession,decisionDigest:d.digest,recordedAt,status,symbol:d.symbol,shares,entryPriceCents,exitPriceCents,pnlCents,cashCents,slippageBps,simulationOnly:true}]};
+ return {...ledger,cashCents,sessions:[...ledger.sessions,{targetSession,decisionDigest:d.digest,recordedAt,status,symbol:d.symbol,shares,entryPriceCents,exitPriceCents,entryDebitCents,exitCreditCents,pnlCents,cashCents,slippageBps,simulationOnly:true}]};
 }
 
 export function applyMvpSessionIdempotent(ledger,journal,input){

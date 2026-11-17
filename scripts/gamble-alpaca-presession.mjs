@@ -1,4 +1,5 @@
 import {isBeforeTargetOpen} from './gamble-presession-time.mjs';
+import {priorRegularMarketDay} from './gamble-market-calendar.mjs';
 // Alpaca IEX 5-minute adapter. Read-only market data; records retrieval time as availability.
 import {planGamblePresession} from './gamble-presession-planner.mjs';
 const nyDay=x=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(x));
@@ -17,7 +18,7 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
  let commonLatest=null;
  for(const symbol of symbols){
   if(!/^[A-Z]{1,5}$/.test(symbol))throw Error('Invalid symbol');
-  const start=new Date(Date.parse(now)-14*86400000).toISOString();
+  const start=new Date(Date.parse(now)-21*86400000).toISOString();
   const url=new URL('https://data.alpaca.markets/v2/stocks/'+symbol+'/bars');
   for(const [k,v] of Object.entries({timeframe:'5Min',start,end:now,feed:'iex',limit:'10000'}))url.searchParams.set(k,v);
   const bars=[];
@@ -44,16 +45,20 @@ export async function collectGamblePresession({key,secret,targetSession,now=new 
   const latestObservedDay=[...byDay.keys()].sort().at(-1);
   if(latestObservedDay&&!completeRegularSession(byDay.get(latestObservedDay)))throw Error('Latest observed session incomplete for '+symbol);
   const completed=[...byDay.entries()].filter(([,v])=>completeRegularSession(v)).sort((a,b)=>a[0].localeCompare(b[0]));
-  if(completed.length<2)throw Error('Insufficient complete prior sessions for '+symbol);
+  if(completed.length<6)throw Error('Insufficient six-session volume history for '+symbol);
   const [session,latest]=completed.at(-1);
   if(session!==latestObservedDay)throw Error('Latest observed session invalid for '+symbol);
   if(commonLatest!==null&&session!==commonLatest)throw Error('Symbols do not share latest completed session');
   commonLatest=session;
   latest.sort((a,b)=>Date.parse(a.t)-Date.parse(b.t));
-  const previous=completed.slice(0,-1).map(([,v])=>v.reduce((n,b)=>n+b.v,0));
+  const six=completed.slice(-6);
+  let expected=targetSession;
+  for(let i=5;i>=0;i--){expected=priorRegularMarketDay(expected);if(six[i][0]!==expected)throw Error('Missing required historical market session for '+symbol);}
+  const baselineVolumes=six.slice(0,-1).map(([date,v])=>({date,volume:v.reduce((n,b)=>n+b.v,0),barCount:v.length}));
+  const previous=baselineVolumes.map(v=>v.volume);
   const meanPriorVolume=previous.reduce((a,b)=>a+b,0)/previous.length;
   if(meanPriorVolume<=0)throw Error('Invalid prior volume baseline');
-  observations.push({symbol,sessionCloseAt:latest.at(-1).t,availableAt:null,open:latest[0].o,close:latest.at(-1).c,volume:latest.reduce((n,b)=>n+b.v,0),meanPriorVolume});
+  observations.push({symbol,sessionCloseAt:latest.at(-1).t,availableAt:null,open:latest[0].o,close:latest.at(-1).c,volume:latest.reduce((n,b)=>n+b.v,0),meanPriorVolume,baselineVolumes,signalBarCount:latest.length});
  }
  // Fail closed unless the latest completed session was the most recent New York date before target.
  // A market holiday/weekend is allowed; stale data older than four calendar days is not.
