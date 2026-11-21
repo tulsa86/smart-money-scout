@@ -12,7 +12,7 @@ test('Alpaca adapter creates two decision-only prospective records',async()=>{
  assert.equal(journal[1].mode,'selective');
 });
 test('missing bars and target-session leakage fail closed',async()=>{
- await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars.slice(0,77)]})})}),/Latest observed session incomplete/);
+ await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars.slice(0,74)]})})}),/Latest observed session incomplete/);
  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...bars,{...bars[0],t:'2026-10-30T13:30:00Z'}]})})}),/Target-session/);
 });
 test('late collection and API errors fail closed',async()=>{
@@ -52,8 +52,8 @@ test('presession rejects duplicate intervals even with 78 bars',async()=>{
  const duplicate=bars.map((b,i)=>i===20?{...b,t:bars[19].t}:b);
  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...duplicate]})})}),/Latest observed session incomplete/);
 });
-test('presession rejects a missing interval disguised by an extra late bar',async()=>{
- const gap=bars.map((b,i)=>i>=20?{...b,t:new Date(Date.parse(b.t)+300000).toISOString()}:b);
+test('presession rejects four missing intervals even when an extra late bar is supplied',async()=>{
+ const gap=[...bars.filter((_,i)=>![20,21,22,23].includes(i)),{...bars[0],t:'2026-10-29T20:00:00Z'}];
  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...gap]})})}),/Latest observed session incomplete/);
 });
 
@@ -63,4 +63,17 @@ test('same-day 08:15 NY collection is permitted and post-open is rejected',async
  assert.equal(journal.length,1);
  assert.equal(journal[0].targetSession,'2026-10-30');
  await assert.rejects(()=>collectGamblePresession({...opts,now:'2026-10-30T13:30:00Z',clock:()=> '2026-10-30T13:30:00Z'}),/Invalid prospective collection inputs/);
+});
+
+test('sparse IEX session with three missing interior intervals remains usable without invented bars',async()=>{
+ const sparse=bars.filter((_,i)=>![10,20,30].includes(i));
+ const result=await collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...sparse]})})});
+ assert.equal(result.observations.length,1);
+ assert.equal(result.observations[0].volume,7800);
+ assert.match(result.source,/75\/78/);
+});
+test('missing opening or closing bar fails closed even when count meets threshold',async()=>{
+ for(const subset of [bars.slice(1),bars.slice(0,-1)]){
+  await assert.rejects(()=>collectGamblePresession({...opts,fetchImpl:async()=>({ok:true,json:async()=>({bars:[...prior,...subset]})})}),/Latest observed session incomplete/);
+ }
 });
