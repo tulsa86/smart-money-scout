@@ -5,6 +5,7 @@ on:
     - cron: '30 22 * * 1-5'
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: smart-money-scout-writers
   cancel-in-progress: false
@@ -48,3 +49,17 @@ jobs:
               sleep $((attempt * 10))
             done
           fi
+      - name: Request Pages deployment of published data commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          published_sha="$(git rev-parse HEAD)"
+          remote_sha="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$published_sha" != "$remote_sha" ]; then
+            echo "::error::Published commit differs from main; refusing deployment."
+            exit 1
+          fi
+          gh workflow run pages.yml --ref main -f expected_sha="$published_sha"
+          echo "Requested Pages deployment for $published_sha"
