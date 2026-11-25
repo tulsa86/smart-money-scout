@@ -427,5 +427,31 @@
     "spyClose": 722.56,
     "recordedAt": "2026-11-24T06:16:51.947Z",
     "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
+  },
+  {
+    "schemaVersion": 1,
+    "day": "2026-11-24",
+    "status": "TRADE_EXECUTED",
+    "strategy": "prior-session-momentum-v1",
+    "feed": "Alpaca IEX 5m",
+    "startingCashCents": 106717,
+    "pnlCents": -197,
+    "endingCashCents": 106520,
+    "selectedTicker": "TSLA",
+    "trades": [
+      {
+        "entryTime": "2026-11-24T20:55:00Z",
+        "exitTime": "2026-11-24T20:55:00Z",
+        "entryPrice": 385.75278,
+        "exitPrice": 384.76752,
+        "shares": 2,
+        "netPnl": -1.97052,
+        "reason": "session-end",
+        "strategy": "breakout"
+      }
+    ],
+    "spyClose": 718.91,
+    "recordedAt": "2026-11-25T04:58:59.508Z",
+    "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
   }
 ]

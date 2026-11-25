@@ -2,37 +2,37 @@
   "source": "Alpaca IEX",
   "feed": "iex",
   "timeframe": "5Min",
-  "fetchedAt": "2026-11-24T06:16:47.454Z",
+  "fetchedAt": "2026-11-25T04:58:55.332Z",
   "symbols": [
     {
       "symbol": "SPY",
       "bars": 1170,
-      "first": "2026-11-03T14:30:00Z",
-      "last": "2026-11-23T20:55:00Z"
+      "first": "2026-11-04T14:30:00Z",
+      "last": "2026-11-24T20:55:00Z"
     },
     {
       "symbol": "QQQ",
       "bars": 1170,
-      "first": "2026-11-03T14:30:00Z",
-      "last": "2026-11-23T20:55:00Z"
+      "first": "2026-11-04T14:30:00Z",
+      "last": "2026-11-24T20:55:00Z"
     },
     {
       "symbol": "NVDA",
       "bars": 1170,
-      "first": "2026-11-03T14:30:00Z",
-      "last": "2026-11-23T20:55:00Z"
+      "first": "2026-11-04T14:30:00Z",
+      "last": "2026-11-24T20:55:00Z"
     },
     {
       "symbol": "AMD",
       "bars": 1170,
-      "first": "2026-11-03T14:30:00Z",
-      "last": "2026-11-23T20:55:00Z"
+      "first": "2026-11-04T14:30:00Z",
+      "last": "2026-11-24T20:55:00Z"
     },
     {
       "symbol": "TSLA",
       "bars": 1170,
-      "first": "2026-11-03T14:30:00Z",
-      "last": "2026-11-23T20:55:00Z"
+      "first": "2026-11-04T14:30:00Z",
+      "last": "2026-11-24T20:55:00Z"
     }
   ],
   "limitations": "Single-exchange volume, not consolidated US market. Historical simulation only."
