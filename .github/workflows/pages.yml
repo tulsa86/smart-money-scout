@@ -10,25 +10,24 @@ on:
         type: string
 permissions:
   contents: read
-  pages: write
-  id-token: write
 concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      revision: ${{ steps.revision.outputs.sha }}
+      report_sha256: ${{ steps.revision.outputs.report_sha256 }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.expected_sha || github.sha }}
-      - name: Verify requested revision is still main
-        if: ${{ inputs.expected_sha != '' }}
+      - name: Verify exact current main revision
         env:
-          EXPECTED_SHA: ${{ inputs.expected_sha }}
+          EXPECTED_SHA: ${{ inputs.expected_sha || github.sha }}
         run: |
           set -euo pipefail
           git fetch origin main
@@ -41,19 +40,82 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - name: Record revision and report digest
+        id: revision
+        run: |
+          set -euo pipefail
+          cmp public/stocks/forward-report.json dist/stocks/forward-report.json
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "report_sha256=$(sha256sum dist/stocks/forward-report.json | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          git rev-parse HEAD > dist/published-revision.txt
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-      - name: Refuse deployment if main advanced during build
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Wait for exactly one available Pages artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          git fetch origin main
-          checked_out_sha="$(git rev-parse HEAD)"
-          current_main_sha="$(git rev-parse origin/main)"
-          if [ "$checked_out_sha" != "$current_main_sha" ]; then
-            echo "::warning::Main advanced during build; skipping stale deployment."
-            exit 1
-          fi
+          for attempt in 1 2 3 4 5 6; do
+            if count="$(gh api "repos/$GH_REPO/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages" --jq '[.artifacts[] | select(.name == "github-pages" and .expired == false)] | length')"; then
+              if [ "$count" = 1 ]; then exit 0; fi
+              if [ "$count" -gt 1 ]; then
+                echo "::error::Ambiguous Pages artifacts; rerun all jobs."
+                exit 1
+              fi
+            fi
+            echo "::warning::Pages artifact not visible (attempt $attempt of 6)"
+            if [ "$attempt" -lt 6 ]; then sleep 10; fi
+          done
+          echo "::error::Pages artifact unavailable; publication failed."
+          exit 1
+      - name: Refuse deployment if main advanced
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          EXPECTED_SHA: ${{ needs.build.outputs.revision }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq .object.sha)" = "$EXPECTED_SHA"
       - uses: actions/deploy-pages@v4
         id: deployment
+      - name: Verify live revision and report
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED_SHA: ${{ needs.build.outputs.revision }}
+          EXPECTED_DIGEST: ${{ needs.build.outputs.report_sha256 }}
+        run: |
+          set -euo pipefail
+          base="${PAGE_URL%/}"
+          for attempt in 1 2 3 4 5 6; do
+            query="revision=$EXPECTED_SHA&attempt=$attempt"
+            if revision="$(curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' "$base/published-revision.txt?$query")" &&
+               curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' "$base/stocks/forward-report.json?$query" -o "$RUNNER_TEMP/live-report.json" &&
+               [ "$revision" = "$EXPECTED_SHA" ] &&
+               [ "$(sha256sum "$RUNNER_TEMP/live-report.json" | cut -d' ' -f1)" = "$EXPECTED_DIGEST" ]; then
+              echo "Verified public report and revision $EXPECTED_SHA"
+              exit 0
+            fi
+            echo "::warning::Live revision or report not yet verified (attempt $attempt of 6)"
+            if [ "$attempt" -lt 6 ]; then sleep 10; fi
+          done
+          echo "::error::Deployment completed but public report verification failed."
+          exit 1
+      - name: Publication failure summary
+        if: failure()
+        run: echo "### Pages publication failed; historical sync success does not imply public data is current." >> "$GITHUB_STEP_SUMMARY"
