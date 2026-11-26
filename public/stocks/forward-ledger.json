@@ -453,5 +453,20 @@
     "spyClose": 718.91,
     "recordedAt": "2026-11-25T04:58:59.508Z",
     "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
+  },
+  {
+    "schemaVersion": 1,
+    "day": "2026-11-25",
+    "status": "NO_CANDIDATE",
+    "strategy": "prior-session-momentum-v1",
+    "feed": "Alpaca IEX 5m",
+    "startingCashCents": 106520,
+    "pnlCents": 0,
+    "endingCashCents": 106520,
+    "selectedTicker": "NONE",
+    "trades": [],
+    "spyClose": 716.735,
+    "recordedAt": "2026-11-26T04:16:15.007Z",
+    "limitations": "End-of-session retrospective candle evaluation; simulated only, no live orders."
   }
 ]

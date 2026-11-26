@@ -464,5 +464,20 @@
     "fixedSizeCumulativePnl": 65.2,
     "fixedSizeIllustrativeBalance": 1065.2,
     "spyReturnSinceAnchorPct": -6.0525
+  },
+  {
+    "day": "2026-11-25",
+    "spyClose": 716.735,
+    "source": "Alpaca IEX five-minute candles",
+    "mode": "prior-session-momentum",
+    "symbol": "NONE",
+    "decision": "no-eligible-stock",
+    "note": "No eligible candidate using previous-session data",
+    "trades": [],
+    "pnl": 0,
+    "limitations": "Research-only replay; no orders. IEX volume is not consolidated. Rolling-window cash and PnL are not cumulative forward returns.",
+    "fixedSizeCumulativePnl": 65.2,
+    "fixedSizeIllustrativeBalance": 1065.2,
+    "spyReturnSinceAnchorPct": -6.3367
   }
 ]
